@@ -331,6 +331,18 @@
           "markdownDescription": "Denies the ignore_battery_optimizations command without any pre-configured scope."
         },
         {
+          "description": "Enables the open_url command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-open-url",
+          "markdownDescription": "Enables the open_url command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the open_url command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-open-url",
+          "markdownDescription": "Denies the open_url command without any pre-configured scope."
+        },
+        {
           "description": "Enables the register_listener command without any pre-configured scope.",
           "type": "string",
           "const": "allow-register-listener",
@@ -415,10 +427,10 @@
           "markdownDescription": "Denies the update_media command without any pre-configured scope."
         },
         {
-          "description": "Alles, was die Oberfläche von Amber Player auf Android braucht\n#### This default permission set includes:\n\n- `allow-update-media`\n- `allow-stop-media`\n- `allow-ignore-battery-optimizations`\n- `allow-take-pair-link`\n- `allow-get-fullscreen`\n- `allow-set-fullscreen`\n- `allow-check-permissions`\n- `allow-request-permissions`\n- `allow-register-listener`\n- `allow-remove-listener`",
+          "description": "Alles, was die Oberfläche von Amber Player auf Android braucht\n#### This default permission set includes:\n\n- `allow-update-media`\n- `allow-stop-media`\n- `allow-ignore-battery-optimizations`\n- `allow-take-pair-link`\n- `allow-get-fullscreen`\n- `allow-set-fullscreen`\n- `allow-open-url`\n- `allow-check-permissions`\n- `allow-request-permissions`\n- `allow-register-listener`\n- `allow-remove-listener`",
           "type": "string",
           "const": "default",
-          "markdownDescription": "Alles, was die Oberfläche von Amber Player auf Android braucht\n#### This default permission set includes:\n\n- `allow-update-media`\n- `allow-stop-media`\n- `allow-ignore-battery-optimizations`\n- `allow-take-pair-link`\n- `allow-get-fullscreen`\n- `allow-set-fullscreen`\n- `allow-check-permissions`\n- `allow-request-permissions`\n- `allow-register-listener`\n- `allow-remove-listener`"
+          "markdownDescription": "Alles, was die Oberfläche von Amber Player auf Android braucht\n#### This default permission set includes:\n\n- `allow-update-media`\n- `allow-stop-media`\n- `allow-ignore-battery-optimizations`\n- `allow-take-pair-link`\n- `allow-get-fullscreen`\n- `allow-set-fullscreen`\n- `allow-open-url`\n- `allow-check-permissions`\n- `allow-request-permissions`\n- `allow-register-listener`\n- `allow-remove-listener`"
         }
       ]
     }

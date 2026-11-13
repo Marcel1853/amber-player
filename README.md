@@ -139,5 +139,6 @@ are explicitly welcome – each plugin package carries its own license; the temp
 ## Privacy
 
 Amber Player collects no data and shows no ads. Only what you turn on goes online: the cover
-search (artist, title, album), the radio station list and the radio streams themselves. The HTTP
-API is only reachable from your own PC by default.
+search (artist, title, album), the radio station list, the radio streams themselves and – once a
+day, can be turned off – the update check on GitHub. The HTTP API is only reachable from your own
+PC by default.

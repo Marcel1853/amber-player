@@ -396,5 +396,15 @@ I18N.en = {
  "Das Plugin wird gelöscht. Klangeffekte verschwinden nach dem nächsten Start der App.": "The plugin will be deleted. Sound effects disappear after the next app start.",
  "Das ist keine ZIP-Datei": "This is not a ZIP file",
  "Die ZIP-Datei ist beschädigt": "The ZIP file is damaged",
- "Nicht unterstütztes ZIP-Format": "Unsupported ZIP format"
+ "Nicht unterstütztes ZIP-Format": "Unsupported ZIP format",
+ "Neue Version {v} verfügbar – unter Einstellungen herunterladen": "New version {v} available – download it in Settings",
+ "Du hast die neueste Version ({v})": "You have the latest version ({v})",
+ "Download startet im Browser – danach die APK antippen und installieren": "The download starts in the browser – then tap the APK and install it",
+ "Neue Version {v} verfügbar": "New version {v} available",
+ "Du hast Version {v}. Deine Bibliothek, Playlisten und Einstellungen bleiben beim Update erhalten.": "You have version {v}. Your library, playlists and settings are kept during the update.",
+ "Herunterladen": "Download",
+ "Öffnet die Release-Seite mit .deb, .rpm und AppImage": "Opens the release page with .deb, .rpm and AppImage",
+ "Automatisch nach Updates suchen": "Check for updates automatically",
+ "Automatisch nach Updates suchen (einmal am Tag bei GitHub)": "Check for updates automatically (once a day on GitHub)",
+ "Jetzt prüfen": "Check now"
 };

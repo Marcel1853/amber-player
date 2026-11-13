@@ -10,6 +10,7 @@ Alles, was die Oberfläche von Amber Player auf Android braucht
 - `allow-take-pair-link`
 - `allow-get-fullscreen`
 - `allow-set-fullscreen`
+- `allow-open-url`
 - `allow-check-permissions`
 - `allow-request-permissions`
 - `allow-register-listener`
@@ -98,6 +99,32 @@ Enables the ignore_battery_optimizations command without any pre-configured scop
 <td>
 
 Denies the ignore_battery_optimizations command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`amber-mobile:allow-open-url`
+
+</td>
+<td>
+
+Enables the open_url command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`amber-mobile:deny-open-url`
+
+</td>
+<td>
+
+Denies the open_url command without any pre-configured scope.
 
 </td>
 </tr>

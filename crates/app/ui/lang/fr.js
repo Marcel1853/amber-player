@@ -396,5 +396,15 @@ I18N.fr = {
  "Das Plugin wird gelöscht. Klangeffekte verschwinden nach dem nächsten Start der App.": "Le plugin sera supprimé. Les effets sonores disparaissent au prochain démarrage de l’app.",
  "Das ist keine ZIP-Datei": "Ce n’est pas un fichier ZIP",
  "Die ZIP-Datei ist beschädigt": "Le fichier ZIP est endommagé",
- "Nicht unterstütztes ZIP-Format": "Format ZIP non pris en charge"
+ "Nicht unterstütztes ZIP-Format": "Format ZIP non pris en charge",
+ "Neue Version {v} verfügbar – unter Einstellungen herunterladen": "Nouvelle version {v} disponible – à télécharger dans les Paramètres",
+ "Du hast die neueste Version ({v})": "Tu as la dernière version ({v})",
+ "Download startet im Browser – danach die APK antippen und installieren": "Le téléchargement démarre dans le navigateur – touche ensuite l’APK pour l’installer",
+ "Neue Version {v} verfügbar": "Nouvelle version {v} disponible",
+ "Du hast Version {v}. Deine Bibliothek, Playlisten und Einstellungen bleiben beim Update erhalten.": "Tu as la version {v}. Ta bibliothèque, tes playlists et tes réglages sont conservés lors de la mise à jour.",
+ "Herunterladen": "Télécharger",
+ "Öffnet die Release-Seite mit .deb, .rpm und AppImage": "Ouvre la page de version avec .deb, .rpm et AppImage",
+ "Automatisch nach Updates suchen": "Rechercher les mises à jour automatiquement",
+ "Automatisch nach Updates suchen (einmal am Tag bei GitHub)": "Rechercher les mises à jour automatiquement (une fois par jour sur GitHub)",
+ "Jetzt prüfen": "Vérifier maintenant"
 };

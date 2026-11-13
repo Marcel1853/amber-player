@@ -396,5 +396,15 @@ I18N.it = {
  "Das Plugin wird gelöscht. Klangeffekte verschwinden nach dem nächsten Start der App.": "Il plugin verrà eliminato. Gli effetti audio spariscono al prossimo avvio dell’app.",
  "Das ist keine ZIP-Datei": "Non è un file ZIP",
  "Die ZIP-Datei ist beschädigt": "Il file ZIP è danneggiato",
- "Nicht unterstütztes ZIP-Format": "Formato ZIP non supportato"
+ "Nicht unterstütztes ZIP-Format": "Formato ZIP non supportato",
+ "Neue Version {v} verfügbar – unter Einstellungen herunterladen": "Nuova versione {v} disponibile: scaricala nelle Impostazioni",
+ "Du hast die neueste Version ({v})": "Hai la versione più recente ({v})",
+ "Download startet im Browser – danach die APK antippen und installieren": "Il download parte nel browser: poi tocca l’APK e installalo",
+ "Neue Version {v} verfügbar": "Nuova versione {v} disponibile",
+ "Du hast Version {v}. Deine Bibliothek, Playlisten und Einstellungen bleiben beim Update erhalten.": "Hai la versione {v}. Libreria, playlist e impostazioni restano durante l’aggiornamento.",
+ "Herunterladen": "Scarica",
+ "Öffnet die Release-Seite mit .deb, .rpm und AppImage": "Apre la pagina della versione con .deb, .rpm e AppImage",
+ "Automatisch nach Updates suchen": "Cerca aggiornamenti automaticamente",
+ "Automatisch nach Updates suchen (einmal am Tag bei GitHub)": "Cerca aggiornamenti automaticamente (una volta al giorno su GitHub)",
+ "Jetzt prüfen": "Controlla ora"
 };

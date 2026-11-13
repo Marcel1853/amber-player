@@ -18,6 +18,11 @@ import app.tauri.plugin.JSObject
 import app.tauri.plugin.Plugin
 
 @InvokeArg
+class UrlArgs {
+    var url: String = ""
+}
+
+@InvokeArg
 class FullscreenArgs {
     var on: Boolean = true
 }
@@ -125,6 +130,19 @@ class AmberMobilePlugin(private val activity: Activity) : Plugin(activity) {
                 controller.show(WindowInsetsCompat.Type.systemBars())
             }
         }
+        invoke.resolve()
+    }
+
+    /** Download-Link eines Updates im Browser öffnen (nur Adressen von Amber Player auf GitHub). */
+    @Command
+    fun openUrl(invoke: Invoke) {
+        val url = invoke.parseArgs(UrlArgs::class.java).url
+        if (!url.startsWith("https://github.com/Marcel1853/amber-player/")) {
+            invoke.reject("Nur Adressen von Amber Player auf GitHub")
+            return
+        }
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        activity.startActivity(intent)
         invoke.resolve()
     }
 

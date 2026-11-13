@@ -396,5 +396,15 @@ I18N.tr = {
  "Das Plugin wird gelöscht. Klangeffekte verschwinden nach dem nächsten Start der App.": "Eklenti silinecek. Ses efektleri uygulama yeniden açıldığında kaybolur.",
  "Das ist keine ZIP-Datei": "Bu bir ZIP dosyası değil",
  "Die ZIP-Datei ist beschädigt": "ZIP dosyası bozuk",
- "Nicht unterstütztes ZIP-Format": "Desteklenmeyen ZIP biçimi"
+ "Nicht unterstütztes ZIP-Format": "Desteklenmeyen ZIP biçimi",
+ "Neue Version {v} verfügbar – unter Einstellungen herunterladen": "Yeni sürüm {v} mevcut – Ayarlar’dan indir",
+ "Du hast die neueste Version ({v})": "En yeni sürüme sahipsin ({v})",
+ "Download startet im Browser – danach die APK antippen und installieren": "İndirme tarayıcıda başlar – ardından APK’ya dokunup yükle",
+ "Neue Version {v} verfügbar": "Yeni sürüm {v} mevcut",
+ "Du hast Version {v}. Deine Bibliothek, Playlisten und Einstellungen bleiben beim Update erhalten.": "Sürüm {v} kullanıyorsun. Kitaplığın, çalma listelerin ve ayarların güncellemede korunur.",
+ "Herunterladen": "İndir",
+ "Öffnet die Release-Seite mit .deb, .rpm und AppImage": ".deb, .rpm ve AppImage içeren sürüm sayfasını açar",
+ "Automatisch nach Updates suchen": "Güncellemeleri otomatik ara",
+ "Automatisch nach Updates suchen (einmal am Tag bei GitHub)": "Güncellemeleri otomatik ara (günde bir kez GitHub’da)",
+ "Jetzt prüfen": "Şimdi denetle"
 };

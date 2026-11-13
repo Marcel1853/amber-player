@@ -1394,6 +1394,15 @@ async function renderSettings(el, v, fresh) {
 
   el.innerHTML = `${head({ kind: 'Amber Player', title: 'Einstellungen' })}
   <div class="scroll pad"><div class="settings">
+    ${updates.info?.newer ? `<div class="box update-box">
+      <h3>${esc(tx('Neue Version {v} verfügbar', { v: updates.info.latest }))}</h3>
+      <p>${esc(tx('Du hast Version {v}. Deine Bibliothek, Playlisten und Einstellungen bleiben beim Update erhalten.', { v: updates.info.current }))}</p>
+      <div class="actions">
+        <button class="btn primary" data-act="update-download">${icon('import')} ${esc(tx('Herunterladen'))}</button>
+        ${IS_ANDROID ? '' : `<span class="hint" style="margin:0">${esc(tx('Öffnet die Release-Seite mit .deb, .rpm und AppImage'))}</span>`}
+      </div>
+    </div>` : ''}
+
     <div class="box">
       <h3>Musikordner</h3>
       <p>${esc(tx('{n} in der Bibliothek. Neue und geänderte Dateien werden beim Start automatisch erkannt.', { n: plural(stats.tracks, 'Titel', 'Titel') }))}</p>
@@ -1538,6 +1547,11 @@ async function renderSettings(el, v, fresh) {
         <tr><td>Medientasten</td><td>werden vom System an Amber Player weitergegeben</td></tr>
       </table>
     </div>
+    <div class="update-row">
+      <label class="switch" title="${esc(tx('Automatisch nach Updates suchen'))}"><input type="checkbox" id="updateAuto" ${updateCheckEnabled() ? 'checked' : ''}><span></span></label>
+      <span class="hint" style="margin:0">${esc(tx('Automatisch nach Updates suchen (einmal am Tag bei GitHub)'))}</span>
+      <button class="btn small" data-act="update-check">${icon('refresh')} ${esc(tx('Jetzt prüfen'))}</button>
+    </div>
     <p class="app-version" id="appVersion" data-raw></p>
   </div></div>`;
   // Versionsnummer ganz unten (kommt aus der App selbst, wie beim Installationspaket)
@@ -1599,6 +1613,13 @@ async function renderSettings(el, v, fresh) {
   for (const b of $$('[data-qr]', el)) b.addEventListener('click', () => streamDialog(streams.links[Number(b.dataset.qr)]));
   $('[data-act="lan-on"]', el)?.addEventListener('click', enableLan);
   $('[data-act="pair"]', el)?.addEventListener('click', pairDialog);
+  $('[data-act="update-download"]', el)?.addEventListener('click', downloadUpdate);
+  $('[data-act="update-check"]', el)?.addEventListener('click', () => checkUpdates(true));
+  $('#updateAuto', el)?.addEventListener('change', (e) => {
+    try {
+      localStorage.setItem('updateCheck', e.target.checked ? 'on' : 'off');
+    } catch {}
+  });
   const langSel = $('#langSel', el);
   try {
     langSel.value = localStorage.getItem('lang') || 'system';
@@ -2465,6 +2486,69 @@ async function renderPc(el, v, fresh) {
   });
 }
 
+// ---------- Updates: neue Version auf GitHub ----------
+
+const updates = { info: null };
+
+/** Automatische Update-Prüfung an/aus (Standard: an). */
+function updateCheckEnabled() {
+  try {
+    return localStorage.getItem('updateCheck') !== 'off';
+  } catch {
+    return true;
+  }
+}
+
+/**
+ * Bei GitHub nach einer neuen Version fragen – automatisch höchstens einmal am Tag,
+ * von Hand (manual) jederzeit.
+ */
+async function checkUpdates(manual = false) {
+  if (!manual) {
+    if (!updateCheckEnabled()) return;
+    try {
+      const last = Number(localStorage.getItem('updateLast') || 0);
+      if (Date.now() - last < 20 * 3600 * 1000 && !localStorage.getItem('updateNewer')) return;
+      localStorage.setItem('updateLast', String(Date.now()));
+    } catch {}
+  }
+  let info;
+  try {
+    info = await invoke('check_update');
+  } catch (e) {
+    if (manual) toast(String(e), 'err');
+    return;
+  }
+  updates.info = info;
+  try {
+    if (info.newer) localStorage.setItem('updateNewer', info.latest);
+    else localStorage.removeItem('updateNewer');
+  } catch {}
+  $$('[data-view="settings"]').forEach((b) => b.classList.toggle('has-update', !!info.newer));
+  if (info.newer) {
+    toast(tx('Neue Version {v} verfügbar – unter Einstellungen herunterladen', { v: info.latest }), 'ok');
+  } else if (manual) {
+    toast(tx('Du hast die neueste Version ({v})', { v: info.current }), 'ok');
+  }
+  if (state.view.name === 'settings') render();
+}
+
+/** Update herunterladen: Handy → APK über den Browser, PC → Release-Seite mit den Paketen. */
+async function downloadUpdate() {
+  const info = updates.info;
+  if (!info) return;
+  try {
+    if (IS_ANDROID) {
+      await invoke('plugin:amber-mobile|open_url', { url: info.apk || info.page });
+      toast(tx('Download startet im Browser – danach die APK antippen und installieren'), 'ok');
+    } else {
+      await invoke('open_release_url', { url: info.page });
+    }
+  } catch (e) {
+    toast(String(e), 'err');
+  }
+}
+
 // ---------- Android: Benachrichtigung, Sperrbildschirm, Medientasten ----------
 
 const androidMedia = {
@@ -2719,6 +2803,7 @@ async function init() {
   bindViz();
   bindMobile();
   androidMedia.init();
+  setTimeout(() => checkUpdates(), 5000);
   await loadSources();
   bindBar();
   bindKeys();

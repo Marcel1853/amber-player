@@ -396,5 +396,15 @@ I18N.nl = {
  "Das Plugin wird gelöscht. Klangeffekte verschwinden nach dem nächsten Start der App.": "De plugin wordt verwijderd. Geluidseffecten verdwijnen na de volgende start van de app.",
  "Das ist keine ZIP-Datei": "Dit is geen ZIP-bestand",
  "Die ZIP-Datei ist beschädigt": "Het ZIP-bestand is beschadigd",
- "Nicht unterstütztes ZIP-Format": "Niet-ondersteund ZIP-formaat"
+ "Nicht unterstütztes ZIP-Format": "Niet-ondersteund ZIP-formaat",
+ "Neue Version {v} verfügbar – unter Einstellungen herunterladen": "Nieuwe versie {v} beschikbaar – download via Instellingen",
+ "Du hast die neueste Version ({v})": "Je hebt de nieuwste versie ({v})",
+ "Download startet im Browser – danach die APK antippen und installieren": "De download start in de browser – tik daarna op de APK en installeer hem",
+ "Neue Version {v} verfügbar": "Nieuwe versie {v} beschikbaar",
+ "Du hast Version {v}. Deine Bibliothek, Playlisten und Einstellungen bleiben beim Update erhalten.": "Je hebt versie {v}. Je bibliotheek, afspeellijsten en instellingen blijven bij de update behouden.",
+ "Herunterladen": "Downloaden",
+ "Öffnet die Release-Seite mit .deb, .rpm und AppImage": "Opent de releasepagina met .deb, .rpm en AppImage",
+ "Automatisch nach Updates suchen": "Automatisch naar updates zoeken",
+ "Automatisch nach Updates suchen (einmal am Tag bei GitHub)": "Automatisch naar updates zoeken (één keer per dag bij GitHub)",
+ "Jetzt prüfen": "Nu controleren"
 };

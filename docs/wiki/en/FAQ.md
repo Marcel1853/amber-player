@@ -20,6 +20,12 @@ Not at the moment. There are packages for Linux and an app for Android.
 **Which version do I have?**
 At the very bottom of **Settings**.
 
+**How do I get updates?**
+Amber Player checks GitHub for a new version once a day. If there is one, a message appears and
+the **Download** button shows up at the top of **Settings** – on the phone it downloads the APK,
+on the PC it opens the release page. Library, playlists and settings are kept during the update.
+To turn this off: at the very bottom of Settings.
+
 ## Library
 
 **A track is missing.**

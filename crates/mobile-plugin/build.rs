@@ -6,6 +6,7 @@ const COMMANDS: &[&str] = &[
     "take_pair_link",
     "get_fullscreen",
     "set_fullscreen",
+    "open_url",
     "check_permissions",
     "request_permissions",
     "register_listener",

@@ -9,6 +9,7 @@ permissions = [
   "allow-take-pair-link",
   "allow-get-fullscreen",
   "allow-set-fullscreen",
+  "allow-open-url",
   "allow-check-permissions",
   "allow-request-permissions",
   "allow-register-listener",

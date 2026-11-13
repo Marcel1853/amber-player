@@ -138,5 +138,5 @@ seine eigene Lizenz; die Vorlagen in `examples/plugins/` stehen unter MIT. Detai
 ## Datenschutz
 
 Amber Player sammelt keine Daten und zeigt keine Werbung. Ins Internet geht nur, was du
-einschaltest: Cover-Suche (Interpret, Titel, Album), Radio-Senderliste und die Radiostreams
-selbst. Die HTTP-API ist standardmäßig nur auf dem eigenen PC erreichbar.
+einschaltest: Cover-Suche (Interpret, Titel, Album), Radio-Senderliste, die Radiostreams selbst
+und – einmal am Tag, abschaltbar – die Update-Prüfung bei GitHub. Die HTTP-API ist standardmäßig nur auf dem eigenen PC erreichbar.

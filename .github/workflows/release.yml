@@ -11,7 +11,10 @@
 #   ANDROID_STORE_PASSWORD   Passwort des Keystores
 #   ANDROID_KEY_ALIAS        Alias des Schlüssels
 #   ANDROID_KEY_PASSWORD     Passwort des Schlüssels
-# Fehlen sie, erscheint das Release ohne APK (mit Hinweis), statt fehlzuschlagen.
+#   ANDROID_OLD_KEYSTORE_BASE64  alter (Debug-)Schlüssel der ersten Versionen, als Base64
+#   ANDROID_LINEAGE_BASE64       Rotations-Bestätigung alt → neu (keystore/rotation.lineage)
+# Mit den letzten beiden nimmt Android die neue Version als Update über die alten Versionen an.
+# Fehlen die ersten vier, erscheint das Release ohne APK (mit Hinweis), statt fehlzuschlagen.
 #
 # Neue Version: Version in Cargo.toml (Workspace) und crates/app/tauri.conf.json hochzählen,
 # auf main pushen.
@@ -162,6 +165,8 @@ jobs:
           STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          OLD_KEYSTORE: ${{ secrets.ANDROID_OLD_KEYSTORE_BASE64 }}
+          LINEAGE: ${{ secrets.ANDROID_LINEAGE_BASE64 }}
         run: |
           if [ -z "$KEYSTORE" ] || [ -z "$STORE_PASSWORD" ] || [ -z "$KEY_ALIAS" ] || [ -z "$KEY_PASSWORD" ]; then
             echo "::warning::Android-Secrets fehlen – das Release erscheint ohne APK (siehe Kommentar oben)."
@@ -173,15 +178,28 @@ jobs:
           APK=crates/app/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk
           VERSION="${{ needs.pruefen.outputs.version }}"
           "$BT/zipalign" -p 4 "$APK" "$RUNNER_TEMP/aligned.apk"
-          "$BT/apksigner" sign --ks "$RUNNER_TEMP/amber.keystore" --ks-key-alias "$KEY_ALIAS" \
-            --ks-pass env:STORE_PASSWORD --key-pass env:KEY_PASSWORD \
-            --out "AmberPlayer-Android-$VERSION.apk" "$RUNNER_TEMP/aligned.apk"
+          if [ -n "$OLD_KEYSTORE" ] && [ -n "$LINEAGE" ]; then
+            # Schlüssel-Rotation: Die ersten Versionen waren mit dem Debug-Schlüssel signiert. Mit der
+            # Rotations-Bestätigung nimmt Android die neue Version als normales Update an (Daten bleiben).
+            printf '%s' "$OLD_KEYSTORE" | tr -d '[:space:]' | base64 -d > "$RUNNER_TEMP/old.keystore"
+            printf '%s' "$LINEAGE" | tr -d '[:space:]' | base64 -d > "$RUNNER_TEMP/rotation.lineage"
+            "$BT/apksigner" sign \
+              --ks "$RUNNER_TEMP/old.keystore" --ks-key-alias androiddebugkey --ks-pass pass:android --key-pass pass:android \
+              --next-signer --ks "$RUNNER_TEMP/amber.keystore" --ks-key-alias "$KEY_ALIAS" \
+              --ks-pass env:STORE_PASSWORD --key-pass env:KEY_PASSWORD \
+              --lineage "$RUNNER_TEMP/rotation.lineage" \
+              --out "AmberPlayer-Android-$VERSION.apk" "$RUNNER_TEMP/aligned.apk"
+          else
+            "$BT/apksigner" sign --ks "$RUNNER_TEMP/amber.keystore" --ks-key-alias "$KEY_ALIAS" \
+              --ks-pass env:STORE_PASSWORD --key-pass env:KEY_PASSWORD \
+              --out "AmberPlayer-Android-$VERSION.apk" "$RUNNER_TEMP/aligned.apk"
+          fi
           "$BT/apksigner" verify "AmberPlayer-Android-$VERSION.apk"
           echo "signiert=true" >> "$GITHUB_OUTPUT"
 
       - name: Schlüssel wieder entfernen
         if: always()
-        run: rm -f "$RUNNER_TEMP/amber.keystore" "$RUNNER_TEMP/aligned.apk"
+        run: rm -f "$RUNNER_TEMP/amber.keystore" "$RUNNER_TEMP/old.keystore" "$RUNNER_TEMP/rotation.lineage" "$RUNNER_TEMP/aligned.apk"
 
       - uses: actions/upload-artifact@v4
         if: steps.schluessel.outputs.signiert == 'true'

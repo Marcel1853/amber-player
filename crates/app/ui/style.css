@@ -871,3 +871,12 @@ table.urls { table-layout: fixed; }
 .pkg-meta b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pkg-meta small { color: var(--text-3); font-weight: 400; }
 .pkg-meta span { color: var(--text-3); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Update-Hinweis */
+.update-box { border-color: var(--accent); background: var(--accent-soft); }
+.update-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+.icon-btn.has-update { position: relative; }
+.icon-btn.has-update::after {
+  content: ""; position: absolute; top: 5px; right: 5px; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 0 2px var(--bg);
+}

@@ -182,6 +182,8 @@ pub fn run() {
             commands::pc_play_here,
             commands::pair_link,
             commands::station_logo,
+            commands::check_update,
+            commands::open_release_url,
         ])
         .setup(move |app| {
             let handle = app.handle().clone();

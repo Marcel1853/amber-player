@@ -830,3 +830,89 @@ pub async fn station_logo(url: String) -> R<tauri::ipc::Response> {
 fn ureq_get(url: &str) -> anyhow::Result<ureq::Response> {
     Ok(ureq::get(url).timeout(Duration::from_secs(6)).call()?)
 }
+
+// ---------- Updates (Releases auf GitHub) ----------
+
+const RELEASES_API: &str = "https://api.github.com/repos/Marcel1853/amber-player/releases/latest";
+const RELEASES_PAGE: &str = "https://github.com/Marcel1853/amber-player/releases";
+
+/// „0.6.2“ bzw. „v0.6.2“ → (0, 6, 2) zum Vergleichen.
+fn version_tuple(v: &str) -> (u32, u32, u32) {
+    let mut it = v.trim().trim_start_matches('v').split('.').map(|x| {
+        x.chars().take_while(char::is_ascii_digit).collect::<String>().parse().unwrap_or(0)
+    });
+    (it.next().unwrap_or(0), it.next().unwrap_or(0), it.next().unwrap_or(0))
+}
+
+/// Fragt bei GitHub nach dem neuesten Release. Gesendet wird nur die Anfrage selbst
+/// (mit „AmberPlayer/<Version>“ als Kennung), keine Daten über den Nutzer.
+#[tauri::command]
+pub async fn check_update() -> R<Value> {
+    let current = env!("CARGO_PKG_VERSION").to_string();
+    let agent = format!("AmberPlayer/{current}");
+    bg(move || {
+        let resp = ureq::get(RELEASES_API)
+            .set("User-Agent", &agent)
+            .set("Accept", "application/vnd.github+json")
+            .timeout(Duration::from_secs(8))
+            .call();
+        let release: Value = match resp {
+            Ok(r) => r.into_json()?,
+            // Noch kein Release veröffentlicht
+            Err(ureq::Error::Status(404, _)) => return Ok(json!({ "current": current, "newer": false })),
+            Err(e) => return Err(anyhow::anyhow!("Update-Prüfung nicht möglich: {e}")),
+        };
+        let latest = release["tag_name"].as_str().unwrap_or("").trim_start_matches('v').to_string();
+        let asset = |pred: &dyn Fn(&str) -> bool| {
+            release["assets"].as_array().and_then(|a| {
+                a.iter()
+                    .find(|x| x["name"].as_str().is_some_and(pred))
+                    .and_then(|x| x["browser_download_url"].as_str())
+                    .map(str::to_string)
+            })
+        };
+        Ok(json!({
+            "current": current,
+            "latest": latest,
+            "newer": !latest.is_empty() && version_tuple(&latest) > version_tuple(&current),
+            "page": release["html_url"].as_str().unwrap_or(RELEASES_PAGE),
+            "apk": asset(&|n| n.ends_with(".apk")),
+            "deb": asset(&|n| n.ends_with(".deb")),
+            "rpm": asset(&|n| n.ends_with(".rpm")),
+            "appimage": asset(&|n| n.ends_with(".AppImage")),
+        }))
+    })
+    .await
+}
+
+/// Eine Adresse von Amber Player auf GitHub im Browser öffnen (am PC; am Handy übernimmt das
+/// das Android-Plugin). Andere Adressen werden abgelehnt.
+#[tauri::command]
+pub fn open_release_url(url: String) -> R<()> {
+    if !url.starts_with("https://github.com/Marcel1853/amber-player/") {
+        return Err("Nur Adressen von Amber Player auf GitHub".into());
+    }
+    #[cfg(desktop)]
+    {
+        std::process::Command::new("xdg-open").arg(&url).spawn().map_err(err)?;
+        Ok(())
+    }
+    #[cfg(mobile)]
+    {
+        let _ = url;
+        Err("Am Handy über das Android-Plugin öffnen".into())
+    }
+}
+
+#[cfg(test)]
+mod update_tests {
+    use super::version_tuple;
+
+    #[test]
+    fn versions() {
+        assert!(version_tuple("v0.6.10") > version_tuple("0.6.9"));
+        assert!(version_tuple("1.0.0") > version_tuple("0.99.99"));
+        assert_eq!(version_tuple("0.6.2"), version_tuple("v0.6.2"));
+        assert_eq!(version_tuple("kaputt"), (0, 0, 0));
+    }
+}

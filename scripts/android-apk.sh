@@ -26,7 +26,18 @@ rm -f "$out" target/android/aligned.apk
 # Debug-Schlüssel. Achtung: Apps mit verschiedenen Schlüsseln lassen sich nicht übereinander
 # installieren.
 props=keystore/keystore.properties
-if [[ -f "$props" ]]; then
+if [[ -f "$props" && -f keystore/rotation.lineage ]]; then
+  # Schlüssel-Rotation: Die ersten Versionen waren mit dem Debug-Schlüssel signiert. Mit der
+  # Rotations-Bestätigung (lineage) nimmt Android Updates mit dem neuen Schlüssel als normales
+  # Update an – ohne Deinstallieren, alle Daten bleiben.
+  prop() { sed -n "s/^$1=//p" "$props"; }
+  echo "== Signieren mit dem Release-Schlüssel (Rotation vom Debug-Schlüssel)"
+  STORE_PW=$(prop storePassword) KEY_PW=$(prop keyPassword) \
+    "$BT/apksigner" sign \
+    --ks "$HOME/.android/debug.keystore" --ks-key-alias androiddebugkey --ks-pass pass:android --key-pass pass:android \
+    --next-signer --ks "keystore/$(prop storeFile)" --ks-key-alias "$(prop keyAlias)" --ks-pass env:STORE_PW --key-pass env:KEY_PW \
+    --lineage keystore/rotation.lineage --out "$out" target/android/aligned.apk
+elif [[ -f "$props" ]]; then
   prop() { sed -n "s/^$1=//p" "$props"; }
   echo "== Signieren mit dem Release-Schlüssel"
   STORE_PW=$(prop storePassword) KEY_PW=$(prop keyPassword) \
