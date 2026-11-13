@@ -412,5 +412,16 @@ I18N.es = {
  "n|Visualisierungen": "visualizadores",
  ".amberplugin-Paket oder .json, gelten nach Neustart": "paquete .amberplugin o .json, se aplican al reiniciar",
  ".amberplugin-Paket oder .js": "paquete .amberplugin o .js",
- "Noch keine Plugin-Pakete installiert. Ein Paket (.amberplugin) enthält einen oder mehrere Klangeffekte und Visualisierungen mit eigener Lizenz.": "Aún no hay paquetes de plugins instalados. Un paquete (.amberplugin) contiene uno o varios efectos de sonido y visualizadores con su propia licencia."
+ "Noch keine Plugin-Pakete installiert. Ein Paket (.amberplugin) enthält einen oder mehrere Klangeffekte und Visualisierungen mit eigener Lizenz.": "Aún no hay paquetes de plugins instalados. Un paquete (.amberplugin) contiene uno o varios efectos de sonido y visualizadores con su propia licencia.",
+ "Wiki": "wiki",
+ "Anleitung im Wiki": "Guía en el wiki",
+ "Hilfe und Anleitung im Wiki": "Ayuda y guía en el wiki",
+ "Playlisten": "Listas",
+ "Playlist": "Lista",
+ "Genres": "Géneros",
+ "Genre": "Género",
+ "Album": "Álbum",
+ "Equalizer": "Ecualizador",
+ "Echo": "Eco",
+ "Online": "En línea"
 };

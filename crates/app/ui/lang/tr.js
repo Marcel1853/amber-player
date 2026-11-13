@@ -412,5 +412,16 @@ I18N.tr = {
  "n|Visualisierungen": "görselleştirme",
  ".amberplugin-Paket oder .json, gelten nach Neustart": ".amberplugin paketi veya .json, yeniden başlatınca geçerli",
  ".amberplugin-Paket oder .js": ".amberplugin paketi veya .js",
- "Noch keine Plugin-Pakete installiert. Ein Paket (.amberplugin) enthält einen oder mehrere Klangeffekte und Visualisierungen mit eigener Lizenz.": "Henüz eklenti paketi yüklenmedi. Bir paket (.amberplugin), kendi lisansıyla bir veya daha fazla ses efekti ve görselleştirme içerir."
+ "Noch keine Plugin-Pakete installiert. Ein Paket (.amberplugin) enthält einen oder mehrere Klangeffekte und Visualisierungen mit eigener Lizenz.": "Henüz eklenti paketi yüklenmedi. Bir paket (.amberplugin), kendi lisansıyla bir veya daha fazla ses efekti ve görselleştirme içerir.",
+ "Wiki": "wiki",
+ "Anleitung im Wiki": "Wiki’deki kılavuz",
+ "Hilfe und Anleitung im Wiki": "Wiki’de yardım ve kılavuz",
+ "Playlisten": "Çalma listeleri",
+ "Playlist": "Çalma listesi",
+ "Genres": "Türler",
+ "Genre": "Tür",
+ "Album": "Albüm",
+ "Equalizer": "Ekolayzer",
+ "Echo": "Yankı",
+ "Online": "Çevrim içi"
 };

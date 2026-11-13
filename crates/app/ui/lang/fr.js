@@ -412,5 +412,16 @@ I18N.fr = {
  "n|Visualisierungen": "visualisations",
  ".amberplugin-Paket oder .json, gelten nach Neustart": "paquet .amberplugin ou .json, appliqués après redémarrage",
  ".amberplugin-Paket oder .js": "paquet .amberplugin ou .js",
- "Noch keine Plugin-Pakete installiert. Ein Paket (.amberplugin) enthält einen oder mehrere Klangeffekte und Visualisierungen mit eigener Lizenz.": "Aucun paquet de plugin installé. Un paquet (.amberplugin) contient un ou plusieurs effets sonores et visualisations avec sa propre licence."
+ "Noch keine Plugin-Pakete installiert. Ein Paket (.amberplugin) enthält einen oder mehrere Klangeffekte und Visualisierungen mit eigener Lizenz.": "Aucun paquet de plugin installé. Un paquet (.amberplugin) contient un ou plusieurs effets sonores et visualisations avec sa propre licence.",
+ "Wiki": "wiki",
+ "Anleitung im Wiki": "Guide dans le wiki",
+ "Hilfe und Anleitung im Wiki": "Aide et guide dans le wiki",
+ "Playlisten": "Playlists",
+ "Playlist": "Playlist",
+ "Genres": "Genres",
+ "Genre": "Genre",
+ "Album": "Album",
+ "Equalizer": "Égaliseur",
+ "Echo": "Écho",
+ "Online": "En ligne"
 };

@@ -880,3 +880,7 @@ table.urls { table-layout: fixed; }
   content: ""; position: absolute; top: 5px; right: 5px; width: 8px; height: 8px; border-radius: 50%;
   background: var(--accent); box-shadow: 0 0 0 2px var(--bg);
 }
+
+/* Links ins Wiki (öffnen im Browser) */
+.wiki-link { color: var(--accent); text-decoration: none; white-space: nowrap; }
+.wiki-link:hover { text-decoration: underline; }

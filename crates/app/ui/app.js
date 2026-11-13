@@ -1298,7 +1298,7 @@ async function renderEffects(el, v, fresh) {
   const [effects, info] = await Promise.all([invoke('effects_list'), invoke('effects_info')]);
   if (!fresh()) return;
   const actions = `${plugBtn('effects', 'Plugin-Ordner öffnen', 'btn')}
-    <span class="hint" style="margin:0">${IS_ANDROID ? 'Eigenes Klang-Plugin (.json) auswählen; es wirkt nach dem nächsten Start der App.' : 'Eigene Klang-Plugins als .json hineinlegen, dann Amber Player neu starten.'}</span>`;
+    <span class="hint" style="margin:0">${esc(IS_ANDROID ? tx('Eigenes Klang-Plugin (.json) auswählen; es wirkt nach dem nächsten Start der App.') : tx('Eigene Klang-Plugins als .json hineinlegen, dann Amber Player neu starten.'))} ${wikiLink('effects', tx('Anleitung im Wiki'))}</span>`;
   const errors = info.errors.length
     ? `<div class="plugin-errors"><b>Nicht geladen:</b>${info.errors.map((e) => `<div>${esc(e)}</div>`).join('')}</div>`
     : '';
@@ -1426,7 +1426,7 @@ async function renderSettings(el, v, fresh) {
 
     ${IS_ANDROID ? '' : `<div class="box">
       <h3>Fernsteuerung &amp; MCP</h3>
-      <p>Steuere Amber Player über Stream Deck, TouchDeck, Home Assistant, KI-Assistenten oder die Handy-App.</p>
+      <p>${esc(tx('Steuere Amber Player über Stream Deck, TouchDeck, Home Assistant, KI-Assistenten oder die Handy-App.'))} ${wikiLink('api', tx('Anleitung im Wiki'))}</p>
       <div class="actions" style="margin:4px 0 14px"><button class="btn primary" data-act="pair">${icon('phone')} Handy koppeln</button></div>
       <div class="kv">
         <span class="k">Status</span>
@@ -1494,7 +1494,7 @@ async function renderSettings(el, v, fresh) {
 
     <div class="box">
       <h3>Plugins</h3>
-      <p>${tx('Klangeffekte und Visualisierungen lassen sich erweitern – eine Anleitung steht in {file}.', { file: '<code>docs/PLUGINS.md</code>' })}</p>
+      <p>${tx('Klangeffekte und Visualisierungen lassen sich erweitern – eine Anleitung steht in {file}.', { file: wikiLink('plugins', tx('Wiki')) })}</p>
       <div class="kv">
         <span class="k">Klangeffekte</span>
         <span style="display:flex;gap:10px;align-items:center">${plugBtn('effects')}<span class="hint" style="margin:0">${esc(tx('.amberplugin-Paket oder .json, gelten nach Neustart'))}</span></span>
@@ -1507,7 +1507,7 @@ async function renderSettings(el, v, fresh) {
       ${packages.packages.length
         ? `<div class="pkg-list">${packages.packages.map((p) => `<div class="pkg">
             <div class="pkg-meta" data-raw><b>${esc(p.name)}</b>${p.version ? ` <small>${esc(p.version)}</small>` : ''}
-              <span>${esc(packageParts(p))}${p.author ? ` · ${esc(p.author)}` : ''} · ${esc(p.license || (p.license_file ? tx('eigene Lizenz') : tx('keine Lizenz angegeben')))}${p.license_file ? '' : ` · ${esc(tx('ohne Lizenzdatei'))}`}</span></div>
+              <span>${esc([packageParts(p), p.author, p.license || (p.license_file ? tx('eigene Lizenz') : tx('keine Lizenz angegeben')), p.license_file ? '' : tx('ohne Lizenzdatei')].filter(Boolean).join(' · '))}</span></div>
             <button class="btn small danger" data-unplug="${esc(`${p.id}|${p.name}|${p.visualizers ? 1 : 0}`)}">${esc(tx('Entfernen'))}</button>
           </div>`).join('')}</div>`
         : `<p class="hint">${esc(tx('Noch keine Plugin-Pakete installiert. Ein Paket (.amberplugin) enthält einen oder mehrere Klangeffekte und Visualisierungen mit eigener Lizenz.'))}</p>`}
@@ -1563,6 +1563,7 @@ async function renderSettings(el, v, fresh) {
       <span class="hint" style="margin:0">${esc(tx('Automatisch nach Updates suchen (einmal am Tag bei GitHub)'))}</span>
       <button class="btn small" data-act="update-check">${icon('refresh')} ${esc(tx('Jetzt prüfen'))}</button>
     </div>
+    <p class="app-version">${wikiLink('home', tx('Hilfe und Anleitung im Wiki'))}</p>
     <p class="app-version" id="appVersion" data-raw></p>
   </div></div>`;
   // Versionsnummer ganz unten (kommt aus der App selbst, wie beim Installationspaket)
@@ -2335,7 +2336,7 @@ async function renderPc(el, v, fresh) {
         <p class="hint">Oder den Kopplungs-Link bzw. die Adresse hier einfügen:</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap"><input class="field" id="pcLink" placeholder="amberplayer://pair?… oder 192.168.178.35:7878" spellcheck="false" style="flex:1;min-width:200px">
         <button class="btn primary" id="pcPairBtn">${icon('link')} Verbinden</button></div>
-        <p class="hint">PC und Handy müssen im selben WLAN sein, und am PC muss „Im Heimnetz“ eingeschaltet sein.</p>
+        <p class="hint">${esc(tx('PC und Handy müssen im selben WLAN sein, und am PC muss „Im Heimnetz“ eingeschaltet sein.'))} ${wikiLink('pc', tx('Anleitung im Wiki'))}</p>
       </div></div></div>`;
     $('#pcPairBtn', el).addEventListener('click', () => {
       const link = $('#pcLink', el).value.trim();
@@ -2497,6 +2498,42 @@ async function renderPc(el, v, fresh) {
   });
 }
 
+// ---------- Wiki: Anleitungen auf GitHub ----------
+
+const WIKI = 'https://github.com/Marcel1853/amber-player/wiki/';
+/** Seiten im Wiki: [deutsch, englisch] – andere Sprachen bekommen die englische Seite. */
+const WIKI_PAGES = {
+  home: ['Home', 'English'],
+  plugins: ['Plugin-Pakete', 'Plugin-Packages'],
+  effects: ['Klang-Plugin-erstellen', 'Creating-a-Sound-Plugin'],
+  visualizers: ['Visualisierung-erstellen', 'Creating-a-Visualizer'],
+  api: ['Fernsteuerung-und-API', 'Remote-Control-and-API'],
+  pc: ['Mit-dem-PC-verbinden', 'Connecting-to-your-PC'],
+};
+
+/** Link auf eine Wiki-Seite (öffnet im Browser). */
+function wikiLink(key, label) {
+  return `<a href="#" class="wiki-link" data-wiki="${key}">${esc(label)}</a>`;
+}
+
+/** Adresse von Amber Player auf GitHub im Browser öffnen – am Handy übers Android-Plugin. */
+async function openGithub(url) {
+  try {
+    if (IS_ANDROID) await invoke('plugin:amber-mobile|open_url', { url });
+    else await invoke('open_release_url', { url });
+  } catch (e) {
+    toast(String(e), 'err');
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('[data-wiki]');
+  if (!a) return;
+  e.preventDefault();
+  const page = WIKI_PAGES[a.dataset.wiki] || WIKI_PAGES.home;
+  openGithub(WIKI + encodeURIComponent(LANG === 'de' ? page[0] : page[1]));
+});
+
 // ---------- Updates: neue Version auf GitHub ----------
 
 const updates = { info: null };
@@ -2548,16 +2585,8 @@ async function checkUpdates(manual = false) {
 async function downloadUpdate() {
   const info = updates.info;
   if (!info) return;
-  try {
-    if (IS_ANDROID) {
-      await invoke('plugin:amber-mobile|open_url', { url: info.apk || info.page });
-      toast(tx('Download startet im Browser – danach die APK antippen und installieren'), 'ok');
-    } else {
-      await invoke('open_release_url', { url: info.page });
-    }
-  } catch (e) {
-    toast(String(e), 'err');
-  }
+  await openGithub(IS_ANDROID ? info.apk || info.page : info.page);
+  if (IS_ANDROID) toast(tx('Download startet im Browser – danach die APK antippen und installieren'), 'ok');
 }
 
 // ---------- Android: Benachrichtigung, Sperrbildschirm, Medientasten ----------

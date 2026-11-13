@@ -50,4 +50,17 @@ ROWS = [
 (".amberplugin-Paket oder .json, gelten nach Neustart", ".amberplugin package or .json, apply after restart", "paquete .amberplugin o .json, se aplican al reiniciar", "paquet .amberplugin ou .json, appliqués après redémarrage", "pacchetto .amberplugin o .json, validi dopo il riavvio", ".amberplugin-pakket of .json, gelden na herstart", "pakiet .amberplugin lub .json, działają po ponownym uruchomieniu", ".amberplugin paketi veya .json, yeniden başlatınca geçerli"),
 (".amberplugin-Paket oder .js", ".amberplugin package or .js", "paquete .amberplugin o .js", "paquet .amberplugin ou .js", "pacchetto .amberplugin o .js", ".amberplugin-pakket of .js", "pakiet .amberplugin lub .js", ".amberplugin paketi veya .js"),
 ("Noch keine Plugin-Pakete installiert. Ein Paket (.amberplugin) enthält einen oder mehrere Klangeffekte und Visualisierungen mit eigener Lizenz.", "No plugin packages installed yet. A package (.amberplugin) contains one or more sound effects and visualizers with its own license.", "Aún no hay paquetes de plugins instalados. Un paquete (.amberplugin) contiene uno o varios efectos de sonido y visualizadores con su propia licencia.", "Aucun paquet de plugin installé. Un paquet (.amberplugin) contient un ou plusieurs effets sonores et visualisations avec sa propre licence.", "Nessun pacchetto di plugin installato. Un pacchetto (.amberplugin) contiene uno o più effetti audio e visualizzazioni con la propria licenza.", "Nog geen pluginpakketten geïnstalleerd. Een pakket (.amberplugin) bevat een of meer geluidseffecten en visualisaties met een eigen licentie.", "Brak zainstalowanych pakietów wtyczek. Pakiet (.amberplugin) zawiera jeden lub więcej efektów dźwiękowych i wizualizacji z własną licencją.", "Henüz eklenti paketi yüklenmedi. Bir paket (.amberplugin), kendi lisansıyla bir veya daha fazla ses efekti ve görselleştirme içerir."),
+# Links ins Wiki
+("Wiki", "wiki", "wiki", "wiki", "wiki", "wiki", "wiki", "wiki"),
+("Anleitung im Wiki", "Guide in the wiki", "Guía en el wiki", "Guide dans le wiki", "Guida nel wiki", "Handleiding in de wiki", "Instrukcja w wiki", "Wiki’deki kılavuz"),
+("Hilfe und Anleitung im Wiki", "Help and guide in the wiki", "Ayuda y guía en el wiki", "Aide et guide dans le wiki", "Aiuto e guida nel wiki", "Hulp en handleiding in de wiki", "Pomoc i instrukcja w wiki", "Wiki’de yardım ve kılavuz"),
+# Wörter, die anfangs als „überall gleich“ aussortiert waren
+("Playlisten", "Playlists", "Listas", "Playlists", "Playlist", "Afspeellijsten", "Playlisty", "Çalma listeleri"),
+("Playlist", "Playlist", "Lista", "Playlist", "Playlist", "Afspeellijst", "Playlista", "Çalma listesi"),
+("Genres", "Genres", "Géneros", "Genres", "Generi", "Genres", "Gatunki", "Türler"),
+("Genre", "Genre", "Género", "Genre", "Genere", "Genre", "Gatunek", "Tür"),
+("Album", "Album", "Álbum", "Album", "Album", "Album", "Album", "Albüm"),
+("Equalizer", "Equalizer", "Ecualizador", "Égaliseur", "Equalizer", "Equalizer", "Korektor", "Ekolayzer"),
+("Echo", "Echo", "Eco", "Écho", "Eco", "Echo", "Echo", "Yankı"),
+("Online", "Online", "En línea", "En ligne", "Online", "Online", "Online", "Çevrim içi"),
 ]

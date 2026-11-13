@@ -412,5 +412,16 @@ I18N.nl = {
  "n|Visualisierungen": "visualisaties",
  ".amberplugin-Paket oder .json, gelten nach Neustart": ".amberplugin-pakket of .json, gelden na herstart",
  ".amberplugin-Paket oder .js": ".amberplugin-pakket of .js",
- "Noch keine Plugin-Pakete installiert. Ein Paket (.amberplugin) enthält einen oder mehrere Klangeffekte und Visualisierungen mit eigener Lizenz.": "Nog geen pluginpakketten geïnstalleerd. Een pakket (.amberplugin) bevat een of meer geluidseffecten en visualisaties met een eigen licentie."
+ "Noch keine Plugin-Pakete installiert. Ein Paket (.amberplugin) enthält einen oder mehrere Klangeffekte und Visualisierungen mit eigener Lizenz.": "Nog geen pluginpakketten geïnstalleerd. Een pakket (.amberplugin) bevat een of meer geluidseffecten en visualisaties met een eigen licentie.",
+ "Wiki": "wiki",
+ "Anleitung im Wiki": "Handleiding in de wiki",
+ "Hilfe und Anleitung im Wiki": "Hulp en handleiding in de wiki",
+ "Playlisten": "Afspeellijsten",
+ "Playlist": "Afspeellijst",
+ "Genres": "Genres",
+ "Genre": "Genre",
+ "Album": "Album",
+ "Equalizer": "Equalizer",
+ "Echo": "Echo",
+ "Online": "Online"
 };
