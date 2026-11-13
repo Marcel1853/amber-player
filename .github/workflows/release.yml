@@ -26,6 +26,12 @@ on:
 permissions:
   contents: write
 
+# Läufe nacheinander statt gleichzeitig: Ein zweiter Push wartet, bis der erste fertig ist, und sieht
+# dann, dass es das Release schon gibt (sonst würden zwei Läufe dasselbe Release anlegen wollen).
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 env:
   CARGO_TERM_COLOR: always
   CARGO_INCREMENTAL: 0
