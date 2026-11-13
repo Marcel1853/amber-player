@@ -1,0 +1,240 @@
+# Prüft jeden Push auf main (Tests). Gibt es die Version aus crates/app/tauri.conf.json noch nicht
+# als Release, baut die Aktion außerdem Amber Player für Linux (.deb, .rpm, AppImage) und die
+# Android-App und legt ein Release mit Tag vX.Y.Z an.
+#
+# Bewusst ohne Caches (kein actions/cache, kein Cache in setup-Aktionen, kein Gradle-Build-Cache):
+# jeder Lauf baut alles frisch, damit nie ein alter oder kaputter Zwischenstand im Release landet.
+#
+# Android-Signierschlüssel (optional) als Secrets – derselbe Schlüssel wie bei den bisher
+# installierten APKs, sonst lassen sich Updates nicht über die installierte App spielen:
+#   ANDROID_KEYSTORE_BASE64  Inhalt der Keystore-Datei als Base64 (base64 -w0 datei.keystore)
+#   ANDROID_STORE_PASSWORD   Passwort des Keystores
+#   ANDROID_KEY_ALIAS        Alias des Schlüssels
+#   ANDROID_KEY_PASSWORD     Passwort des Schlüssels
+# Fehlen sie, erscheint das Release ohne APK (mit Hinweis), statt fehlzuschlagen.
+#
+# Neue Version: Version in Cargo.toml (Workspace) und crates/app/tauri.conf.json hochzählen,
+# auf main pushen.
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+
+jobs:
+  pruefen:
+    name: Prüfen und testen
+    runs-on: ubuntu-22.04
+    outputs:
+      version: ${{ steps.info.outputs.version }}
+      neu: ${{ steps.gh.outputs.neu }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version lesen
+        id: info
+        run: |
+          app=$(jq -r '.version' crates/app/tauri.conf.json)
+          cargo=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)
+          if [ "$app" != "$cargo" ]; then
+            echo "::error::Version passt nicht: tauri.conf.json $app, Cargo.toml $cargo"
+            exit 1
+          fi
+          echo "version=$app" >> "$GITHUB_OUTPUT"
+
+      - name: Release prüfen
+        id: gh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "v${{ steps.info.outputs.version }}" >/dev/null 2>&1; then
+            echo "v${{ steps.info.outputs.version }} gibt es schon – nur Tests."
+            echo "neu=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "neu=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Systempakete
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev \
+            librsvg2-dev libasound2-dev libdbus-1-dev libssl-dev
+
+      - name: Rust (stabil)
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+
+      - name: Tests
+        run: cargo test --workspace
+
+      - name: Übersetzungen vollständig
+        run: python3 crates/app/i18n/build.py && git diff --exit-code crates/app/ui/lang/
+
+  linux:
+    name: Linux (.deb, .rpm, AppImage)
+    needs: pruefen
+    if: needs.pruefen.outputs.neu == 'true'
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Systempakete
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev \
+            librsvg2-dev libasound2-dev libdbus-1-dev libssl-dev patchelf file libfuse2 rpm
+
+      - name: Rust (stabil)
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+
+      - name: Tauri-CLI
+        run: cargo install tauri-cli --version "^2" --locked
+
+      - name: Bauen
+        working-directory: crates/app
+        env:
+          # AppImage-Werkzeuge ohne FUSE starten (auf den Runnern nicht verfügbar).
+          APPIMAGE_EXTRACT_AND_RUN: 1
+        run: cargo tauri build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: |
+            target/release/bundle/deb/*.deb
+            target/release/bundle/rpm/*.rpm
+            target/release/bundle/appimage/*.AppImage
+          if-no-files-found: error
+
+  android:
+    name: Android-App
+    needs: pruefen
+    if: needs.pruefen.outputs.neu == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      signiert: ${{ steps.schluessel.outputs.signiert }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Rust (stabil) mit Android-Ziel
+        run: |
+          rustup toolchain install stable --profile minimal --target aarch64-linux-android
+          rustup default stable
+
+      - name: Tauri-CLI
+        run: cargo install tauri-cli --version "^2" --locked
+
+      - name: Bauen
+        working-directory: crates/app
+        run: |
+          # NDK und SDK bringt der Runner mit.
+          export NDK_HOME="$ANDROID_NDK_LATEST_HOME"
+          cargo tauri android build --target aarch64 --apk
+
+      - name: Signierschlüssel aus den Secrets
+        id: schluessel
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE" ] || [ -z "$STORE_PASSWORD" ] || [ -z "$KEY_ALIAS" ] || [ -z "$KEY_PASSWORD" ]; then
+            echo "::warning::Android-Secrets fehlen – das Release erscheint ohne APK (siehe Kommentar oben)."
+            echo "signiert=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          printf '%s' "$KEYSTORE" | tr -d '[:space:]' | base64 -d > "$RUNNER_TEMP/amber.keystore"
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          APK=crates/app/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk
+          VERSION="${{ needs.pruefen.outputs.version }}"
+          "$BT/zipalign" -p 4 "$APK" "$RUNNER_TEMP/aligned.apk"
+          "$BT/apksigner" sign --ks "$RUNNER_TEMP/amber.keystore" --ks-key-alias "$KEY_ALIAS" \
+            --ks-pass env:STORE_PASSWORD --key-pass env:KEY_PASSWORD \
+            --out "AmberPlayer-Android-$VERSION.apk" "$RUNNER_TEMP/aligned.apk"
+          "$BT/apksigner" verify "AmberPlayer-Android-$VERSION.apk"
+          echo "signiert=true" >> "$GITHUB_OUTPUT"
+
+      - name: Schlüssel wieder entfernen
+        if: always()
+        run: rm -f "$RUNNER_TEMP/amber.keystore" "$RUNNER_TEMP/aligned.apk"
+
+      - uses: actions/upload-artifact@v4
+        if: steps.schluessel.outputs.signiert == 'true'
+        with:
+          name: android
+          path: AmberPlayer-Android-*.apk
+          if-no-files-found: error
+
+  veroeffentlichen:
+    name: Veröffentlichen
+    needs: [pruefen, linux, android]
+    # Linux muss geklappt haben; die Android-App ist nur dabei, wenn sie signiert werden konnte.
+    if: always() && needs.pruefen.outputs.neu == 'true' && needs.linux.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: ausgabe
+          merge-multiple: true
+
+      - name: Dateien sammeln
+        run: |
+          # Die Artefakte bringen Unterordner mit (deb/, rpm/, appimage/) – alle Dateien flach in ausgabe/.
+          find ausgabe -mindepth 2 -type f -exec mv -t ausgabe {} +
+          find ausgabe -mindepth 1 -type d -empty -delete
+          ls -la ausgabe
+
+      - name: Release-Text
+        run: |
+          VERSION="${{ needs.pruefen.outputs.version }}"
+          {
+            echo "## Amber Player $VERSION"
+            echo
+            echo "| Datei | Für |"
+            echo "|---|---|"
+            echo "| \`.deb\` | Ubuntu, Debian, Linux Mint, Pop!_OS |"
+            echo "| \`.rpm\` | Fedora, openSUSE |"
+            echo "| \`.AppImage\` | alle Linux-Distributionen |"
+            if ls ausgabe/*.apk >/dev/null 2>&1; then
+              echo "| \`.apk\` | Android (Handy und Tablet, 64 Bit) |"
+            else
+              echo
+              echo "> Die Android-App wird für diese Version nachgereicht."
+            fi
+            echo
+            echo "Anleitung: [Installation](https://github.com/Marcel1853/amber-player/blob/main/docs/wiki/Installation.md) · [Install (English)](https://github.com/Marcel1853/amber-player/blob/main/docs/wiki/en/Install.md)"
+            echo
+            echo "Kostenlos und ohne Werbung. Alle Rechte vorbehalten – siehe [LICENSE](https://github.com/Marcel1853/amber-player/blob/main/LICENSE)."
+          } > release-notes.md
+          cat release-notes.md
+
+      - name: Release anlegen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ needs.pruefen.outputs.version }}"
+          gh release create "v$VERSION" ausgabe/* \
+            --title "Amber Player $VERSION" \
+            --notes-file release-notes.md \
+            --target "${{ github.sha }}"

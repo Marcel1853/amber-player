@@ -1,148 +1,143 @@
+**English** · [Deutsch](README.de.md)
+
 # Amber Player
 
-**Musik-Player für Linux und Android** – schnell, schön, werbefrei und kostenlos.
-Geschrieben in Rust (Tauri 2, rodio), mit eigener Oberfläche im warmen Dunkel-Design.
-
-> **English:** Amber Player is a free, ad-free music player for Linux and Android. It plays your
-> local library, internet radio and music streamed from your PC, has plugin-based sound effects
-> and visualizers, an HTTP API (Stream Deck, TouchDeck, Home Assistant) and a built-in MCP server
-> for AI assistants. The interface is available in English, German, Spanish, French, Italian,
-> Dutch, Polish and Turkish. Documentation is currently written in German – see the
-> [wiki pages](docs/wiki/Home.md).
+**A music player for Linux and Android** – fast, good-looking, free and without ads.
+Written in Rust (Tauri 2, rodio), with its own interface in a warm dark design.
 
 ---
 
-## Was Amber Player kann
+## What Amber Player can do
 
-**Musik hören**
-- **Eigene Bibliothek:** Musikordner wählen – Amber Player liest sie ein und hält sie automatisch
-  aktuell. MP3, FLAC, OGG/Opus, WAV, M4A/AAC, AIFF und mehr.
-- **Ansichten** für Titel, Alben, Interpreten, Genres, Favoriten, Zuletzt gespielt und
-  Meistgespielt, dazu eine Live-Suche.
-- **Playlisten** anlegen, sortieren, als M3U importieren und exportieren.
-- **Warteschlange** mit „Als Nächstes spielen“, Zufall, Wiederholen, Sleep-Timer. Beim nächsten
-  Start geht es an derselben Stelle weiter.
-- **Cover** aus der Datei, aus `cover.jpg`/`folder.jpg` oder automatisch aus dem Internet
-  (Deezer, MusicBrainz – nur bei sicherem Treffer, abschaltbar).
-- **Internetradio:** über 50.000 Sender suchen (radio-browser.info), eigene Sender speichern,
-  Songtitel und Senderlogo werden angezeigt.
+**Listening**
+- **Your own library:** choose your music folders – Amber Player scans them and keeps them up to
+  date automatically. MP3, FLAC, OGG/Opus, WAV, M4A/AAC, AIFF and more.
+- **Views** for tracks, albums, artists, genres, favourites, recently played and most played,
+  plus live search.
+- **Playlists:** create, reorder, import and export as M3U.
+- **Queue** with “Play next”, shuffle, repeat and a sleep timer. On the next start it continues
+  where you left off.
+- **Covers** from the file, from `cover.jpg`/`folder.jpg` or automatically from the internet
+  (Deezer, MusicBrainz – only on a confident match, can be turned off).
+- **Internet radio:** search more than 50,000 stations (radio-browser.info), save your own,
+  song titles and station logos are shown.
 
-**Klang und Bild**
-- **Klangeffekte als Plugins:** 10-Band-Equalizer mit Presets, Bass-Booster, Stimmen klarer,
-  Kopfhörer-Crossfeed, Stereobreite, Echo, Altes Radio, 8D-Rundflug, Vorverstärker & Limiter.
-  Ein Schutz-Limiter verhindert Übersteuern und Knacken.
-- **Visualisierungen** im Vollbild: Balken, Welle, Ring (mit drehendem Cover) und Nebel.
-- **Eigene Plugins** ohne den Player neu zu bauen: Klangeffekte als JSON-Datei (ohne
-  Programmieren), Visualisierungen als JavaScript-Datei.
+**Sound and visuals**
+- **Sound effects as plugins:** 10-band equalizer with presets, bass booster, clearer voices,
+  headphone crossfeed, stereo width, echo, old radio, 8D flight, preamp & limiter. A safety
+  limiter prevents clipping and crackling.
+- **Visualizers** in full screen: Bars, Wave, Ring (with a spinning cover) and Fog.
+- **Your own plugins** without rebuilding the player: sound effects as a JSON file (no
+  programming), visualizers as a JavaScript file.
 
-**Handy und PC zusammen**
-- **Android-App** mit allen Funktionen zum Hören: Bibliothek, Playlisten, Effekte,
-  Visualisierungen, Radio. Hintergrund-Wiedergabe mit Benachrichtigung, Sperrbildschirm und
-  Kopfhörer-/Bluetooth-Tasten.
-- **Mit dem PC koppeln** (QR-Code scannen): den PC vom Handy aus fernsteuern oder Musik und
-  Playlisten vom PC aufs Handy streamen – ohne Dateien zu kopieren.
-- **Fernsteuerung** über eine HTTP-API (Stream Deck, TouchDeck, Home Assistant, curl) und einen
-  eingebauten **MCP-Server** für KI-Assistenten wie Claude.
+**Phone and PC together**
+- **Android app** with everything for listening: library, playlists, effects, visualizers,
+  radio. Background playback with notification, lock screen and headphone/Bluetooth buttons.
+- **Pair with your PC** (scan a QR code): control the PC from your phone or stream music and
+  playlists from the PC to the phone – without copying files.
+- **Remote control** via an HTTP API (Stream Deck, TouchDeck, Home Assistant, curl) and a
+  built-in **MCP server** for AI assistants like Claude.
 
-**Überall zu Hause**
-- **Acht Sprachen:** Deutsch, Englisch, Spanisch, Französisch, Italienisch, Niederländisch,
-  Polnisch, Türkisch – automatisch nach Systemsprache oder fest einstellbar.
-- **Passt sich an:** PC-Fenster, Tablet hoch und quer, Handy hoch und quer.
-- **Design:** dunkel oder hell, Akzentfarbe frei wählbar.
-- **Kostenlos und ohne Werbung** – jetzt und in Zukunft.
+**At home everywhere**
+- **Eight languages:** English, German, Spanish, French, Italian, Dutch, Polish, Turkish –
+  automatically by system language or set manually.
+- **Adapts:** PC window, tablet in portrait and landscape, phone in portrait and landscape.
+- **Design:** dark or light, accent colour of your choice.
+- **Free and without ads** – now and in the future.
 
-## Installieren
+## Install
 
 ### Linux (PC)
 
-| Paket | Für | Installieren |
+| Package | For | How to install |
 |---|---|---|
-| `.deb` | Ubuntu, Debian, Linux Mint, Pop!_OS | Doppelklick oder `sudo apt install "./Amber Player_<Version>_amd64.deb"` |
-| `.rpm` | Fedora, openSUSE | `sudo dnf install "./Amber Player-<Version>-1.x86_64.rpm"` |
-| `.AppImage` | alle Distributionen | `chmod +x` und starten |
+| `.deb` | Ubuntu, Debian, Linux Mint, Pop!_OS | double-click or `sudo apt install "./Amber Player_<version>_amd64.deb"` |
+| `.rpm` | Fedora, openSUSE | `sudo dnf install "./Amber Player-<version>-1.x86_64.rpm"` |
+| `.AppImage` | any distribution | `chmod +x` and start |
 
-Danach steht Amber Player im Startmenü. Beim ersten Start **Musikordner wählen** – fertig.
+Afterwards Amber Player is in your application menu. On first start click **Choose music
+folder** – done.
 
 ### Android
 
-Die APK-Datei aufs Handy laden und öffnen (einmalig „Installation aus dieser Quelle erlauben“
-bestätigen). Beim ersten Start fragt die App nach dem Zugriff auf deine Musik und nach
-Benachrichtigungen und liest dann den Ordner **Music** ein. Mindestens Android 7, empfohlen ab 10.
+Download the APK file to your phone and open it (allow “install from this source” once). On
+first start the app asks for access to your music and for notifications, then scans the
+**Music** folder. Android 7 or newer, 64-bit.
 
-Ausführlich: [Installation](docs/wiki/Installation.md) · [Handy-App](docs/wiki/Handy-App.md)
+Details: [Install](docs/wiki/en/Install.md) · [Phone app](docs/wiki/en/Phone-App.md)
 
-## Schnellstart
+## Quick start
 
-| Ich möchte … | So geht’s |
+| I want to … | How |
 |---|---|
-| Musik abspielen | Titel antippen bzw. doppelklicken, oder **Abspielen** / **Zufällig** |
-| eine Playlist anlegen | **Playlisten → Neue Playlist**, Titel per Rechtsklick (Handy: lange drücken) hinzufügen |
-| den Klang ändern | Regler-Symbol oben → **Effekte** |
-| Radio hören | **Radio** → Sender suchen → antippen, mit ★ speichern |
-| das Handy mit dem PC koppeln | am PC **Einstellungen → Fernsteuerung → Handy koppeln**, QR-Code scannen |
-| die Sprache ändern | **Einstellungen → Darstellung → Sprache** |
-| ein eigenes Plugin bauen | [Plugins erstellen](docs/wiki/Plugins-erstellen.md) |
+| play music | tap or double-click a track, or **Play** / **Shuffle** |
+| create a playlist | **Playlists → New playlist**, add tracks via right-click (phone: long-press) |
+| change the sound | sliders icon at the top → **Effects** |
+| listen to radio | **Radio** → search a station → tap it, save with ★ |
+| pair my phone with the PC | on the PC **Settings → Remote control → Pair phone**, scan the QR code |
+| change the language | **Settings → Appearance → Language** |
+| build my own plugin | [Creating plugins](docs/wiki/en/Creating-Plugins.md) |
+| know my version | at the very bottom of **Settings** |
 
-## Dokumentation
+## Documentation
 
-Das ausführliche Handbuch steht im **Wiki** ([docs/wiki](docs/wiki/Home.md)):
+The full manual is in the **wiki** – in [English](docs/wiki/en/English.md) and
+[German](docs/wiki/Home.md) (also on [GitHub Wiki](https://github.com/Marcel1853/amber-player/wiki)):
 
-- [Erste Schritte](docs/wiki/Erste-Schritte.md) · [Bedienung und Tastenkürzel](docs/wiki/Bedienung.md)
-- [Handy-App](docs/wiki/Handy-App.md) · [Mit dem PC verbinden](docs/wiki/Mit-dem-PC-verbinden.md)
-- [Internetradio](docs/wiki/Internetradio.md) · [Klangeffekte](docs/wiki/Klangeffekte.md) · [Visualisierungen](docs/wiki/Visualisierungen.md)
-- [Plugins installieren](docs/wiki/Plugins-installieren.md) · [Plugins erstellen](docs/wiki/Plugins-erstellen.md)
-- [Fernsteuerung und API](docs/wiki/Fernsteuerung-und-API.md) · [Stream Deck und TouchDeck](docs/wiki/Stream-Deck-und-TouchDeck.md) · [MCP und KI-Assistenten](docs/wiki/MCP-und-KI.md)
-- [Sprachen und Übersetzen](docs/wiki/Sprachen-und-Übersetzen.md) · [Selbst bauen](docs/wiki/Selbst-bauen.md) · [Häufige Fragen](docs/wiki/Häufige-Fragen.md)
+- [Getting started](docs/wiki/en/Getting-Started.md) · [Usage and shortcuts](docs/wiki/en/Usage.md)
+- [Phone app](docs/wiki/en/Phone-App.md) · [Connecting to your PC](docs/wiki/en/Connecting-to-your-PC.md)
+- [Internet radio](docs/wiki/en/Internet-Radio.md) · [Sound effects](docs/wiki/en/Sound-Effects.md) · [Visualizers](docs/wiki/en/Visualizers.md)
+- [Installing plugins](docs/wiki/en/Installing-Plugins.md) · [Creating plugins](docs/wiki/en/Creating-Plugins.md)
+- [Remote control and API](docs/wiki/en/Remote-Control-and-API.md) · [Stream Deck and TouchDeck](docs/wiki/en/Stream-Deck-and-TouchDeck.md) · [MCP and AI assistants](docs/wiki/en/MCP-and-AI.md)
+- [Languages and translation](docs/wiki/en/Languages-and-Translation.md) · [Building from source](docs/wiki/en/Building-from-Source.md) · [FAQ](docs/wiki/en/FAQ.md)
 
-Nachschlagewerke für Entwickler:
+References for developers (German):
 
-- [docs/PLUGINS.md](docs/PLUGINS.md) – alle Plugin-Schnittstellen im Detail
-- [docs/API.md](docs/API.md) – alle Endpunkte der HTTP-API und des MCP-Servers
-- [integrations/touchdeck](integrations/touchdeck/README.de.md) – TouchDeck-Plugin mit fertiger Seite
+- [docs/PLUGINS.md](docs/PLUGINS.md) – all plugin interfaces in detail
+- [docs/API.md](docs/API.md) – all endpoints of the HTTP API and the MCP server
+- [integrations/touchdeck](integrations/touchdeck/README.md) – TouchDeck plugin with a ready-made page
 
-## Selbst bauen (Kurzfassung)
+## Building (short version)
 
 ```sh
-# Voraussetzungen (Ubuntu/Debian): Rust über https://rustup.rs und
+# Requirements (Ubuntu/Debian): Rust via https://rustup.rs and
 sudo apt install libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev \
                  librsvg2-dev libasound2-dev libdbus-1-dev
 
-cargo test --workspace                     # Tests
-cargo run -p amber-player                  # starten (Entwicklung)
+cargo test --workspace                     # tests
+cargo run -p amber-player                  # start (development)
 cargo install tauri-cli --version "^2" --locked
 cd crates/app && cargo tauri build         # .deb, .rpm, AppImage → target/release/bundle/
-bash scripts/android-apk.sh                # Android-App → target/android/
+bash scripts/android-apk.sh                # Android app → target/android/
 ```
 
-Alles Weitere, auch für Android: [Selbst bauen](docs/wiki/Selbst-bauen.md).
+Everything else, including Android: [Building from source](docs/wiki/en/Building-from-Source.md).
 
-## Aufbau
+## Structure
 
 ```
-crates/core/            Herz des Players: Bibliothek (SQLite), Scanner, Warteschlange,
-                        Audio-Engine, Effekte, Radio, PC-Verbindung, HTTP-API, MCP-Server
-crates/app/             App für PC und Android (Tauri)
-  ui/                   Oberfläche (HTML/CSS/JavaScript), Visualisierungen, Sprachdateien
-  i18n/                 Übersetzungstabellen → ui/lang/*.js
-  gen/android/          Android-Projekt
-crates/mobile-plugin/   Android-Teil: Hintergrund-Wiedergabe, Benachrichtigung, Medientasten
-examples/plugins/       Vorlagen für eigene Plugins
-integrations/touchdeck/ Plugin für TouchDeck
-docs/                   Handbuch (wiki/) und Nachschlagewerke
-scripts/                Hilfsskripte (Android-App bauen, Wiki hochladen)
+crates/core/            heart of the player: library (SQLite), scanner, queue, audio engine,
+                        effects, radio, PC connection, HTTP API, MCP server
+crates/app/             app for PC and Android (Tauri)
+  ui/                   interface (HTML/CSS/JavaScript), visualizers, language files
+  i18n/                 translation tables → ui/lang/*.js
+  gen/android/          Android project
+crates/mobile-plugin/   Android part: background playback, notification, media buttons
+examples/plugins/       templates for your own plugins
+integrations/touchdeck/ TouchDeck plugin
+docs/                   manual (wiki/, wiki/en/) and references
+scripts/                helper scripts (build the Android app, upload the wiki)
 ```
 
-## Lizenz
+## License
 
-**Alle Rechte vorbehalten.** Amber Player ist kostenlos zu benutzen, aber kein Open Source: Der
-Quellcode ist einsehbar, darf aber nicht kopiert, verändert oder als eigene Version
-weitergegeben werden. Eigene Plugins sind ausdrücklich erwünscht – die Vorlagen in
-`examples/plugins/` und die Beispiele in der Doku sind frei verwendbar. Details: [LICENSE](LICENSE).
+**All rights reserved.** Amber Player is free to use but not open source: the source code is
+visible, but may not be copied, modified or redistributed as your own version. Your own plugins
+are explicitly welcome – the templates in `examples/plugins/` and the examples in the
+documentation can be used freely. Details: [LICENSE](LICENSE).
 
-> **English:** All rights reserved. Free to use, but not open source – see [LICENSE](LICENSE).
+## Privacy
 
-## Datenschutz
-
-Amber Player sammelt keine Daten und zeigt keine Werbung. Ins Internet geht nur, was du
-einschaltest: Cover-Suche (Interpret, Titel, Album), Radio-Senderliste und die Radiostreams
-selbst. Die HTTP-API ist standardmäßig nur auf dem eigenen PC erreichbar.
+Amber Player collects no data and shows no ads. Only what you turn on goes online: the cover
+search (artist, title, album), the radio station list and the radio streams themselves. The HTTP
+API is only reachable from your own PC by default.

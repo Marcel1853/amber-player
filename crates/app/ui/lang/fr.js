@@ -378,5 +378,7 @@ I18N.fr = {
  "Als Stream fürs Handy (Poweramp)": "En flux pour le téléphone (Poweramp)",
  "QR-Code": "Code QR",
  "10 Sekunden zurück / vor": "10 secondes en arrière / en avant",
- "amberplayer://pair?… oder 192.168.178.35:7878": "amberplayer://pair?… ou 192.168.178.35:7878"
+ "amberplayer://pair?… oder 192.168.178.35:7878": "amberplayer://pair?… ou 192.168.178.35:7878",
+ "Version {v}": "Version {v}",
+ "Visualisierung an/aus (darin: F = Vollbild, 1–9 = Motiv)": "Visualisation oui/non (dedans : F = plein écran, 1–9 = choisir)"
 };

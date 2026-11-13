@@ -378,5 +378,7 @@ I18N.nl = {
  "Als Stream fürs Handy (Poweramp)": "Als stream voor je telefoon (Poweramp)",
  "QR-Code": "QR-code",
  "10 Sekunden zurück / vor": "10 seconden terug / vooruit",
- "amberplayer://pair?… oder 192.168.178.35:7878": "amberplayer://pair?… of 192.168.178.35:7878"
+ "amberplayer://pair?… oder 192.168.178.35:7878": "amberplayer://pair?… of 192.168.178.35:7878",
+ "Version {v}": "Versie {v}",
+ "Visualisierung an/aus (darin: F = Vollbild, 1–9 = Motiv)": "Visualisatie aan/uit (daarin: F = volledig scherm, 1–9 = kiezen)"
 };

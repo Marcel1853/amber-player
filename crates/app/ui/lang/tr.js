@@ -378,5 +378,7 @@ I18N.tr = {
  "Als Stream fürs Handy (Poweramp)": "Telefon için akış olarak (Poweramp)",
  "QR-Code": "QR kod",
  "10 Sekunden zurück / vor": "10 saniye geri / ileri",
- "amberplayer://pair?… oder 192.168.178.35:7878": "amberplayer://pair?… veya 192.168.178.35:7878"
+ "amberplayer://pair?… oder 192.168.178.35:7878": "amberplayer://pair?… veya 192.168.178.35:7878",
+ "Version {v}": "Sürüm {v}",
+ "Visualisierung an/aus (darin: F = Vollbild, 1–9 = Motiv)": "Görselleştirme aç/kapat (içinde: F = tam ekran, 1–9 = seç)"
 };

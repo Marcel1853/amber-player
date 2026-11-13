@@ -14,4 +14,6 @@ ROWS = [
 ("QR-Code", "QR code", "Código QR", "Code QR", "Codice QR", "QR-code", "Kod QR", "QR kod"),
 ("10 Sekunden zurück / vor", "10 seconds back / forward", "10 segundos atrás / adelante", "10 secondes en arrière / en avant", "10 secondi indietro / avanti", "10 seconden terug / vooruit", "10 sekund do tyłu / do przodu", "10 saniye geri / ileri"),
 ("amberplayer://pair?… oder 192.168.178.35:7878", "amberplayer://pair?… or 192.168.178.35:7878", "amberplayer://pair?… o 192.168.178.35:7878", "amberplayer://pair?… ou 192.168.178.35:7878", "amberplayer://pair?… o 192.168.178.35:7878", "amberplayer://pair?… of 192.168.178.35:7878", "amberplayer://pair?… lub 192.168.178.35:7878", "amberplayer://pair?… veya 192.168.178.35:7878"),
+("Version {v}", "Version {v}", "Versión {v}", "Version {v}", "Versione {v}", "Versie {v}", "Wersja {v}", "Sürüm {v}"),
+("Visualisierung an/aus (darin: F = Vollbild, 1–9 = Motiv)", "Visualizer on/off (inside: F = full screen, 1–9 = choose)", "Visualizador sí/no (dentro: F = pantalla completa, 1–9 = elegir)", "Visualisation oui/non (dedans : F = plein écran, 1–9 = choisir)", "Visualizzazione on/off (dentro: F = schermo intero, 1–9 = scegli)", "Visualisatie aan/uit (daarin: F = volledig scherm, 1–9 = kiezen)", "Wizualizacja wł./wył. (w niej: F = pełny ekran, 1–9 = wybór)", "Görselleştirme aç/kapat (içinde: F = tam ekran, 1–9 = seç)"),
 ]

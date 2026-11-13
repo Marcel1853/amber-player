@@ -1461,7 +1461,16 @@ async function renderSettings(el, v, fresh) {
         <tr><td>Medientasten</td><td>werden vom System an Amber Player weitergegeben</td></tr>
       </table>
     </div>
+    <p class="app-version" id="appVersion" data-raw></p>
   </div></div>`;
+  // Versionsnummer ganz unten (kommt aus der App selbst, wie beim Installationspaket)
+  window.__TAURI__.app
+    ?.getVersion()
+    .then((v) => {
+      const box = $('#appVersion', el);
+      if (box) box.textContent = `Amber Player · ${tx('Version {v}', { v })} · ${IS_ANDROID ? 'Android' : 'Linux'}`;
+    })
+    .catch(() => {});
 
   bindActs(el, {});
   el.addEventListener('click', async (e) => {

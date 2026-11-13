@@ -378,5 +378,7 @@ I18N.es = {
  "Als Stream fürs Handy (Poweramp)": "Como stream para el móvil (Poweramp)",
  "QR-Code": "Código QR",
  "10 Sekunden zurück / vor": "10 segundos atrás / adelante",
- "amberplayer://pair?… oder 192.168.178.35:7878": "amberplayer://pair?… o 192.168.178.35:7878"
+ "amberplayer://pair?… oder 192.168.178.35:7878": "amberplayer://pair?… o 192.168.178.35:7878",
+ "Version {v}": "Versión {v}",
+ "Visualisierung an/aus (darin: F = Vollbild, 1–9 = Motiv)": "Visualizador sí/no (dentro: F = pantalla completa, 1–9 = elegir)"
 };

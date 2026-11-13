@@ -12,6 +12,9 @@ Cover-Suche (sendet Interpret, Titel, Album), die Radio-Senderliste und die Radi
 **Gibt es Amber Player für Windows, macOS oder iPhone?**
 Derzeit nicht. Es gibt Pakete für Linux und eine App für Android.
 
+**Welche Version habe ich?**
+Ganz unten in den **Einstellungen**.
+
 ## Bibliothek
 
 **Ein Titel fehlt.**

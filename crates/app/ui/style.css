@@ -860,3 +860,6 @@ table.urls { table-layout: fixed; }
   .mq-box.mq > .mq-inner { animation: none; }
   .mq-box { text-overflow: ellipsis !important; }
 }
+
+/* Versionsnummer unten in den Einstellungen */
+.app-version { margin: 6px 0 4px; text-align: center; color: var(--text-3); font-size: 12px; font-variant-numeric: tabular-nums; }

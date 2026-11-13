@@ -1,3 +1,5 @@
+**Deutsch** · [English](en/English.md)
+
 # Willkommen bei Amber Player
 
 Amber Player ist ein kostenloser, werbefreier Musik-Player für **Linux** und **Android**.
