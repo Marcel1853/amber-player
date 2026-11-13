@@ -380,5 +380,21 @@ I18N.pl = {
  "10 Sekunden zurück / vor": "10 sekund do tyłu / do przodu",
  "amberplayer://pair?… oder 192.168.178.35:7878": "amberplayer://pair?… lub 192.168.178.35:7878",
  "Version {v}": "Wersja {v}",
- "Visualisierung an/aus (darin: F = Vollbild, 1–9 = Motiv)": "Wizualizacja wł./wył. (w niej: F = pełny ekran, 1–9 = wybór)"
+ "Visualisierung an/aus (darin: F = Vollbild, 1–9 = Motiv)": "Wizualizacja wł./wył. (w niej: F = pełny ekran, 1–9 = wybór)",
+ "Installieren": "Zainstaluj",
+ "Installierte Plugins": "Zainstalowane wtyczki",
+ "Klangeffekt": "Efekt dźwiękowy",
+ "eigene Lizenz": "własna licencja",
+ "keine Lizenz angegeben": "nie podano licencji",
+ "ohne Lizenzdatei": "bez pliku licencji",
+ "Noch keine Plugin-Pakete installiert. Ein Paket ist eine ZIP-Datei mit plugin.json, dem Plugin und seiner Lizenz.": "Brak zainstalowanych pakietów wtyczek. Pakiet to plik ZIP z plugin.json, wtyczką i jej licencją.",
+ ".zip-Paket oder .json, gelten nach Neustart": "pakiet .zip lub .json, działają po ponownym uruchomieniu",
+ ".zip-Paket oder .js": "pakiet .zip lub .js",
+ "„{name}“ installiert": "Zainstalowano „{name}”",
+ "„{name}“ installiert – wirkt nach dem nächsten Start der App": "Zainstalowano „{name}” – zadziała po ponownym uruchomieniu aplikacji",
+ "„{name}“ entfernen?": "Usunąć „{name}”?",
+ "Das Plugin wird gelöscht. Klangeffekte verschwinden nach dem nächsten Start der App.": "Wtyczka zostanie usunięta. Efekty dźwiękowe znikną po ponownym uruchomieniu aplikacji.",
+ "Das ist keine ZIP-Datei": "To nie jest plik ZIP",
+ "Die ZIP-Datei ist beschädigt": "Plik ZIP jest uszkodzony",
+ "Nicht unterstütztes ZIP-Format": "Nieobsługiwany format ZIP"
 };

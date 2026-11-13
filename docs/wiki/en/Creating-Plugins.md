@@ -27,10 +27,11 @@ You can extend Amber Player without changing or rebuilding the player itself.
 
 ## Sharing
 
-A sound effect or visualizer is **a single file** – just send it to others. Put `author` and a
-short `description` in it so people see who made it and what it does.
+To share your plugin, pack it as a **plugin package**: a ZIP file with `plugin.json` (name,
+version, author, license), the plugin file and its own **LICENSE**. How it works and which
+license fits: [Plugin packages](Plugin-Packages.md).
 
-The plugin templates in `examples/plugins/` and the code examples in the documentation may be
+The plugin templates in `examples/plugins/` are MIT-licensed, and the code examples in the documentation may be
 used freely for your own plugins (see [LICENSE](https://github.com/Marcel1853/amber-player/blob/main/LICENSE)).
 
 The complete reference with all fields is in

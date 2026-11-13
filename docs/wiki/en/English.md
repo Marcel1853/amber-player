@@ -31,7 +31,7 @@ and visualizers are plugins – you can build your own without recompiling the p
 
 | Topic | Page |
 |---|---|
-| Install ready-made plugins | [Installing plugins](Installing-Plugins.md) |
+| Install ready-made plugins | [Installing plugins](Installing-Plugins.md) · [Plugin packages (ZIP)](Plugin-Packages.md) |
 | Write your own plugins | [Creating plugins](Creating-Plugins.md) · [Sound plugin](Creating-a-Sound-Plugin.md) · [Visualizer](Creating-a-Visualizer.md) · [Source plugin](Creating-a-Source-Plugin.md) |
 | HTTP API for your own programs | [Remote control and API](Remote-Control-and-API.md) |
 | Buttons on a Stream Deck or tablet | [Stream Deck and TouchDeck](Stream-Deck-and-TouchDeck.md) |

@@ -9,7 +9,8 @@ gehört aber allein dem Urheber.
    b) Die vom Urheber veröffentlichten Programmpakete (z. B. .deb, .rpm, .AppImage, .apk)
       kostenlos installieren und für private und berufliche Zwecke benutzen.
    c) Eigene Plugins für Amber Player schreiben (Klang-Plugins, Visualisierungen,
-      Quellen-Plugins) und diese frei weitergeben – siehe Abschnitt 3.
+      Quellen-Plugins) und sie unter einer Lizenz deiner Wahl weitergeben – siehe
+      Abschnitt 3.
 
 2. NICHT ERLAUBT – außer mit vorheriger schriftlicher Erlaubnis des Urhebers
    a) Den Quellcode ganz oder in Teilen kopieren, verändern oder in andere Programme
@@ -20,9 +21,10 @@ gehört aber allein dem Urheber.
    d) Die Programmpakete gegen Geld anbieten oder mit Werbung versehen weitergeben.
 
 3. AUSNAHMEN
-   a) Die Plugin-Vorlagen im Ordner examples/plugins/ sowie die Code-Beispiele in der
-      Dokumentation (docs/) dürfen frei kopiert, verändert und für eigene Plugins
-      verwendet werden.
+   a) Jedes Plugin-Paket steht unter seiner eigenen Lizenz (Datei LICENSE im Paket).
+      Die Plugin-Vorlagen im Ordner examples/plugins/ stehen unter der MIT-Lizenz (siehe
+      die LICENSE im jeweiligen Ordner). Die Code-Beispiele in der Dokumentation (docs/)
+      dürfen frei kopiert, verändert und für eigene Plugins verwendet werden.
    b) Das TouchDeck-Plugin im Ordner integrations/touchdeck/ steht unter seiner eigenen
       Lizenz (MIT, siehe integrations/touchdeck/LICENSE).
    c) Programmbibliotheken anderer Urheber, die Amber Player verwendet, stehen unter
@@ -47,7 +49,7 @@ sole property of the author.
    b) Install and use the program packages published by the author (e.g. .deb, .rpm,
       .AppImage, .apk) free of charge for private and professional purposes.
    c) Write your own plugins for Amber Player (sound plugins, visualizers, source plugins)
-      and share them freely – see section 3.
+      and share them under a license of your choice – see section 3.
 
 2. YOU MAY NOT – without the author's prior written permission
    a) Copy, modify or reuse the source code in whole or in part in other programs.
@@ -56,8 +58,10 @@ sole property of the author.
    d) Sell the program packages or redistribute them with advertising.
 
 3. EXCEPTIONS
-   a) The plugin templates in examples/plugins/ and the code examples in the
-      documentation (docs/) may be freely copied, modified and used for your own plugins.
+   a) Every plugin package is covered by its own license (LICENSE file in the package).
+      The plugin templates in examples/plugins/ are covered by the MIT license (see the
+      LICENSE in each folder). The code examples in the documentation (docs/) may be
+      freely copied, modified and used for your own plugins.
    b) The TouchDeck plugin in integrations/touchdeck/ is covered by its own license
       (MIT, see integrations/touchdeck/LICENSE).
    c) Third-party libraries used by Amber Player are covered by their own licenses.

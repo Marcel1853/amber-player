@@ -108,5 +108,5 @@ Die Datei darf höchstens 512 KB groß sein.
 
 ## Vorlagen
 
-- [`examples/plugins/sternenfeld.js`](https://github.com/Marcel1853/amber-player/blob/main/examples/plugins/sternenfeld.js) – Sterne fliegen auf dich zu
+- [`examples/plugins/sternenfeld/`](https://github.com/Marcel1853/amber-player/tree/main/examples/plugins/sternenfeld) – Sterne fliegen auf dich zu
 - [`crates/app/ui/visualizers/`](https://github.com/Marcel1853/amber-player/tree/main/crates/app/ui/visualizers) – Balken, Welle, Ring, Nebel

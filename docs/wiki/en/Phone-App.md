@@ -45,8 +45,8 @@ or copy it via cable. **Settings → Rescan** picks up new files immediately.
 
 ## Plugins on the phone
 
-Install your own sound effects (`.json`) and visualizers (`.js`) via **Effects → Import** or
-**Settings → Plugins → Import**: choose the file, done. Sound plugins take effect after the next
+Install your own sound effects (`.json`) and visualizers (`.js`) via **Effects → Install** or
+**Settings → Plugins → Install**: choose the package (`.zip`) or file, done. Sound plugins take effect after the next
 app start, visualizers immediately. More: [Installing plugins](Installing-Plugins.md).
 
 ## PC-only features

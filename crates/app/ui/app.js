@@ -1181,9 +1181,70 @@ function fmtVal(v, p) {
 
 /** Knopf für einen Plugin-Ordner: am Handy „Importieren“, am PC „Ordner öffnen“. */
 function plugBtn(kind, label = 'Ordner öffnen', cls = 'btn small') {
+  // Handy: nur Installieren (kein Zugriff auf den App-Ordner). PC: Installieren und Ordner öffnen.
   return IS_ANDROID
-    ? `<button class="${cls}" data-plugdir="${kind}">${icon('plus')} Importieren</button>`
-    : `<button class="${cls}" data-plugdir="${kind}">${icon('folder')} ${label}</button>`;
+    ? `<button class="${cls}" data-plugdir="${kind}">${icon('plus')} Installieren</button>`
+    : `<button class="${cls}" data-plugimport="${kind}">${icon('plus')} Installieren</button>
+       <button class="${cls}" data-plugdir="${kind}">${icon('folder')} ${label}</button>`;
+}
+
+/**
+ * ZIP-Datei im Browser entpacken (nur Textdateien, wie sie Plugin-Pakete enthalten).
+ * Nutzt den eingebauten Entpacker (DecompressionStream) – keine zusätzliche Bibliothek.
+ * Liegt alles in einem gemeinsamen Ordner („telefon/plugin.json“), wird er weggelassen.
+ */
+async function unzipText(buffer) {
+  const dv = new DataView(buffer);
+  let eocd = -1;
+  for (let i = buffer.byteLength - 22; i >= Math.max(0, buffer.byteLength - 65557); i--) {
+    if (dv.getUint32(i, true) === 0x06054b50) {
+      eocd = i;
+      break;
+    }
+  }
+  if (eocd < 0) throw new Error(tx('Das ist keine ZIP-Datei'));
+  const count = dv.getUint16(eocd + 10, true);
+  let p = dv.getUint32(eocd + 16, true);
+  const dec = new TextDecoder();
+  const files = {};
+  for (let n = 0; n < count; n++) {
+    if (dv.getUint32(p, true) !== 0x02014b50) throw new Error(tx('Die ZIP-Datei ist beschädigt'));
+    const method = dv.getUint16(p + 10, true);
+    const size = dv.getUint32(p + 20, true);
+    const nameLen = dv.getUint16(p + 28, true);
+    const extraLen = dv.getUint16(p + 30, true);
+    const commentLen = dv.getUint16(p + 32, true);
+    const local = dv.getUint32(p + 42, true);
+    const name = dec.decode(new Uint8Array(buffer, p + 46, nameLen));
+    p += 46 + nameLen + extraLen + commentLen;
+    if (name.endsWith('/') || name.startsWith('__MACOSX/') || name.split('/').pop().startsWith('.')) continue;
+    const start = local + 30 + dv.getUint16(local + 26, true) + dv.getUint16(local + 28, true);
+    const data = new Uint8Array(buffer, start, size);
+    let bytes;
+    if (method === 0) bytes = data;
+    else if (method === 8) bytes = new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
+    else throw new Error(tx('Nicht unterstütztes ZIP-Format'));
+    files[name] = dec.decode(bytes);
+  }
+  const names = Object.keys(files);
+  const prefix = names.length && names.every((x) => x.includes('/')) ? names[0].split('/')[0] + '/' : '';
+  if (prefix && names.every((x) => x.startsWith(prefix))) {
+    return Object.fromEntries(names.map((x) => [x.slice(prefix.length), files[x]]));
+  }
+  return files;
+}
+
+/** Plugin-Paket (ZIP) installieren. */
+async function installPackage(file) {
+  const files = await unzipText(await file.arrayBuffer());
+  const m = await call('install_plugin_package', { files });
+  if (m.type === 'visualizer') {
+    if (await vizEnsure()) await vizLoad();
+    toast(tx('„{name}“ installiert', { name: m.name }), 'ok');
+  } else {
+    toast(tx('„{name}“ installiert – wirkt nach dem nächsten Start der App', { name: m.name }), 'ok');
+  }
+  setTimeout(render, 300);
 }
 
 function plugAction(kind) {
@@ -1196,11 +1257,15 @@ function importPlugin(kind) {
   const input = document.createElement('input');
   input.type = 'file';
   // Android kennt für .json/.js oft keinen passenden Dateityp – darum alles anbieten und selbst prüfen.
-  input.accept = kind === 'effects' ? '.json,application/json,*/*' : '.js,text/javascript,*/*';
+  input.accept = kind === 'effects' ? '.zip,application/zip,.json,application/json,*/*' : '.zip,application/zip,.js,text/javascript,*/*';
   input.addEventListener('change', async () => {
     const file = input.files?.[0];
     if (!file) return;
     try {
+      if (/\.zip$/i.test(file.name)) {
+        await installPackage(file);
+        return;
+      }
       const content = await file.text();
       const name = await call('import_plugin', { kind, fileName: file.name, content });
       if (kind === 'visualizers') {
@@ -1210,8 +1275,9 @@ function importPlugin(kind) {
       } else {
         toast(tx('„{name}“ importiert – wirkt nach dem nächsten Start der App', { name }), 'ok');
       }
-    } catch {
-      // Fehlermeldung zeigt call() schon an.
+    } catch (e) {
+      // Fehler von call() sind schon angezeigt; Entpackfehler hier melden.
+      if (e instanceof Error) toast(e.message, 'err');
     }
   });
   input.click();
@@ -1227,7 +1293,8 @@ async function renderEffects(el, v, fresh) {
     : '';
   el.innerHTML = `${head({ kind: 'Klang', title: 'Effekte', sub: 'Plugins wirken sofort auf die laufende Wiedergabe und werden gespeichert.', actions })}
     <div class="scroll pad">${errors}<div class="fx-list">${effects.map(fxCard).join('')}</div></div>`;
-  $('[data-plugdir]', el).addEventListener('click', () => plugAction('effects'));
+  for (const b of $$('[data-plugdir]', el)) b.addEventListener('click', () => plugAction(b.dataset.plugdir));
+  for (const b of $$('[data-plugimport]', el)) b.addEventListener('click', () => importPlugin(b.dataset.plugimport));
 
   const byId = Object.fromEntries(effects.map((f) => [f.id, f]));
   const pushValues = throttle((id) => invoke('effect_set', { id, enabled: null, values: byId[id].values }).catch((e) => toast(String(e), 'err')), 60);
@@ -1308,11 +1375,12 @@ function copyField(text) {
 }
 
 async function renderSettings(el, v, fresh) {
-  const [folders, api, stats, covers, streams, firewall] = await Promise.all([
+  const [folders, api, stats, covers, packages, streams, firewall] = await Promise.all([
     invoke('folders'),
     invoke('api_info'),
     invoke('library_stats'),
     invoke('cover_settings'),
+    invoke('plugin_packages'),
     IS_ANDROID ? { lan: false, links: [] } : invoke('stream_links'),
     IS_ANDROID ? { active: false } : invoke('firewall_status'),
   ]);
@@ -1409,12 +1477,21 @@ async function renderSettings(el, v, fresh) {
       <p>${tx('Klangeffekte und Visualisierungen lassen sich erweitern – eine Anleitung steht in {file}.', { file: '<code>docs/PLUGINS.md</code>' })}</p>
       <div class="kv">
         <span class="k">Klangeffekte</span>
-        <span style="display:flex;gap:10px;align-items:center">${plugBtn('effects')}<span class="hint" style="margin:0">.json-Dateien, gelten nach Neustart</span></span>
+        <span style="display:flex;gap:10px;align-items:center">${plugBtn('effects')}<span class="hint" style="margin:0">${esc(tx('.zip-Paket oder .json, gelten nach Neustart'))}</span></span>
         ${IS_ANDROID ? '' : `        <span class="k">Quellen (Online)</span>
         <span style="display:flex;gap:10px;align-items:center"><button class="btn small" data-plugdir="sources">${icon('folder')} Ordner öffnen</button><span class="hint" style="margin:0">${online.sources.length ? esc(online.sources.map((s) => s.name).join(', ')) : esc(tx('keine installiert'))} · ${esc(tx('gelten nach Neustart'))}</span></span>`}
         <span class="k">Visualisierungen</span>
-        <span style="display:flex;gap:10px;align-items:center">${plugBtn('visualizers')}<button class="btn small" id="vizReload">${icon('refresh')} Neu laden</button><span class="hint" style="margin:0">.js-Dateien</span></span>
+        <span style="display:flex;gap:10px;align-items:center">${plugBtn('visualizers')}<button class="btn small" id="vizReload">${icon('refresh')} Neu laden</button><span class="hint" style="margin:0">${esc(tx('.zip-Paket oder .js'))}</span></span>
       </div>
+      <h3 style="margin-top:18px">Installierte Plugins</h3>
+      ${packages.packages.length
+        ? `<div class="pkg-list">${packages.packages.map((p) => `<div class="pkg">
+            <div class="pkg-meta" data-raw><b>${esc(p.name)}</b>${p.version ? ` <small>${esc(p.version)}</small>` : ''}
+              <span>${esc(p.type === 'effect' ? tx('Klangeffekt') : tx('Visualisierung'))}${p.author ? ` · ${esc(p.author)}` : ''} · ${esc(p.license || (p.license_file ? tx('eigene Lizenz') : tx('keine Lizenz angegeben')))}${p.license_file ? '' : ` · ${esc(tx('ohne Lizenzdatei'))}`}</span></div>
+            <button class="btn small danger" data-unplug="${esc(`${p.type}|${p.id}|${p.name}`)}">${esc(tx('Entfernen'))}</button>
+          </div>`).join('')}</div>`
+        : `<p class="hint">${esc(tx('Noch keine Plugin-Pakete installiert. Ein Paket ist eine ZIP-Datei mit plugin.json, dem Plugin und seiner Lizenz.'))}</p>`}
+      ${packages.errors.length ? `<div class="plugin-errors"><b>${esc(tx('Nicht geladen:'))}</b>${packages.errors.map((e) => `<div>${esc(e)}</div>`).join('')}</div>` : ''}
       ${viz.list.length ? `<div class="plug-list">${viz.list.map((v) => `<div><b>${esc(v.name)}</b><span>${esc(v.source ? `eigenes Plugin · ${v.source}` : 'mitgeliefert')}${v.author && v.source ? ` · ${esc(v.author)}` : ''}</span></div>`).join('')}</div>` : ''}
     </div>
 
@@ -1548,6 +1625,20 @@ async function renderSettings(el, v, fresh) {
   $('#coverOn', el).addEventListener('change', (e) => call('set_cover_download', { enabled: e.target.checked }).catch(() => {}));
   $('#coverAgain', el).addEventListener('click', () => call('refetch_covers').then(() => toast('Cover-Suche gestartet', 'ok')).catch(() => {}));
   for (const b of $$('[data-plugdir]', el)) b.addEventListener('click', () => plugAction(b.dataset.plugdir));
+  for (const b of $$('[data-plugimport]', el)) b.addEventListener('click', () => importPlugin(b.dataset.plugimport));
+  for (const b of $$('[data-unplug]', el)) {
+    b.addEventListener('click', async () => {
+      const [kind, id, name] = b.dataset.unplug.split('|');
+      const ok = await dialog({ title: tx('„{name}“ entfernen?', { name }), text: tx('Das Plugin wird gelöscht. Klangeffekte verschwinden nach dem nächsten Start der App.'), ok: tx('Entfernen'), danger: true });
+      if (!ok) return;
+      try {
+        await call('remove_plugin_package', { kind, id });
+        if (kind === 'visualizer' && (await vizEnsure())) await vizLoad();
+        toast(tx('„{name}“ entfernt', { name }), 'ok');
+        render();
+      } catch {}
+    });
+  }
   $('#vizReload', el).addEventListener('click', async () => {
     if (!(await vizEnsure())) return;
     await vizLoad();

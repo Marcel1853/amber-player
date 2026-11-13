@@ -22,9 +22,21 @@ out="target/android/AmberPlayer-$version.apk"
 mkdir -p target/android
 rm -f "$out" target/android/aligned.apk
 "$BT/zipalign" -p 4 "$unsigned" target/android/aligned.apk
-# Vorerst mit dem Debug-Schlüssel signiert (eigener Schlüssel folgt mit der Veröffentlichung)
-"$BT/apksigner" sign --ks "$HOME/.android/debug.keystore" --ks-key-alias androiddebugkey \
-  --ks-pass pass:android --key-pass pass:android --out "$out" target/android/aligned.apk
+# Signieren: mit dem Release-Schlüssel aus keystore/ (derselbe wie bei GitHub), sonst mit dem
+# Debug-Schlüssel. Achtung: Apps mit verschiedenen Schlüsseln lassen sich nicht übereinander
+# installieren.
+props=keystore/keystore.properties
+if [[ -f "$props" ]]; then
+  prop() { sed -n "s/^$1=//p" "$props"; }
+  echo "== Signieren mit dem Release-Schlüssel"
+  STORE_PW=$(prop storePassword) KEY_PW=$(prop keyPassword) \
+    "$BT/apksigner" sign --ks "keystore/$(prop storeFile)" --ks-key-alias "$(prop keyAlias)" \
+    --ks-pass env:STORE_PW --key-pass env:KEY_PW --out "$out" target/android/aligned.apk
+else
+  echo "== Kein Release-Schlüssel (keystore/keystore.properties) – signiere mit dem Debug-Schlüssel"
+  "$BT/apksigner" sign --ks "$HOME/.android/debug.keystore" --ks-key-alias androiddebugkey \
+    --ks-pass pass:android --key-pass pass:android --out "$out" target/android/aligned.apk
+fi
 rm -f target/android/aligned.apk "$out.idsig"
 echo "== Fertig: $out ($(du -h "$out" | cut -f1))"
 

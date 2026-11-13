@@ -110,5 +110,5 @@ The file may be at most 512 KB.
 
 ## Templates
 
-- [`examples/plugins/sternenfeld.js`](https://github.com/Marcel1853/amber-player/blob/main/examples/plugins/sternenfeld.js) – stars flying towards you
+- [`examples/plugins/sternenfeld/`](https://github.com/Marcel1853/amber-player/tree/main/examples/plugins/sternenfeld) – stars flying towards you
 - [`crates/app/ui/visualizers/`](https://github.com/Marcel1853/amber-player/tree/main/crates/app/ui/visualizers) – Bars, Wave, Ring, Fog

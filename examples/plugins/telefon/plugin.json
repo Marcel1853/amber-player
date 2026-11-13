@@ -1,0 +1,11 @@
+{
+  "id": "telefon",
+  "name": "Telefon",
+  "type": "effect",
+  "version": "1.0.0",
+  "author": "Marcel1853",
+  "description": "Klingt wie durchs Telefon – Vorlage für eigene Klang-Plugins",
+  "license": "MIT",
+  "main": "effect.json",
+  "homepage": "https://github.com/Marcel1853/amber-player/tree/main/examples/plugins/telefon"
+}

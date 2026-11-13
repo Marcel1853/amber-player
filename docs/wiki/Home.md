@@ -31,7 +31,7 @@ neu zu übersetzen.
 
 | Thema | Seite |
 |---|---|
-| Fertige Plugins einspielen | [Plugins installieren](Plugins-installieren.md) |
+| Fertige Plugins einspielen | [Plugins installieren](Plugins-installieren.md) · [Plugin-Pakete (ZIP)](Plugin-Pakete.md) |
 | Eigene Plugins schreiben | [Plugins erstellen](Plugins-erstellen.md) · [Klang-Plugin](Klang-Plugin-erstellen.md) · [Visualisierung](Visualisierung-erstellen.md) · [Quellen-Plugin](Quellen-Plugin-erstellen.md) |
 | HTTP-API für eigene Programme | [Fernsteuerung und API](Fernsteuerung-und-API.md) |
 | Tasten am Stream Deck oder Tablet | [Stream Deck und TouchDeck](Stream-Deck-und-TouchDeck.md) |

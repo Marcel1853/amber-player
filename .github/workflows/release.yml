@@ -204,6 +204,13 @@ jobs:
           path: ausgabe
           merge-multiple: true
 
+      - name: Beispiel-Plugins packen
+        run: |
+          # Jede Vorlage aus examples/plugins/ als installierbares Paket (ZIP, mit eigener Lizenz).
+          for d in examples/plugins/*/; do
+            python3 scripts/plugin-pack.py "$d" ausgabe
+          done
+
       - name: Dateien sammeln
         run: |
           # Die Artefakte bringen Unterordner mit (deb/, rpm/, appimage/) – alle Dateien flach in ausgabe/.
@@ -222,6 +229,7 @@ jobs:
             echo "| \`.deb\` | Ubuntu, Debian, Linux Mint, Pop!_OS |"
             echo "| \`.rpm\` | Fedora, openSUSE |"
             echo "| \`.AppImage\` | alle Linux-Distributionen |"
+            echo "| \`telefon.zip\`, \`sternenfeld.zip\` | Beispiel-Plugins (MIT) – in Amber Player unter *Installieren* auswählen |"
             if ls ausgabe/*.apk >/dev/null 2>&1; then
               echo "| \`.apk\` | Android (Handy und Tablet, 64 Bit) |"
             else

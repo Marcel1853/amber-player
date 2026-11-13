@@ -13,6 +13,7 @@ pub mod m3u;
 pub mod mcp;
 pub mod model;
 pub mod netstream;
+pub mod packages;
 pub mod pc;
 pub mod player;
 pub mod queue;

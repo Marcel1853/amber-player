@@ -1,11 +1,15 @@
 # Plugins installieren
 
+Klangeffekte und Visualisierungen kommen als **Plugin-Paket** – eine ZIP-Datei mit eigener
+Lizenz, siehe [Plugin-Pakete](Plugin-Pakete.md). Am schnellsten installierst du sie mit
+**Installieren** (Effekte bzw. Einstellungen → Plugins) – am PC und am Handy gleich.
+
 Amber Player kennt drei Arten von Plugins:
 
 | Art | Datei | Wo | Wirkt |
 |---|---|---|---|
-| **Klangeffekt** | eine `.json`-Datei | PC und Handy | nach Neustart der App |
-| **Visualisierung** | eine `.js`-Datei | PC und Handy | sofort (PC: nach „Neu laden“) |
+| **Klangeffekt** | Paket (`.zip`) oder eine `.json`-Datei | PC und Handy | nach Neustart der App |
+| **Visualisierung** | Paket (`.zip`) oder eine `.js`-Datei | PC und Handy | sofort (PC: nach „Neu laden“) |
 | **Quelle** (Musik aus dem Netz) | ein Ordner mit `plugin.json` und Programm | nur PC | nach Neustart |
 
 > **Sicherheit:** Klangeffekte sind reine Beschreibungen ohne Programmcode. Visualisierungen
@@ -39,8 +43,8 @@ Datei hineinkopieren, dann
 
 Am Handy gibt es keinen Zugriff auf den App-Ordner, darum:
 
-1. Die `.json`- oder `.js`-Datei aufs Handy laden (Download, Messenger, Kabel …).
-2. **Effekte → Importieren** (Klangeffekte) oder **Einstellungen → Plugins → Importieren**.
+1. Das Paket (`.zip`) bzw. die `.json`- oder `.js`-Datei aufs Handy laden (Download, Messenger, Kabel …).
+2. **Effekte → Installieren** (Klangeffekte) oder **Einstellungen → Plugins → Installieren**.
 3. Datei auswählen.
 
 Amber Player prüft Klangeffekte schon beim Import; eine fehlerhafte Datei wird abgelehnt und die
@@ -50,7 +54,8 @@ Quellen-Plugins gibt es am Handy nicht.
 
 ## Plugins entfernen
 
-Die Datei bzw. den Ordner wieder löschen und Amber Player neu starten. Am Handy: App-Daten
+Pakete: **Einstellungen → Plugins → Installierte Plugins → Entfernen**. Einzelne Dateien:
+wieder löschen und Amber Player neu starten. Am Handy: App-Daten
 löschen entfernt alle importierten Plugins (aber auch Bibliothek und Einstellungen).
 
 ## Wenn ein Plugin nicht erscheint
@@ -66,7 +71,7 @@ löschen entfernt alle importierten Plugins (aber auch Bibliothek und Einstellun
 
 Im Quellcode liegen Beispiele zum Ausprobieren: [`examples/plugins/`](https://github.com/Marcel1853/amber-player/tree/main/examples/plugins)
 
-- `telefon.json` – Klangeffekt „Telefon“
-- `sternenfeld.js` – Visualisierung „Sternenfeld“
+- `telefon/` – Klangeffekt „Telefon“ (Paket, MIT-Lizenz)
+- `sternenfeld/` – Visualisierung „Sternenfeld“ (Paket, MIT-Lizenz)
 
 Selbst bauen: [Plugins erstellen](Plugins-erstellen.md)

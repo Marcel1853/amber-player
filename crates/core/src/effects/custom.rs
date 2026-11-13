@@ -73,8 +73,24 @@ pub fn builtin_json_plugins() -> Vec<CustomPlugin> {
         .collect()
 }
 
-/// Lädt alle `*.json` aus einem Ordner. Fehlerhafte Dateien landen mit Meldung in der zweiten Liste.
+/// Lädt alle `*.json` aus einem Ordner und alle Plugin-Pakete (Unterordner mit `plugin.json`).
+/// Fehlerhafte Dateien landen mit Meldung in der zweiten Liste.
 pub fn load_dir(dir: &std::path::Path) -> (Vec<CustomPlugin>, Vec<String>) {
+    let (mut ok, mut errors) = load_files(dir);
+    let (packages, package_errors) = crate::packages::list_in(dir, crate::packages::Kind::Effect);
+    errors.extend(package_errors);
+    for p in packages {
+        let source = format!("{}/{}", p.manifest.id, p.manifest.main);
+        match crate::packages::main_text(&p).and_then(|text| CustomPlugin::parse(&text, &source)) {
+            Ok(plugin) => ok.push(plugin),
+            Err(e) => errors.push(format!("{source}: {e:#}")),
+        }
+    }
+    (ok, errors)
+}
+
+/// Einzelne `*.json`-Dateien direkt im Ordner (ältere Art, ohne Paket).
+fn load_files(dir: &std::path::Path) -> (Vec<CustomPlugin>, Vec<String>) {
     let mut ok = Vec::new();
     let mut errors = Vec::new();
     let Ok(entries) = std::fs::read_dir(dir) else {

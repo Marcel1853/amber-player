@@ -380,5 +380,21 @@ I18N.nl = {
  "10 Sekunden zurück / vor": "10 seconden terug / vooruit",
  "amberplayer://pair?… oder 192.168.178.35:7878": "amberplayer://pair?… of 192.168.178.35:7878",
  "Version {v}": "Versie {v}",
- "Visualisierung an/aus (darin: F = Vollbild, 1–9 = Motiv)": "Visualisatie aan/uit (daarin: F = volledig scherm, 1–9 = kiezen)"
+ "Visualisierung an/aus (darin: F = Vollbild, 1–9 = Motiv)": "Visualisatie aan/uit (daarin: F = volledig scherm, 1–9 = kiezen)",
+ "Installieren": "Installeren",
+ "Installierte Plugins": "Geïnstalleerde plugins",
+ "Klangeffekt": "Geluidseffect",
+ "eigene Lizenz": "eigen licentie",
+ "keine Lizenz angegeben": "geen licentie vermeld",
+ "ohne Lizenzdatei": "zonder licentiebestand",
+ "Noch keine Plugin-Pakete installiert. Ein Paket ist eine ZIP-Datei mit plugin.json, dem Plugin und seiner Lizenz.": "Nog geen pluginpakketten geïnstalleerd. Een pakket is een ZIP-bestand met plugin.json, de plugin en de licentie.",
+ ".zip-Paket oder .json, gelten nach Neustart": ".zip-pakket of .json, gelden na herstart",
+ ".zip-Paket oder .js": ".zip-pakket of .js",
+ "„{name}“ installiert": "‘{name}’ geïnstalleerd",
+ "„{name}“ installiert – wirkt nach dem nächsten Start der App": "‘{name}’ geïnstalleerd – werkt na de volgende start van de app",
+ "„{name}“ entfernen?": "‘{name}’ verwijderen?",
+ "Das Plugin wird gelöscht. Klangeffekte verschwinden nach dem nächsten Start der App.": "De plugin wordt verwijderd. Geluidseffecten verdwijnen na de volgende start van de app.",
+ "Das ist keine ZIP-Datei": "Dit is geen ZIP-bestand",
+ "Die ZIP-Datei ist beschädigt": "Het ZIP-bestand is beschadigd",
+ "Nicht unterstütztes ZIP-Format": "Niet-ondersteund ZIP-formaat"
 };

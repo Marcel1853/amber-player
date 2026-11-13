@@ -863,3 +863,11 @@ table.urls { table-layout: fixed; }
 
 /* Versionsnummer unten in den Einstellungen */
 .app-version { margin: 6px 0 4px; text-align: center; color: var(--text-3); font-size: 12px; font-variant-numeric: tabular-nums; }
+
+/* Installierte Plugin-Pakete */
+.pkg-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.pkg { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; background: var(--panel-2); }
+.pkg-meta { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.pkg-meta b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pkg-meta small { color: var(--text-3); font-weight: 400; }
+.pkg-meta span { color: var(--text-3); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

@@ -133,8 +133,8 @@ scripts/                helper scripts (build the Android app, upload the wiki)
 
 **All rights reserved.** Amber Player is free to use but not open source: the source code is
 visible, but may not be copied, modified or redistributed as your own version. Your own plugins
-are explicitly welcome – the templates in `examples/plugins/` and the examples in the
-documentation can be used freely. Details: [LICENSE](LICENSE).
+are explicitly welcome – each plugin package carries its own license; the templates in
+`examples/plugins/` are MIT. Details: [LICENSE](LICENSE).
 
 ## Privacy
 

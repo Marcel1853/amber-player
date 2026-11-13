@@ -16,6 +16,7 @@
 
 **Plugins**
 - [Plugins installieren](Plugins-installieren.md)
+- [Plugin-Pakete (ZIP)](Plugin-Pakete.md)
 - [Plugins erstellen](Plugins-erstellen.md)
   - [Klang-Plugin](Klang-Plugin-erstellen.md)
   - [Visualisierung](Visualisierung-erstellen.md)

@@ -380,5 +380,21 @@ I18N.tr = {
  "10 Sekunden zurück / vor": "10 saniye geri / ileri",
  "amberplayer://pair?… oder 192.168.178.35:7878": "amberplayer://pair?… veya 192.168.178.35:7878",
  "Version {v}": "Sürüm {v}",
- "Visualisierung an/aus (darin: F = Vollbild, 1–9 = Motiv)": "Görselleştirme aç/kapat (içinde: F = tam ekran, 1–9 = seç)"
+ "Visualisierung an/aus (darin: F = Vollbild, 1–9 = Motiv)": "Görselleştirme aç/kapat (içinde: F = tam ekran, 1–9 = seç)",
+ "Installieren": "Yükle",
+ "Installierte Plugins": "Yüklü eklentiler",
+ "Klangeffekt": "Ses efekti",
+ "eigene Lizenz": "kendi lisansı",
+ "keine Lizenz angegeben": "lisans belirtilmemiş",
+ "ohne Lizenzdatei": "lisans dosyası yok",
+ "Noch keine Plugin-Pakete installiert. Ein Paket ist eine ZIP-Datei mit plugin.json, dem Plugin und seiner Lizenz.": "Henüz eklenti paketi yüklenmedi. Paket; plugin.json, eklenti ve lisansını içeren bir ZIP dosyasıdır.",
+ ".zip-Paket oder .json, gelten nach Neustart": ".zip paketi veya .json, yeniden başlatınca geçerli",
+ ".zip-Paket oder .js": ".zip paketi veya .js",
+ "„{name}“ installiert": "“{name}” yüklendi",
+ "„{name}“ installiert – wirkt nach dem nächsten Start der App": "“{name}” yüklendi – uygulama yeniden açıldığında etkin olur",
+ "„{name}“ entfernen?": "“{name}” kaldırılsın mı?",
+ "Das Plugin wird gelöscht. Klangeffekte verschwinden nach dem nächsten Start der App.": "Eklenti silinecek. Ses efektleri uygulama yeniden açıldığında kaybolur.",
+ "Das ist keine ZIP-Datei": "Bu bir ZIP dosyası değil",
+ "Die ZIP-Datei ist beschädigt": "ZIP dosyası bozuk",
+ "Nicht unterstütztes ZIP-Format": "Desteklenmeyen ZIP biçimi"
 };

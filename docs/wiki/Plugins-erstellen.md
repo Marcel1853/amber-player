@@ -27,9 +27,9 @@ Du kannst Amber Player erweitern, ohne den Player selbst zu verändern oder neu 
 
 ## Weitergeben
 
-Ein Klangeffekt oder eine Visualisierung ist **eine einzige Datei** – du kannst sie einfach
-verschicken. Schreib `author` und eine kurze `description` hinein, dann sehen andere, von wem
-sie ist und was sie tut.
+Zum Weitergeben packst du dein Plugin als **Plugin-Paket**: eine ZIP-Datei mit `plugin.json`
+(Name, Version, Autor, Lizenz), der Plugin-Datei und einer eigenen **LICENSE**. Wie das geht
+und welche Lizenz passt: [Plugin-Pakete](Plugin-Pakete.md).
 
 Das vollständige Nachschlagewerk mit allen Feldern steht in
 [`docs/PLUGINS.md`](https://github.com/Marcel1853/amber-player/blob/main/docs/PLUGINS.md).

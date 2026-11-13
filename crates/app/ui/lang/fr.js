@@ -380,5 +380,21 @@ I18N.fr = {
  "10 Sekunden zurück / vor": "10 secondes en arrière / en avant",
  "amberplayer://pair?… oder 192.168.178.35:7878": "amberplayer://pair?… ou 192.168.178.35:7878",
  "Version {v}": "Version {v}",
- "Visualisierung an/aus (darin: F = Vollbild, 1–9 = Motiv)": "Visualisation oui/non (dedans : F = plein écran, 1–9 = choisir)"
+ "Visualisierung an/aus (darin: F = Vollbild, 1–9 = Motiv)": "Visualisation oui/non (dedans : F = plein écran, 1–9 = choisir)",
+ "Installieren": "Installer",
+ "Installierte Plugins": "Plugins installés",
+ "Klangeffekt": "Effet sonore",
+ "eigene Lizenz": "licence propre",
+ "keine Lizenz angegeben": "aucune licence indiquée",
+ "ohne Lizenzdatei": "sans fichier de licence",
+ "Noch keine Plugin-Pakete installiert. Ein Paket ist eine ZIP-Datei mit plugin.json, dem Plugin und seiner Lizenz.": "Aucun paquet de plugin installé. Un paquet est un fichier ZIP avec plugin.json, le plugin et sa licence.",
+ ".zip-Paket oder .json, gelten nach Neustart": "paquet .zip ou .json, appliqués après redémarrage",
+ ".zip-Paket oder .js": "paquet .zip ou .js",
+ "„{name}“ installiert": "« {name} » installé",
+ "„{name}“ installiert – wirkt nach dem nächsten Start der App": "« {name} » installé – actif au prochain démarrage de l’app",
+ "„{name}“ entfernen?": "Retirer « {name} » ?",
+ "Das Plugin wird gelöscht. Klangeffekte verschwinden nach dem nächsten Start der App.": "Le plugin sera supprimé. Les effets sonores disparaissent au prochain démarrage de l’app.",
+ "Das ist keine ZIP-Datei": "Ce n’est pas un fichier ZIP",
+ "Die ZIP-Datei ist beschädigt": "Le fichier ZIP est endommagé",
+ "Nicht unterstütztes ZIP-Format": "Format ZIP non pris en charge"
 };

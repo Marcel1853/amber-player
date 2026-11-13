@@ -13,4 +13,9 @@ windows-media-player-11.exe
 # Private Plugins (nur auf diesem PC, nie auf GitHub)
 private/
 
+# Android-Signierschlüssel – nie einchecken (liegt als Secret bei GitHub)
+keystore/
+*.jks
+*.keystore
+
 crates/mobile-plugin/android/.tauri/

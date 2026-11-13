@@ -16,6 +16,7 @@
 
 **Plugins**
 - [Installing plugins](Installing-Plugins.md)
+- [Plugin packages (ZIP)](Plugin-Packages.md)
 - [Creating plugins](Creating-Plugins.md)
   - [Sound plugin](Creating-a-Sound-Plugin.md)
   - [Visualizer](Creating-a-Visualizer.md)

@@ -380,5 +380,21 @@ I18N.it = {
  "10 Sekunden zurück / vor": "10 secondi indietro / avanti",
  "amberplayer://pair?… oder 192.168.178.35:7878": "amberplayer://pair?… o 192.168.178.35:7878",
  "Version {v}": "Versione {v}",
- "Visualisierung an/aus (darin: F = Vollbild, 1–9 = Motiv)": "Visualizzazione on/off (dentro: F = schermo intero, 1–9 = scegli)"
+ "Visualisierung an/aus (darin: F = Vollbild, 1–9 = Motiv)": "Visualizzazione on/off (dentro: F = schermo intero, 1–9 = scegli)",
+ "Installieren": "Installa",
+ "Installierte Plugins": "Plugin installati",
+ "Klangeffekt": "Effetto audio",
+ "eigene Lizenz": "licenza propria",
+ "keine Lizenz angegeben": "nessuna licenza indicata",
+ "ohne Lizenzdatei": "senza file di licenza",
+ "Noch keine Plugin-Pakete installiert. Ein Paket ist eine ZIP-Datei mit plugin.json, dem Plugin und seiner Lizenz.": "Nessun pacchetto di plugin installato. Un pacchetto è un file ZIP con plugin.json, il plugin e la sua licenza.",
+ ".zip-Paket oder .json, gelten nach Neustart": "pacchetto .zip o .json, validi dopo il riavvio",
+ ".zip-Paket oder .js": "pacchetto .zip o .js",
+ "„{name}“ installiert": "«{name}» installato",
+ "„{name}“ installiert – wirkt nach dem nächsten Start der App": "«{name}» installato – attivo al prossimo avvio dell’app",
+ "„{name}“ entfernen?": "Rimuovere «{name}»?",
+ "Das Plugin wird gelöscht. Klangeffekte verschwinden nach dem nächsten Start der App.": "Il plugin verrà eliminato. Gli effetti audio spariscono al prossimo avvio dell’app.",
+ "Das ist keine ZIP-Datei": "Non è un file ZIP",
+ "Die ZIP-Datei ist beschädigt": "Il file ZIP è danneggiato",
+ "Nicht unterstütztes ZIP-Format": "Formato ZIP non supportato"
 };

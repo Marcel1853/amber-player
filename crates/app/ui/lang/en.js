@@ -380,5 +380,21 @@ I18N.en = {
  "10 Sekunden zurück / vor": "10 seconds back / forward",
  "amberplayer://pair?… oder 192.168.178.35:7878": "amberplayer://pair?… or 192.168.178.35:7878",
  "Version {v}": "Version {v}",
- "Visualisierung an/aus (darin: F = Vollbild, 1–9 = Motiv)": "Visualizer on/off (inside: F = full screen, 1–9 = choose)"
+ "Visualisierung an/aus (darin: F = Vollbild, 1–9 = Motiv)": "Visualizer on/off (inside: F = full screen, 1–9 = choose)",
+ "Installieren": "Install",
+ "Installierte Plugins": "Installed plugins",
+ "Klangeffekt": "Sound effect",
+ "eigene Lizenz": "own license",
+ "keine Lizenz angegeben": "no license stated",
+ "ohne Lizenzdatei": "no license file",
+ "Noch keine Plugin-Pakete installiert. Ein Paket ist eine ZIP-Datei mit plugin.json, dem Plugin und seiner Lizenz.": "No plugin packages installed yet. A package is a ZIP file with plugin.json, the plugin and its license.",
+ ".zip-Paket oder .json, gelten nach Neustart": ".zip package or .json, apply after restart",
+ ".zip-Paket oder .js": ".zip package or .js",
+ "„{name}“ installiert": "“{name}” installed",
+ "„{name}“ installiert – wirkt nach dem nächsten Start der App": "“{name}” installed – takes effect after the next app start",
+ "„{name}“ entfernen?": "Remove “{name}”?",
+ "Das Plugin wird gelöscht. Klangeffekte verschwinden nach dem nächsten Start der App.": "The plugin will be deleted. Sound effects disappear after the next app start.",
+ "Das ist keine ZIP-Datei": "This is not a ZIP file",
+ "Die ZIP-Datei ist beschädigt": "The ZIP file is damaged",
+ "Nicht unterstütztes ZIP-Format": "Unsupported ZIP format"
 };
