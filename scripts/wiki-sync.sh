@@ -48,4 +48,6 @@ if git diff --cached --quiet; then
 fi
 git commit --quiet -m "Wiki aus docs/wiki aktualisiert"
 git push --quiet
-echo "== Wiki aktualisiert: ${repo_url%.git}/wiki"
+# git@github.com:Nutzer/Repo.git bzw. https://github.com/Nutzer/Repo.git → https://github.com/Nutzer/Repo/wiki
+web=$(printf '%s' "${repo_url%.git}" | sed -e 's#^git@github.com:#https://github.com/#')
+echo "== Wiki aktualisiert: $web/wiki"
