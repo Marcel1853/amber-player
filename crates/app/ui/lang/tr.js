@@ -387,9 +387,6 @@ I18N.tr = {
  "eigene Lizenz": "kendi lisansı",
  "keine Lizenz angegeben": "lisans belirtilmemiş",
  "ohne Lizenzdatei": "lisans dosyası yok",
- "Noch keine Plugin-Pakete installiert. Ein Paket ist eine ZIP-Datei mit plugin.json, dem Plugin und seiner Lizenz.": "Henüz eklenti paketi yüklenmedi. Paket; plugin.json, eklenti ve lisansını içeren bir ZIP dosyasıdır.",
- ".zip-Paket oder .json, gelten nach Neustart": ".zip paketi veya .json, yeniden başlatınca geçerli",
- ".zip-Paket oder .js": ".zip paketi veya .js",
  "„{name}“ installiert": "“{name}” yüklendi",
  "„{name}“ installiert – wirkt nach dem nächsten Start der App": "“{name}” yüklendi – uygulama yeniden açıldığında etkin olur",
  "„{name}“ entfernen?": "“{name}” kaldırılsın mı?",
@@ -406,5 +403,14 @@ I18N.tr = {
  "Öffnet die Release-Seite mit .deb, .rpm und AppImage": ".deb, .rpm ve AppImage içeren sürüm sayfasını açar",
  "Automatisch nach Updates suchen": "Güncellemeleri otomatik ara",
  "Automatisch nach Updates suchen (einmal am Tag bei GitHub)": "Güncellemeleri otomatik ara (günde bir kez GitHub’da)",
- "Jetzt prüfen": "Şimdi denetle"
+ "Jetzt prüfen": "Şimdi denetle",
+ "„{name}“ installiert ({parts}) – Klangeffekte wirken nach dem nächsten Start der App": "“{name}” yüklendi ({parts}) – ses efektleri uygulama yeniden açıldığında etkin olur",
+ "„{name}“ installiert ({parts})": "“{name}” yüklendi ({parts})",
+ "1|Klangeffekt": "ses efekti",
+ "n|Klangeffekte": "ses efekti",
+ "1|Visualisierung": "görselleştirme",
+ "n|Visualisierungen": "görselleştirme",
+ ".amberplugin-Paket oder .json, gelten nach Neustart": ".amberplugin paketi veya .json, yeniden başlatınca geçerli",
+ ".amberplugin-Paket oder .js": ".amberplugin paketi veya .js",
+ "Noch keine Plugin-Pakete installiert. Ein Paket (.amberplugin) enthält einen oder mehrere Klangeffekte und Visualisierungen mit eigener Lizenz.": "Henüz eklenti paketi yüklenmedi. Bir paket (.amberplugin), kendi lisansıyla bir veya daha fazla ses efekti ve görselleştirme içerir."
 };

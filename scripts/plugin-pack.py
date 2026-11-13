@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Baut aus einem Plugin-Ordner ein installierbares Plugin-Paket (ZIP) für Amber Player.
+"""Baut aus einem Plugin-Ordner ein installierbares Plugin-Paket (.amberplugin) für Amber Player.
 
 Aufruf:   python3 scripts/plugin-pack.py <Plugin-Ordner> [Zielordner]
-Beispiel: python3 scripts/plugin-pack.py examples/plugins/telefon
-          → telefon.zip im aktuellen Ordner
+Beispiel: python3 scripts/plugin-pack.py examples/plugins/nachtfahrt
+          → nachtfahrt.amberplugin im aktuellen Ordner
 
-Geprüft wird vorher, was Amber Player beim Installieren auch prüft: plugin.json mit gültiger
-id, name und type, die Plugin-Datei (main) ist vorhanden, es liegt eine Lizenzdatei bei und es
-sind nur erlaubte Dateien im Ordner (plugin.json, Plugin-Datei, LICENSE*, README*).
+Ein .amberplugin ist eine ZIP-Datei. Geprüft wird vorher, was Amber Player beim Installieren
+auch prüft: plugin.json mit gültiger id und name, alle Teile aus „contents“ (bzw. „type“/„main“)
+sind vorhanden und haben die richtige Endung, eine Lizenzdatei liegt bei und es sind nur
+erlaubte Dateien im Paket (plugin.json, die Teile, LICENSE*, README*).
 """
 import json
 import pathlib
@@ -17,6 +18,7 @@ import zipfile
 
 DEFAULT_MAIN = {"effect": "effect.json", "visualizer": "visualizer.js"}
 EXT = {"effect": ".json", "visualizer": ".js"}
+SAFE = re.compile(r"[A-Za-z0-9_.-]{1,64}")
 
 
 def fail(msg):
@@ -24,9 +26,14 @@ def fail(msg):
     sys.exit(1)
 
 
+def safe_path(path):
+    parts = path.split("/")
+    return 1 <= len(parts) <= 2 and all(SAFE.fullmatch(p) and not p.startswith(".") for p in parts)
+
+
 def main():
     if len(sys.argv) < 2:
-        fail(__doc__.strip().splitlines()[2])
+        fail("Aufruf: python3 scripts/plugin-pack.py <Plugin-Ordner> [Zielordner]")
     src = pathlib.Path(sys.argv[1])
     out_dir = pathlib.Path(sys.argv[2]) if len(sys.argv) > 2 else pathlib.Path(".")
     manifest_path = src / "plugin.json"
@@ -37,44 +44,69 @@ def main():
     except json.JSONDecodeError as e:
         fail(f"plugin.json ist kein gültiges JSON: {e}")
 
-    pid, kind = m.get("id", ""), m.get("type", "")
+    pid = m.get("id", "")
     if not re.fullmatch(r"[A-Za-z0-9_-]{1,32}", pid):
         fail("„id“ in plugin.json: 1–32 Zeichen aus Buchstaben, Ziffern, - und _")
     if not str(m.get("name", "")).strip():
         fail("„name“ in plugin.json fehlt")
-    if kind not in DEFAULT_MAIN:
-        fail("„type“ in plugin.json muss „effect“ oder „visualizer“ sein")
-    main_file = m.get("main") or DEFAULT_MAIN[kind]
-    if not main_file.lower().endswith(EXT[kind]):
-        fail(f"„main“ muss bei dieser Plugin-Art auf {EXT[kind]} enden")
-    if not (src / main_file).is_file():
-        fail(f"Plugin-Datei {main_file} fehlt")
-    if kind == "effect":
-        try:
-            json.loads((src / main_file).read_text(encoding="utf-8"))
-        except json.JSONDecodeError as e:
-            fail(f"{main_file} ist kein gültiges JSON: {e}")
 
-    def allowed(name):
-        up = name.upper()
-        return name in ("plugin.json", main_file) or up.startswith(("LICENSE", "LICENCE", "COPYING", "README"))
+    contents = m.get("contents") or []
+    if not contents:
+        kind = m.get("type")
+        if kind not in DEFAULT_MAIN:
+            fail("plugin.json braucht „contents“ (Liste der Teile) oder „type“ (effect/visualizer)")
+        contents = [{"type": kind, "file": m.get("main") or DEFAULT_MAIN[kind]}]
+    if len(contents) > 32:
+        fail("Höchstens 32 Teile pro Paket")
 
-    files = sorted(p for p in src.iterdir() if p.is_file() and not p.name.startswith("."))
-    extra = [p.name for p in files if not allowed(p.name)]
-    if extra:
-        fail(f"Nicht erlaubte Dateien im Ordner: {', '.join(extra)}")
-    if not any(p.name.upper().startswith(("LICENSE", "LICENCE", "COPYING")) for p in files):
-        fail("Es fehlt eine Lizenzdatei (LICENSE) – jedes Plugin braucht seine eigene Lizenz")
-    total = sum(p.stat().st_size for p in files)
-    if total > 1024 * 1024:
-        fail("Das Paket wäre größer als 1 MB")
+    parts = []
+    for c in contents:
+        kind, file = c.get("type"), c.get("file", "")
+        if kind not in EXT:
+            fail(f"Unbekannte Art „{kind}“ in „contents“ (erlaubt: effect, visualizer)")
+        if not safe_path(file):
+            fail(f"Ungültiger Dateipfad in „contents“: {file}")
+        if not file.lower().endswith(EXT[kind]):
+            fail(f"{file} muss bei dieser Art auf {EXT[kind]} enden")
+        path = src / file
+        if not path.is_file():
+            fail(f"Teil {file} fehlt")
+        if path.stat().st_size > 512 * 1024:
+            fail(f"{file} ist größer als 512 KB")
+        if kind == "effect":
+            try:
+                json.loads(path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError as e:
+                fail(f"{file} ist kein gültiges JSON: {e}")
+        parts.append(file)
+
+    top = [p for p in src.iterdir() if p.is_file() and not p.name.startswith(".")]
+    licenses = [p.name for p in top if p.name.upper().startswith(("LICENSE", "LICENCE", "COPYING"))]
+    readmes = [p.name for p in top if p.name.upper().startswith("README")]
+    if not licenses:
+        fail("Es fehlt eine Lizenzdatei (LICENSE) – jedes Paket braucht seine eigene Lizenz")
+    files = ["plugin.json", *parts, *licenses, *readmes]
+    total = sum((src / f).stat().st_size for f in files)
+    if total > 2 * 1024 * 1024:
+        fail("Das Paket wäre größer als 2 MB")
+
+    # Warnen, wenn im Ordner Dateien liegen, die nicht mitkommen (z. B. vergessen in „contents“).
+    known = set(files)
+    for p in src.rglob("*"):
+        rel = p.relative_to(src).as_posix()
+        if p.is_file() and not any(part.startswith(".") for part in p.relative_to(src).parts) and rel not in known:
+            print(f"Hinweis: {rel} kommt nicht ins Paket (nicht in „contents“)", file=sys.stderr)
 
     out_dir.mkdir(parents=True, exist_ok=True)
-    target = out_dir / f"{pid}.zip"
+    target = out_dir / f"{pid}.amberplugin"
     with zipfile.ZipFile(target, "w", zipfile.ZIP_DEFLATED) as z:
-        for p in files:
-            z.write(p, p.name)
-    print(f"{target}  ({m.get('name')} {m.get('version', '')}, Lizenz: {m.get('license') or 'siehe LICENSE'})")
+        for f in files:
+            z.write(src / f, f)
+    counts = {k: sum(1 for c in contents if c["type"] == k) for k in EXT}
+    print(
+        f"{target}  ({m.get('name')} {m.get('version', '')}: {counts['effect']} Klangeffekt(e), "
+        f"{counts['visualizer']} Visualisierung(en), Lizenz: {m.get('license') or 'siehe LICENSE'})"
+    )
 
 
 if __name__ == "__main__":

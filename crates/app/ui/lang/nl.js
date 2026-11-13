@@ -387,9 +387,6 @@ I18N.nl = {
  "eigene Lizenz": "eigen licentie",
  "keine Lizenz angegeben": "geen licentie vermeld",
  "ohne Lizenzdatei": "zonder licentiebestand",
- "Noch keine Plugin-Pakete installiert. Ein Paket ist eine ZIP-Datei mit plugin.json, dem Plugin und seiner Lizenz.": "Nog geen pluginpakketten geïnstalleerd. Een pakket is een ZIP-bestand met plugin.json, de plugin en de licentie.",
- ".zip-Paket oder .json, gelten nach Neustart": ".zip-pakket of .json, gelden na herstart",
- ".zip-Paket oder .js": ".zip-pakket of .js",
  "„{name}“ installiert": "‘{name}’ geïnstalleerd",
  "„{name}“ installiert – wirkt nach dem nächsten Start der App": "‘{name}’ geïnstalleerd – werkt na de volgende start van de app",
  "„{name}“ entfernen?": "‘{name}’ verwijderen?",
@@ -406,5 +403,14 @@ I18N.nl = {
  "Öffnet die Release-Seite mit .deb, .rpm und AppImage": "Opent de releasepagina met .deb, .rpm en AppImage",
  "Automatisch nach Updates suchen": "Automatisch naar updates zoeken",
  "Automatisch nach Updates suchen (einmal am Tag bei GitHub)": "Automatisch naar updates zoeken (één keer per dag bij GitHub)",
- "Jetzt prüfen": "Nu controleren"
+ "Jetzt prüfen": "Nu controleren",
+ "„{name}“ installiert ({parts}) – Klangeffekte wirken nach dem nächsten Start der App": "‘{name}’ geïnstalleerd ({parts}) – geluidseffecten werken na de volgende start van de app",
+ "„{name}“ installiert ({parts})": "‘{name}’ geïnstalleerd ({parts})",
+ "1|Klangeffekt": "geluidseffect",
+ "n|Klangeffekte": "geluidseffecten",
+ "1|Visualisierung": "visualisatie",
+ "n|Visualisierungen": "visualisaties",
+ ".amberplugin-Paket oder .json, gelten nach Neustart": ".amberplugin-pakket of .json, gelden na herstart",
+ ".amberplugin-Paket oder .js": ".amberplugin-pakket of .js",
+ "Noch keine Plugin-Pakete installiert. Ein Paket (.amberplugin) enthält einen oder mehrere Klangeffekte und Visualisierungen mit eigener Lizenz.": "Nog geen pluginpakketten geïnstalleerd. Een pakket (.amberplugin) bevat een of meer geluidseffecten en visualisaties met een eigen licentie."
 };

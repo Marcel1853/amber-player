@@ -1,62 +1,76 @@
 # Plugin-Pakete
 
-Ein Klangeffekt oder eine Visualisierung wird als **Plugin-Paket** weitergegeben: eine
-ZIP-Datei mit Beschreibung, dem Plugin selbst und **seiner eigenen Lizenz**. Amber Player
-installiert das Paket mit einem Klick – am PC und am Handy.
+Klangeffekte und Visualisierungen werden als **Plugin-Paket** weitergegeben: eine Datei mit der
+Endung **`.amberplugin`**. Ein Paket kann **einen oder mehrere Teile** enthalten – zum Beispiel
+drei Klangeffekte und zwei Visualisierungen – und hat **seine eigene Lizenz**. Amber Player
+installiert es mit einem Klick, am PC und am Handy.
+
+Innen ist ein `.amberplugin` eine ganz normale ZIP-Datei; Amber Player nimmt auch Pakete mit der
+Endung `.zip` an.
 
 ## Aufbau
 
 ```
-telefon.zip
-├── plugin.json     ← Beschreibung: Name, Art, Version, Autor, Lizenz
-├── effect.json     ← das Plugin (bei Visualisierungen: visualizer.js)
-├── LICENSE         ← die Lizenz dieses Plugins (Pflicht)
-└── README.md       ← optional: Beschreibung, Anleitung
+nachtfahrt.amberplugin
+├── plugin.json              ← Beschreibung und Liste der Teile
+├── effects/
+│   ├── kassette.json        ← Klangeffekt
+│   └── stadion.json         ← Klangeffekt
+├── visualizers/
+│   └── polarlicht.js        ← Visualisierung
+├── LICENSE                  ← die Lizenz des Pakets (Pflicht)
+└── README.md                ← optional: Beschreibung, Anleitung
 ```
 
-Die Dateien dürfen direkt in der ZIP-Datei liegen oder in einem gemeinsamen Ordner
-(`telefon/plugin.json` …). Andere Dateien sind nicht erlaubt.
+Die Teile dürfen direkt im Paket oder in **einem** Unterordner liegen (z. B. `effects/`). Andere
+Dateien als `plugin.json`, die Teile, `LICENSE` und `README` sind nicht erlaubt.
 
 ## plugin.json
 
 ```json
 {
-  "id": "telefon",
-  "name": "Telefon",
-  "type": "effect",
+  "id": "nachtfahrt",
+  "name": "Nachtfahrt",
   "version": "1.0.0",
   "author": "Dein Name",
-  "description": "Klingt wie durchs Telefon",
+  "description": "Zwei Klangeffekte und eine Visualisierung für die Nacht",
   "license": "MIT",
-  "main": "effect.json",
-  "homepage": "https://…"
+  "homepage": "https://…",
+  "contents": [
+    { "type": "effect", "file": "effects/kassette.json" },
+    { "type": "effect", "file": "effects/stadion.json" },
+    { "type": "visualizer", "file": "visualizers/polarlicht.js" }
+  ]
 }
 ```
 
 | Feld | Pflicht | Bedeutung |
 |---|---|---|
 | `id` | ja | 1–32 Zeichen aus Buchstaben, Ziffern, `-`, `_`; bestimmt den Ordnernamen |
-| `name` | ja | Anzeigename |
-| `type` | ja | `effect` (Klangeffekt) oder `visualizer` (Visualisierung) |
+| `name` | ja | Anzeigename des Pakets |
+| `contents` | ja* | Liste der Teile: `type` (`effect` oder `visualizer`) und `file` (Pfad im Paket) – bis zu 32 Teile |
 | `version` | | z. B. `1.0.0` – erscheint in den Einstellungen |
 | `author` | | dein Name |
 | `description` | | kurze Beschreibung |
 | `license` | | Kurzname der Lizenz, z. B. `MIT`, `GPL-3.0`, `CC-BY-4.0` oder „Alle Rechte vorbehalten“ |
-| `main` | | Plugin-Datei; Standard `effect.json` bzw. `visualizer.js` |
-| `homepage` | | Adresse, unter der es das Plugin gibt |
+| `homepage` | | Adresse, unter der es das Paket gibt |
 
-Die eigentliche Plugin-Datei (`effect.json` bzw. `visualizer.js`) ist genau so aufgebaut wie
-beschrieben in [Klang-Plugin erstellen](Klang-Plugin-erstellen.md) und
-[Visualisierung erstellen](Visualisierung-erstellen.md).
+\* **Kurzform für ein einzelnes Teil:** statt `contents` einfach `"type": "effect"` (oder
+`"visualizer"`) und optional `"main": "effect.json"` angeben.
+
+Jedes Teil ist genau so aufgebaut wie beschrieben in [Klang-Plugin erstellen](Klang-Plugin-erstellen.md)
+und [Visualisierung erstellen](Visualisierung-erstellen.md). Die `id` der einzelnen Klangeffekte
+und Visualisierungen muss über alle installierten Plugins eindeutig sein.
 
 ## Lizenz
 
-Jedes Paket braucht eine eigene **LICENSE**-Datei. Welche Lizenz du nimmst, entscheidest du:
+Jedes Paket braucht eine eigene **LICENSE**-Datei. Sie gilt für alle Teile im Paket. Welche
+Lizenz du nimmst, entscheidest du:
 
-- **MIT** – jeder darf das Plugin nutzen, verändern und weitergeben, solange dein Name genannt
+- **MIT** – jeder darf das Paket nutzen, verändern und weitergeben, solange dein Name genannt
   bleibt. Gut für Vorlagen und alles, was andere weiterentwickeln sollen.
 - **GPL-3.0** – wie MIT, aber veränderte Versionen müssen ebenfalls offen bleiben.
-- **Alle Rechte vorbehalten** – andere dürfen das Plugin benutzen, aber nicht verändern oder
+- **Alle Rechte vorbehalten** – andere dürfen das Paket benutzen, aber nicht verändern oder
   weitergeben.
 
 In den Einstellungen zeigt Amber Player bei jedem Paket die Lizenz an – und weist darauf hin,
@@ -65,35 +79,38 @@ wenn keine Lizenzdatei dabei ist.
 ## Paket bauen
 
 Am einfachsten mit dem Skript aus dem Quellcode – es prüft vorher alles, was Amber Player beim
-Installieren auch prüft:
+Installieren auch prüft, und warnt, wenn Dateien im Ordner liegen, die nicht in `contents`
+stehen:
 
 ```sh
-python3 scripts/plugin-pack.py mein-plugin/        # → mein-plugin.zip
+python3 scripts/plugin-pack.py mein-paket/        # → mein-paket.amberplugin
 ```
 
-Von Hand geht es mit jedem ZIP-Programm: die Dateien des Ordners auswählen und als ZIP
-speichern.
+Von Hand geht es mit jedem ZIP-Programm: die Dateien des Ordners als ZIP speichern und die Endung
+in `.amberplugin` ändern (oder `.zip` lassen).
 
 ## Installieren, aktualisieren, entfernen
 
 - **Installieren:** Effekte → **Installieren** oder Einstellungen → Plugins → **Installieren**,
-  ZIP-Datei auswählen. Klangeffekte wirken nach dem nächsten Start der App, Visualisierungen
-  sofort.
+  Datei auswählen. Visualisierungen sind sofort da, Klangeffekte nach dem nächsten Start der
+  App.
 - **Aktualisieren:** die neue Version genauso installieren – ein Paket mit derselben `id` wird
-  ersetzt.
-- **Entfernen:** Einstellungen → Plugins → **Installierte Plugins** → **Entfernen**.
+  samt allen Teilen ersetzt.
+- **Entfernen:** Einstellungen → Plugins → **Installierte Plugins** → **Entfernen**. Alle Teile
+  des Pakets verschwinden zusammen.
 
-Installiert wird in einen eigenen Ordner: `~/.local/share/amber-player/effects/<id>/` bzw.
-`…/visualizers/<id>/` (am Handy im privaten Ordner der App).
+Installiert wird nach `~/.local/share/amber-player/packages/<id>/` (am Handy in den privaten
+Ordner der App).
 
 ## Vorlagen
 
-Im Quellcode unter [`examples/plugins/`](https://github.com/Marcel1853/amber-player/tree/main/examples/plugins)
-liegen zwei fertige Pakete (MIT-Lizenz), fertig gepackt hängen sie auch an jedem
+Im Quellcode unter [`examples/plugins/`](https://github.com/Marcel1853/amber-player/tree/main/examples/plugins),
+alle mit MIT-Lizenz; fertig gepackt hängen sie an jedem
 [Release](https://github.com/Marcel1853/amber-player/releases):
 
-- `telefon/` – Klangeffekt
-- `sternenfeld/` – Visualisierung
+- `nachtfahrt/` – **mehrere Teile:** Klangeffekte „Kassette“ und „Stadion“, Visualisierung „Polarlicht“
+- `telefon/` – ein Klangeffekt (Kurzform mit `type`)
+- `sternenfeld/` – eine Visualisierung (Kurzform mit `type`)
 
 > Einzelne `.json`- und `.js`-Dateien ohne Paket funktionieren weiterhin, haben aber keine
 > Version, keinen Autor und keine Lizenz.

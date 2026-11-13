@@ -1,6 +1,7 @@
 # Installing plugins
 
-Sound effects and visualizers come as a **plugin package** – a ZIP file with its own license,
+Sound effects and visualizers come as a **plugin package** – an `.amberplugin` file with one or more
+parts and its own license,
 see [Plugin packages](Plugin-Packages.md). The quickest way is **Install** (Effects or
 Settings → Plugins) – the same on the PC and the phone.
 
@@ -8,8 +9,8 @@ Amber Player knows three kinds of plugins:
 
 | Kind | File | Where | Takes effect |
 |---|---|---|---|
-| **Sound effect** | package (`.zip`) or one `.json` file | PC and phone | after restarting the app |
-| **Visualizer** | package (`.zip`) or one `.js` file | PC and phone | immediately (PC: after “Reload”) |
+| **Sound effect** | package (`.amberplugin`) or one `.json` file | PC and phone | after restarting the app |
+| **Visualizer** | package (`.amberplugin`) or one `.js` file | PC and phone | immediately (PC: after “Reload”) |
 | **Source** (online music) | a folder with `plugin.json` and a program | PC only | after restart |
 
 > **Security:** Sound effects are pure descriptions without program code. Visualizers run
@@ -43,7 +44,7 @@ Copy the file in, then
 
 The phone gives no access to the app folder, so:
 
-1. Get the package (`.zip`) or the `.json` / `.js` file onto the phone (download, messenger, cable …).
+1. Get the package (`.amberplugin`) or the `.json` / `.js` file onto the phone (download, messenger, cable …).
 2. **Effects → Install** (sound effects) or **Settings → Plugins → Install**.
 3. Choose the file.
 
@@ -71,6 +72,7 @@ all imported plugins (but also library and settings).
 
 Examples to try in the source code: [`examples/plugins/`](https://github.com/Marcel1853/amber-player/tree/main/examples/plugins)
 
+- `nachtfahrt/` – package with several parts: two sound effects and a visualizer (MIT license)
 - `telefon/` – sound effect “Telephone” (package, MIT license)
 - `sternenfeld/` – visualizer “Star field” (package, MIT license)
 

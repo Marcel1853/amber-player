@@ -49,7 +49,7 @@ Dateien sofort ein.
 ## Plugins am Handy
 
 Eigene Klangeffekte (`.json`) und Visualisierungen (`.js`) installierst du über
-**Effekte → Installieren** bzw. **Einstellungen → Plugins → Installieren**: Paket (`.zip`) oder
+**Effekte → Installieren** bzw. **Einstellungen → Plugins → Installieren**: Paket (`.amberplugin`) oder
 Datei auswählen, fertig. Klang-Plugins wirken nach dem nächsten Start der App, Visualisierungen sofort.
 Mehr dazu: [Plugins installieren](Plugins-installieren.md).
 

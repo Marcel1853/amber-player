@@ -1,0 +1,16 @@
+{
+  "id": "stadion",
+  "name": "Stadion",
+  "author": "Marcel1853",
+  "description": "Klingt wie aus den Lautsprechern eines großen Stadions: breit, mit Nachhall",
+  "params": [
+    { "id": "groesse", "name": "Größe", "min": 0, "max": 100, "default": 60, "step": 1, "unit": "%" }
+  ],
+  "mix": "0.4 + groesse / 250",
+  "chain": [
+    { "type": "highpass", "freq": 90, "q": 0.7 },
+    { "type": "peaking", "freq": 2500, "gain": 2, "q": 0.8 },
+    { "type": "echo", "time": "80 + groesse * 2", "feedback": "0.2 + groesse / 300", "mix": 0.35 },
+    { "type": "width", "amount": "1.2 + groesse / 200" }
+  ]
+}

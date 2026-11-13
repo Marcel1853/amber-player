@@ -18,7 +18,7 @@ Amber Player lässt sich an drei Stellen erweitern – ohne den Player neu zu ba
 **Plugin-Pakete:** Klangeffekte und Visualisierungen werden als ZIP-Datei mit `plugin.json`,
 Plugin-Datei und eigener `LICENSE` weitergegeben und über **Installieren** eingespielt –
 Aufbau, Felder und Lizenzen: [Plugin-Pakete](wiki/Plugin-Pakete.md). Installiert wird nach
-`effects/<id>/` bzw. `visualizers/<id>/`; einzelne Dateien direkt im Ordner gehen weiterhin.
+`packages/<id>/`; einzelne Dateien direkt im Ordner gehen weiterhin.
 
 **Am Handy (Android)** gibt es keinen Zugriff auf den App-Ordner. Dort heißt der Knopf
 **Installieren**: Datei auswählen, Amber Player prüft sie (Klang-Plugins werden vorab geladen) und

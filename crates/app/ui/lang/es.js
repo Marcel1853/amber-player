@@ -387,9 +387,6 @@ I18N.es = {
  "eigene Lizenz": "licencia propia",
  "keine Lizenz angegeben": "sin licencia indicada",
  "ohne Lizenzdatei": "sin archivo de licencia",
- "Noch keine Plugin-Pakete installiert. Ein Paket ist eine ZIP-Datei mit plugin.json, dem Plugin und seiner Lizenz.": "Aún no hay paquetes de plugins instalados. Un paquete es un archivo ZIP con plugin.json, el plugin y su licencia.",
- ".zip-Paket oder .json, gelten nach Neustart": "paquete .zip o .json, se aplican al reiniciar",
- ".zip-Paket oder .js": "paquete .zip o .js",
  "„{name}“ installiert": "«{name}» instalado",
  "„{name}“ installiert – wirkt nach dem nächsten Start der App": "«{name}» instalado: se aplica al volver a abrir la app",
  "„{name}“ entfernen?": "¿Quitar «{name}»?",
@@ -406,5 +403,14 @@ I18N.es = {
  "Öffnet die Release-Seite mit .deb, .rpm und AppImage": "Abre la página de la versión con .deb, .rpm y AppImage",
  "Automatisch nach Updates suchen": "Buscar actualizaciones automáticamente",
  "Automatisch nach Updates suchen (einmal am Tag bei GitHub)": "Buscar actualizaciones automáticamente (una vez al día en GitHub)",
- "Jetzt prüfen": "Comprobar ahora"
+ "Jetzt prüfen": "Comprobar ahora",
+ "„{name}“ installiert ({parts}) – Klangeffekte wirken nach dem nächsten Start der App": "«{name}» instalado ({parts}): los efectos de sonido se aplican al volver a abrir la app",
+ "„{name}“ installiert ({parts})": "«{name}» instalado ({parts})",
+ "1|Klangeffekt": "efecto de sonido",
+ "n|Klangeffekte": "efectos de sonido",
+ "1|Visualisierung": "visualizador",
+ "n|Visualisierungen": "visualizadores",
+ ".amberplugin-Paket oder .json, gelten nach Neustart": "paquete .amberplugin o .json, se aplican al reiniciar",
+ ".amberplugin-Paket oder .js": "paquete .amberplugin o .js",
+ "Noch keine Plugin-Pakete installiert. Ein Paket (.amberplugin) enthält einen oder mehrere Klangeffekte und Visualisierungen mit eigener Lizenz.": "Aún no hay paquetes de plugins instalados. Un paquete (.amberplugin) contiene uno o varios efectos de sonido y visualizadores con su propia licencia."
 };

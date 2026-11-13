@@ -1,0 +1,19 @@
+{
+  "id": "kassette",
+  "name": "Kassette",
+  "author": "Marcel1853",
+  "description": "Warmer Klang wie von einer alten Musikkassette: weiche Höhen, etwas Sättigung",
+  "params": [
+    { "id": "alter", "name": "Alter", "min": 0, "max": 100, "default": 50, "step": 1, "unit": "%" }
+  ],
+  "presets": [
+    { "name": "Neu gekauft", "values": [20] },
+    { "name": "Oft gehört", "values": [85] }
+  ],
+  "chain": [
+    { "type": "lowshelf", "freq": 120, "gain": "alter / 40", "q": 0.7 },
+    { "type": "lowpass", "freq": "14000 - alter * 80", "q": 0.7 },
+    { "type": "saturate", "drive": "1 + alter / 60" },
+    { "type": "gain", "db": "-alter / 50" }
+  ]
+}

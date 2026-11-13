@@ -68,7 +68,7 @@ dependencies = [
 
 [[package]]
 name = "amber-core"
-version = "0.6.3"
+version = "0.6.4"
 dependencies = [
  "anyhow",
  "axum",
@@ -92,7 +92,7 @@ dependencies = [
 
 [[package]]
 name = "amber-player"
-version = "0.6.3"
+version = "0.6.4"
 dependencies = [
  "amber-core",
  "android_logger",
@@ -4656,7 +4656,7 @@ dependencies = [
 
 [[package]]
 name = "tauri-plugin-amber-mobile"
-version = "0.6.3"
+version = "0.6.4"
 dependencies = [
  "tauri",
  "tauri-plugin",

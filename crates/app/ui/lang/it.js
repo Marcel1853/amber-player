@@ -387,9 +387,6 @@ I18N.it = {
  "eigene Lizenz": "licenza propria",
  "keine Lizenz angegeben": "nessuna licenza indicata",
  "ohne Lizenzdatei": "senza file di licenza",
- "Noch keine Plugin-Pakete installiert. Ein Paket ist eine ZIP-Datei mit plugin.json, dem Plugin und seiner Lizenz.": "Nessun pacchetto di plugin installato. Un pacchetto è un file ZIP con plugin.json, il plugin e la sua licenza.",
- ".zip-Paket oder .json, gelten nach Neustart": "pacchetto .zip o .json, validi dopo il riavvio",
- ".zip-Paket oder .js": "pacchetto .zip o .js",
  "„{name}“ installiert": "«{name}» installato",
  "„{name}“ installiert – wirkt nach dem nächsten Start der App": "«{name}» installato – attivo al prossimo avvio dell’app",
  "„{name}“ entfernen?": "Rimuovere «{name}»?",
@@ -406,5 +403,14 @@ I18N.it = {
  "Öffnet die Release-Seite mit .deb, .rpm und AppImage": "Apre la pagina della versione con .deb, .rpm e AppImage",
  "Automatisch nach Updates suchen": "Cerca aggiornamenti automaticamente",
  "Automatisch nach Updates suchen (einmal am Tag bei GitHub)": "Cerca aggiornamenti automaticamente (una volta al giorno su GitHub)",
- "Jetzt prüfen": "Controlla ora"
+ "Jetzt prüfen": "Controlla ora",
+ "„{name}“ installiert ({parts}) – Klangeffekte wirken nach dem nächsten Start der App": "«{name}» installato ({parts}) – gli effetti audio sono attivi al prossimo avvio dell’app",
+ "„{name}“ installiert ({parts})": "«{name}» installato ({parts})",
+ "1|Klangeffekt": "effetto audio",
+ "n|Klangeffekte": "effetti audio",
+ "1|Visualisierung": "visualizzazione",
+ "n|Visualisierungen": "visualizzazioni",
+ ".amberplugin-Paket oder .json, gelten nach Neustart": "pacchetto .amberplugin o .json, validi dopo il riavvio",
+ ".amberplugin-Paket oder .js": "pacchetto .amberplugin o .js",
+ "Noch keine Plugin-Pakete installiert. Ein Paket (.amberplugin) enthält einen oder mehrere Klangeffekte und Visualisierungen mit eigener Lizenz.": "Nessun pacchetto di plugin installato. Un pacchetto (.amberplugin) contiene uno o più effetti audio e visualizzazioni con la propria licenza."
 };

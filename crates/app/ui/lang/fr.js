@@ -387,9 +387,6 @@ I18N.fr = {
  "eigene Lizenz": "licence propre",
  "keine Lizenz angegeben": "aucune licence indiquée",
  "ohne Lizenzdatei": "sans fichier de licence",
- "Noch keine Plugin-Pakete installiert. Ein Paket ist eine ZIP-Datei mit plugin.json, dem Plugin und seiner Lizenz.": "Aucun paquet de plugin installé. Un paquet est un fichier ZIP avec plugin.json, le plugin et sa licence.",
- ".zip-Paket oder .json, gelten nach Neustart": "paquet .zip ou .json, appliqués après redémarrage",
- ".zip-Paket oder .js": "paquet .zip ou .js",
  "„{name}“ installiert": "« {name} » installé",
  "„{name}“ installiert – wirkt nach dem nächsten Start der App": "« {name} » installé – actif au prochain démarrage de l’app",
  "„{name}“ entfernen?": "Retirer « {name} » ?",
@@ -406,5 +403,14 @@ I18N.fr = {
  "Öffnet die Release-Seite mit .deb, .rpm und AppImage": "Ouvre la page de version avec .deb, .rpm et AppImage",
  "Automatisch nach Updates suchen": "Rechercher les mises à jour automatiquement",
  "Automatisch nach Updates suchen (einmal am Tag bei GitHub)": "Rechercher les mises à jour automatiquement (une fois par jour sur GitHub)",
- "Jetzt prüfen": "Vérifier maintenant"
+ "Jetzt prüfen": "Vérifier maintenant",
+ "„{name}“ installiert ({parts}) – Klangeffekte wirken nach dem nächsten Start der App": "« {name} » installé ({parts}) – les effets sonores sont actifs au prochain démarrage de l’app",
+ "„{name}“ installiert ({parts})": "« {name} » installé ({parts})",
+ "1|Klangeffekt": "effet sonore",
+ "n|Klangeffekte": "effets sonores",
+ "1|Visualisierung": "visualisation",
+ "n|Visualisierungen": "visualisations",
+ ".amberplugin-Paket oder .json, gelten nach Neustart": "paquet .amberplugin ou .json, appliqués après redémarrage",
+ ".amberplugin-Paket oder .js": "paquet .amberplugin ou .js",
+ "Noch keine Plugin-Pakete installiert. Ein Paket (.amberplugin) enthält einen oder mehrere Klangeffekte und Visualisierungen mit eigener Lizenz.": "Aucun paquet de plugin installé. Un paquet (.amberplugin) contient un ou plusieurs effets sonores et visualisations avec sa propre licence."
 };

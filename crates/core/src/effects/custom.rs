@@ -77,11 +77,13 @@ pub fn builtin_json_plugins() -> Vec<CustomPlugin> {
 /// Fehlerhafte Dateien landen mit Meldung in der zweiten Liste.
 pub fn load_dir(dir: &std::path::Path) -> (Vec<CustomPlugin>, Vec<String>) {
     let (mut ok, mut errors) = load_files(dir);
-    let (packages, package_errors) = crate::packages::list_in(dir, crate::packages::Kind::Effect);
+    // Pakete: der Paket-Ordner neben effects/ und alte Ein-Teil-Pakete in effects/<id>/
+    let root = dir.parent().unwrap_or(dir);
+    let bases = [root.join(crate::packages::PACKAGES_DIR), dir.to_path_buf()];
+    let (parts, package_errors) = crate::packages::contents_in(&bases, crate::packages::Kind::Effect);
     errors.extend(package_errors);
-    for p in packages {
-        let source = format!("{}/{}", p.manifest.id, p.manifest.main);
-        match crate::packages::main_text(&p).and_then(|text| CustomPlugin::parse(&text, &source)) {
+    for (source, text) in parts {
+        match text.and_then(|text| CustomPlugin::parse(&text, &source)) {
             Ok(plugin) => ok.push(plugin),
             Err(e) => errors.push(format!("{source}: {e:#}")),
         }

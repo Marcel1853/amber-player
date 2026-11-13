@@ -387,9 +387,6 @@ I18N.en = {
  "eigene Lizenz": "own license",
  "keine Lizenz angegeben": "no license stated",
  "ohne Lizenzdatei": "no license file",
- "Noch keine Plugin-Pakete installiert. Ein Paket ist eine ZIP-Datei mit plugin.json, dem Plugin und seiner Lizenz.": "No plugin packages installed yet. A package is a ZIP file with plugin.json, the plugin and its license.",
- ".zip-Paket oder .json, gelten nach Neustart": ".zip package or .json, apply after restart",
- ".zip-Paket oder .js": ".zip package or .js",
  "„{name}“ installiert": "“{name}” installed",
  "„{name}“ installiert – wirkt nach dem nächsten Start der App": "“{name}” installed – takes effect after the next app start",
  "„{name}“ entfernen?": "Remove “{name}”?",
@@ -406,5 +403,14 @@ I18N.en = {
  "Öffnet die Release-Seite mit .deb, .rpm und AppImage": "Opens the release page with .deb, .rpm and AppImage",
  "Automatisch nach Updates suchen": "Check for updates automatically",
  "Automatisch nach Updates suchen (einmal am Tag bei GitHub)": "Check for updates automatically (once a day on GitHub)",
- "Jetzt prüfen": "Check now"
+ "Jetzt prüfen": "Check now",
+ "„{name}“ installiert ({parts}) – Klangeffekte wirken nach dem nächsten Start der App": "“{name}” installed ({parts}) – sound effects take effect after the next app start",
+ "„{name}“ installiert ({parts})": "“{name}” installed ({parts})",
+ "1|Klangeffekt": "sound effect",
+ "n|Klangeffekte": "sound effects",
+ "1|Visualisierung": "visualizer",
+ "n|Visualisierungen": "visualizers",
+ ".amberplugin-Paket oder .json, gelten nach Neustart": ".amberplugin package or .json, apply after restart",
+ ".amberplugin-Paket oder .js": ".amberplugin package or .js",
+ "Noch keine Plugin-Pakete installiert. Ein Paket (.amberplugin) enthält einen oder mehrere Klangeffekte und Visualisierungen mit eigener Lizenz.": "No plugin packages installed yet. A package (.amberplugin) contains one or more sound effects and visualizers with its own license."
 };

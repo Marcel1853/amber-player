@@ -1238,13 +1238,24 @@ async function unzipText(buffer) {
 async function installPackage(file) {
   const files = await unzipText(await file.arrayBuffer());
   const m = await call('install_plugin_package', { files });
-  if (m.type === 'visualizer') {
-    if (await vizEnsure()) await vizLoad();
-    toast(tx('„{name}“ installiert', { name: m.name }), 'ok');
-  } else {
-    toast(tx('„{name}“ installiert – wirkt nach dem nächsten Start der App', { name: m.name }), 'ok');
-  }
+  if (m.visualizers && (await vizEnsure())) await vizLoad();
+  toast(
+    m.effects
+      ? tx('„{name}“ installiert ({parts}) – Klangeffekte wirken nach dem nächsten Start der App', { name: m.name, parts: packageParts(m) })
+      : tx('„{name}“ installiert ({parts})', { name: m.name, parts: packageParts(m) }),
+    'ok',
+  );
   setTimeout(render, 300);
+}
+
+/** „2 Klangeffekte · 1 Visualisierung“ */
+function packageParts(p) {
+  return [
+    p.effects ? plural(p.effects, 'Klangeffekt', 'Klangeffekte') : '',
+    p.visualizers ? plural(p.visualizers, 'Visualisierung', 'Visualisierungen') : '',
+  ]
+    .filter(Boolean)
+    .join(' · ');
 }
 
 function plugAction(kind) {
@@ -1257,12 +1268,12 @@ function importPlugin(kind) {
   const input = document.createElement('input');
   input.type = 'file';
   // Android kennt für .json/.js oft keinen passenden Dateityp – darum alles anbieten und selbst prüfen.
-  input.accept = kind === 'effects' ? '.zip,application/zip,.json,application/json,*/*' : '.zip,application/zip,.js,text/javascript,*/*';
+  input.accept = kind === 'effects' ? '.amberplugin,.zip,application/zip,.json,application/json,*/*' : '.amberplugin,.zip,application/zip,.js,text/javascript,*/*';
   input.addEventListener('change', async () => {
     const file = input.files?.[0];
     if (!file) return;
     try {
-      if (/\.zip$/i.test(file.name)) {
+      if (/\.(amberplugin|zip)$/i.test(file.name)) {
         await installPackage(file);
         return;
       }
@@ -1486,20 +1497,20 @@ async function renderSettings(el, v, fresh) {
       <p>${tx('Klangeffekte und Visualisierungen lassen sich erweitern – eine Anleitung steht in {file}.', { file: '<code>docs/PLUGINS.md</code>' })}</p>
       <div class="kv">
         <span class="k">Klangeffekte</span>
-        <span style="display:flex;gap:10px;align-items:center">${plugBtn('effects')}<span class="hint" style="margin:0">${esc(tx('.zip-Paket oder .json, gelten nach Neustart'))}</span></span>
+        <span style="display:flex;gap:10px;align-items:center">${plugBtn('effects')}<span class="hint" style="margin:0">${esc(tx('.amberplugin-Paket oder .json, gelten nach Neustart'))}</span></span>
         ${IS_ANDROID ? '' : `        <span class="k">Quellen (Online)</span>
         <span style="display:flex;gap:10px;align-items:center"><button class="btn small" data-plugdir="sources">${icon('folder')} Ordner öffnen</button><span class="hint" style="margin:0">${online.sources.length ? esc(online.sources.map((s) => s.name).join(', ')) : esc(tx('keine installiert'))} · ${esc(tx('gelten nach Neustart'))}</span></span>`}
         <span class="k">Visualisierungen</span>
-        <span style="display:flex;gap:10px;align-items:center">${plugBtn('visualizers')}<button class="btn small" id="vizReload">${icon('refresh')} Neu laden</button><span class="hint" style="margin:0">${esc(tx('.zip-Paket oder .js'))}</span></span>
+        <span style="display:flex;gap:10px;align-items:center">${plugBtn('visualizers')}<button class="btn small" id="vizReload">${icon('refresh')} Neu laden</button><span class="hint" style="margin:0">${esc(tx('.amberplugin-Paket oder .js'))}</span></span>
       </div>
       <h3 style="margin-top:18px">Installierte Plugins</h3>
       ${packages.packages.length
         ? `<div class="pkg-list">${packages.packages.map((p) => `<div class="pkg">
             <div class="pkg-meta" data-raw><b>${esc(p.name)}</b>${p.version ? ` <small>${esc(p.version)}</small>` : ''}
-              <span>${esc(p.type === 'effect' ? tx('Klangeffekt') : tx('Visualisierung'))}${p.author ? ` · ${esc(p.author)}` : ''} · ${esc(p.license || (p.license_file ? tx('eigene Lizenz') : tx('keine Lizenz angegeben')))}${p.license_file ? '' : ` · ${esc(tx('ohne Lizenzdatei'))}`}</span></div>
-            <button class="btn small danger" data-unplug="${esc(`${p.type}|${p.id}|${p.name}`)}">${esc(tx('Entfernen'))}</button>
+              <span>${esc(packageParts(p))}${p.author ? ` · ${esc(p.author)}` : ''} · ${esc(p.license || (p.license_file ? tx('eigene Lizenz') : tx('keine Lizenz angegeben')))}${p.license_file ? '' : ` · ${esc(tx('ohne Lizenzdatei'))}`}</span></div>
+            <button class="btn small danger" data-unplug="${esc(`${p.id}|${p.name}|${p.visualizers ? 1 : 0}`)}">${esc(tx('Entfernen'))}</button>
           </div>`).join('')}</div>`
-        : `<p class="hint">${esc(tx('Noch keine Plugin-Pakete installiert. Ein Paket ist eine ZIP-Datei mit plugin.json, dem Plugin und seiner Lizenz.'))}</p>`}
+        : `<p class="hint">${esc(tx('Noch keine Plugin-Pakete installiert. Ein Paket (.amberplugin) enthält einen oder mehrere Klangeffekte und Visualisierungen mit eigener Lizenz.'))}</p>`}
       ${packages.errors.length ? `<div class="plugin-errors"><b>${esc(tx('Nicht geladen:'))}</b>${packages.errors.map((e) => `<div>${esc(e)}</div>`).join('')}</div>` : ''}
       ${viz.list.length ? `<div class="plug-list">${viz.list.map((v) => `<div><b>${esc(v.name)}</b><span>${esc(v.source ? `eigenes Plugin · ${v.source}` : 'mitgeliefert')}${v.author && v.source ? ` · ${esc(v.author)}` : ''}</span></div>`).join('')}</div>` : ''}
     </div>
@@ -1649,12 +1660,12 @@ async function renderSettings(el, v, fresh) {
   for (const b of $$('[data-plugimport]', el)) b.addEventListener('click', () => importPlugin(b.dataset.plugimport));
   for (const b of $$('[data-unplug]', el)) {
     b.addEventListener('click', async () => {
-      const [kind, id, name] = b.dataset.unplug.split('|');
+      const [id, name, hasViz] = b.dataset.unplug.split('|');
       const ok = await dialog({ title: tx('„{name}“ entfernen?', { name }), text: tx('Das Plugin wird gelöscht. Klangeffekte verschwinden nach dem nächsten Start der App.'), ok: tx('Entfernen'), danger: true });
       if (!ok) return;
       try {
-        await call('remove_plugin_package', { kind, id });
-        if (kind === 'visualizer' && (await vizEnsure())) await vizLoad();
+        await call('remove_plugin_package', { id });
+        if (hasViz === '1' && (await vizEnsure())) await vizLoad();
         toast(tx('„{name}“ entfernt', { name }), 'ok');
         render();
       } catch {}

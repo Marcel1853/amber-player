@@ -387,9 +387,6 @@ I18N.pl = {
  "eigene Lizenz": "własna licencja",
  "keine Lizenz angegeben": "nie podano licencji",
  "ohne Lizenzdatei": "bez pliku licencji",
- "Noch keine Plugin-Pakete installiert. Ein Paket ist eine ZIP-Datei mit plugin.json, dem Plugin und seiner Lizenz.": "Brak zainstalowanych pakietów wtyczek. Pakiet to plik ZIP z plugin.json, wtyczką i jej licencją.",
- ".zip-Paket oder .json, gelten nach Neustart": "pakiet .zip lub .json, działają po ponownym uruchomieniu",
- ".zip-Paket oder .js": "pakiet .zip lub .js",
  "„{name}“ installiert": "Zainstalowano „{name}”",
  "„{name}“ installiert – wirkt nach dem nächsten Start der App": "Zainstalowano „{name}” – zadziała po ponownym uruchomieniu aplikacji",
  "„{name}“ entfernen?": "Usunąć „{name}”?",
@@ -406,5 +403,14 @@ I18N.pl = {
  "Öffnet die Release-Seite mit .deb, .rpm und AppImage": "Otwiera stronę wydania z .deb, .rpm i AppImage",
  "Automatisch nach Updates suchen": "Automatycznie szukaj aktualizacji",
  "Automatisch nach Updates suchen (einmal am Tag bei GitHub)": "Automatycznie szukaj aktualizacji (raz dziennie w GitHub)",
- "Jetzt prüfen": "Sprawdź teraz"
+ "Jetzt prüfen": "Sprawdź teraz",
+ "„{name}“ installiert ({parts}) – Klangeffekte wirken nach dem nächsten Start der App": "Zainstalowano „{name}” ({parts}) – efekty dźwiękowe zadziałają po ponownym uruchomieniu aplikacji",
+ "„{name}“ installiert ({parts})": "Zainstalowano „{name}” ({parts})",
+ "1|Klangeffekt": "efekt dźwiękowy",
+ "n|Klangeffekte": "efekty dźwiękowe",
+ "1|Visualisierung": "wizualizacja",
+ "n|Visualisierungen": "wizualizacje",
+ ".amberplugin-Paket oder .json, gelten nach Neustart": "pakiet .amberplugin lub .json, działają po ponownym uruchomieniu",
+ ".amberplugin-Paket oder .js": "pakiet .amberplugin lub .js",
+ "Noch keine Plugin-Pakete installiert. Ein Paket (.amberplugin) enthält einen oder mehrere Klangeffekte und Visualisierungen mit eigener Lizenz.": "Brak zainstalowanych pakietów wtyczek. Pakiet (.amberplugin) zawiera jeden lub więcej efektów dźwiękowych i wizualizacji z własną licencją."
 };

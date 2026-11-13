@@ -1,0 +1,14 @@
+{
+  "id": "nachtfahrt",
+  "name": "Nachtfahrt",
+  "version": "1.0.0",
+  "author": "Marcel1853",
+  "description": "Beispiel-Paket mit mehreren Teilen: zwei Klangeffekte und eine Visualisierung",
+  "license": "MIT",
+  "homepage": "https://github.com/Marcel1853/amber-player/tree/main/examples/plugins/nachtfahrt",
+  "contents": [
+    { "type": "effect", "file": "effects/kassette.json" },
+    { "type": "effect", "file": "effects/stadion.json" },
+    { "type": "visualizer", "file": "visualizers/polarlicht.js" }
+  ]
+}

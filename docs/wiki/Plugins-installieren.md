@@ -1,15 +1,15 @@
 # Plugins installieren
 
-Klangeffekte und Visualisierungen kommen als **Plugin-Paket** – eine ZIP-Datei mit eigener
-Lizenz, siehe [Plugin-Pakete](Plugin-Pakete.md). Am schnellsten installierst du sie mit
+Klangeffekte und Visualisierungen kommen als **Plugin-Paket** – eine `.amberplugin`-Datei mit einem
+oder mehreren Teilen und eigener Lizenz, siehe [Plugin-Pakete](Plugin-Pakete.md). Am schnellsten installierst du sie mit
 **Installieren** (Effekte bzw. Einstellungen → Plugins) – am PC und am Handy gleich.
 
 Amber Player kennt drei Arten von Plugins:
 
 | Art | Datei | Wo | Wirkt |
 |---|---|---|---|
-| **Klangeffekt** | Paket (`.zip`) oder eine `.json`-Datei | PC und Handy | nach Neustart der App |
-| **Visualisierung** | Paket (`.zip`) oder eine `.js`-Datei | PC und Handy | sofort (PC: nach „Neu laden“) |
+| **Klangeffekt** | Paket (`.amberplugin`) oder eine `.json`-Datei | PC und Handy | nach Neustart der App |
+| **Visualisierung** | Paket (`.amberplugin`) oder eine `.js`-Datei | PC und Handy | sofort (PC: nach „Neu laden“) |
 | **Quelle** (Musik aus dem Netz) | ein Ordner mit `plugin.json` und Programm | nur PC | nach Neustart |
 
 > **Sicherheit:** Klangeffekte sind reine Beschreibungen ohne Programmcode. Visualisierungen
@@ -43,7 +43,7 @@ Datei hineinkopieren, dann
 
 Am Handy gibt es keinen Zugriff auf den App-Ordner, darum:
 
-1. Das Paket (`.zip`) bzw. die `.json`- oder `.js`-Datei aufs Handy laden (Download, Messenger, Kabel …).
+1. Das Paket (`.amberplugin`) bzw. die `.json`- oder `.js`-Datei aufs Handy laden (Download, Messenger, Kabel …).
 2. **Effekte → Installieren** (Klangeffekte) oder **Einstellungen → Plugins → Installieren**.
 3. Datei auswählen.
 
@@ -71,6 +71,7 @@ löschen entfernt alle importierten Plugins (aber auch Bibliothek und Einstellun
 
 Im Quellcode liegen Beispiele zum Ausprobieren: [`examples/plugins/`](https://github.com/Marcel1853/amber-player/tree/main/examples/plugins)
 
+- `nachtfahrt/` – Paket mit mehreren Teilen: zwei Klangeffekte und eine Visualisierung (MIT-Lizenz)
 - `telefon/` – Klangeffekt „Telefon“ (Paket, MIT-Lizenz)
 - `sternenfeld/` – Visualisierung „Sternenfeld“ (Paket, MIT-Lizenz)
 

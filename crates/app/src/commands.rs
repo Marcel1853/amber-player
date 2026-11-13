@@ -473,41 +473,40 @@ pub fn visualizer_plugins() -> Value {
                 .collect()
         })
         .unwrap_or_default();
-    // Plugin-Pakete (Unterordner mit plugin.json)
-    let (packages, _) = amber_core::packages::list(amber_core::packages::Kind::Visualizer);
-    for p in packages {
-        if let Ok(code) = amber_core::packages::main_text(&p) {
-            plugins.push(json!({ "file": format!("{}/{}", p.manifest.id, p.manifest.main), "code": code }));
+    // Visualisierungen aus Plugin-Paketen
+    let (parts, _) = amber_core::packages::contents(amber_core::packages::Kind::Visualizer);
+    for (source, code) in parts {
+        if let Ok(code) = code {
+            plugins.push(json!({ "file": source, "code": code }));
         }
     }
     plugins.sort_by(|a, b| a["file"].as_str().cmp(&b["file"].as_str()));
     json!({ "dir": dir.to_string_lossy(), "plugins": plugins })
 }
 
-/// Plugin-Paket installieren (Dateien aus der ZIP-Datei, von der Oberfläche entpackt).
+/// Plugin-Paket installieren (Dateien aus der .amberplugin-/ZIP-Datei, von der Oberfläche entpackt).
 /// Klangeffekte wirken nach dem nächsten Start, Visualisierungen nach „Neu laden“.
 #[tauri::command]
 pub fn install_plugin_package(files: std::collections::HashMap<String, String>) -> R<Value> {
+    use amber_core::packages::Kind;
     let m = amber_core::packages::install(&files).map_err(|e| format!("{e:#}"))?;
-    Ok(json!({ "id": m.id, "name": m.name, "type": m.kind, "version": m.version }))
+    Ok(json!({
+        "id": m.id, "name": m.name, "version": m.version,
+        "effects": m.count(Kind::Effect), "visualizers": m.count(Kind::Visualizer),
+    }))
 }
 
 /// Alle installierten Plugin-Pakete mit Version, Autor und Lizenz.
 #[tauri::command]
 pub fn plugin_packages() -> Value {
-    use amber_core::packages::{list, Kind};
-    let (mut all, mut errors) = list(Kind::Effect);
-    let (vis, vis_errors) = list(Kind::Visualizer);
-    all.extend(vis);
-    errors.extend(vis_errors);
+    let (all, errors) = amber_core::packages::list();
     json!({ "packages": all, "errors": errors })
 }
 
 /// Plugin-Paket entfernen.
 #[tauri::command]
-pub fn remove_plugin_package(kind: String, id: String) -> R<()> {
-    let kind = amber_core::packages::Kind::parse(&kind).map_err(|e| format!("{e:#}"))?;
-    amber_core::packages::remove(kind, &id).map_err(|e| format!("{e:#}"))
+pub fn remove_plugin_package(id: String) -> R<()> {
+    amber_core::packages::remove(&id).map_err(|e| format!("{e:#}"))
 }
 
 /// Ordner und Ladefehler der Klang-Plugins.

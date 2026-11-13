@@ -11,8 +11,8 @@ Sterne fliegen auf dich zu, der Bass gibt das Tempo vor, die Höhen lassen sie f
 
 ## Installieren
 
-`sternenfeld.zip` in Amber Player unter **Einstellungen → Plugins → Installieren** auswählen.
-Die Visualisierung erscheint sofort als „Sternenfeld ★“. Die ZIP-Datei baust du aus diesem
+`sternenfeld.amberplugin` in Amber Player unter **Einstellungen → Plugins → Installieren** auswählen.
+Die Visualisierung erscheint sofort als „Sternenfeld ★“. Das Paket baust du aus diesem
 Ordner mit:
 
 ```sh

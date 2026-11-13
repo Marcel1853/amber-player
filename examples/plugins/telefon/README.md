@@ -11,8 +11,8 @@ Klingt wie durchs Telefon: Tiefen und Höhen weg, leicht verzerrt, mono.
 
 ## Installieren
 
-`telefon.zip` in Amber Player unter **Effekte → Installieren** auswählen und die App neu
-starten. Die ZIP-Datei baust du aus diesem Ordner mit:
+`telefon.amberplugin` in Amber Player unter **Effekte → Installieren** auswählen und die App neu
+starten. Das Paket baust du aus diesem Ordner mit:
 
 ```sh
 python3 scripts/plugin-pack.py examples/plugins/telefon
