@@ -1,0 +1,59 @@
+{
+    // Startkonfigurationen für Amber Player (Ausführen und Debuggen → Liste oben, oder F5).
+    // Sie laufen als Befehl im Terminal – dafür ist keine zusätzliche Erweiterung nötig.
+    //
+    // Die Test-Instanzen nutzen einen eigenen Datenordner (target/test-data) und laufen neben
+    // dem installierten Player, ohne dessen Bibliothek, Einstellungen oder Lautstärke anzufassen.
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node-terminal",
+            "request": "launch",
+            "name": "Amber Player (Test-Instanz mit Fenster)",
+            "cwd": "${workspaceFolder}",
+            "command": "AMBER_TEST_INSTANCE=1 XDG_DATA_HOME=${workspaceFolder}/target/test-data XDG_CONFIG_HOME=${workspaceFolder}/target/test-data cargo run -p amber-player"
+        },
+        {
+            "type": "node-terminal",
+            "request": "launch",
+            "name": "Amber Player ohne Fenster (Port 7899)",
+            "cwd": "${workspaceFolder}",
+            "command": "AMBER_TEST_INSTANCE=1 XDG_DATA_HOME=${workspaceFolder}/target/test-data XDG_CONFIG_HOME=${workspaceFolder}/target/test-data cargo run -p amber-player -- --headless --port 7899"
+        },
+        {
+            "type": "node-terminal",
+            "request": "launch",
+            "name": "Tests (alle)",
+            "cwd": "${workspaceFolder}",
+            "command": "cargo test --workspace"
+        },
+        {
+            "type": "node-terminal",
+            "request": "launch",
+            "name": "PC-Paket bauen (.deb)",
+            "cwd": "${workspaceFolder}/crates/app",
+            "command": "PATH=$HOME/.cargo/bin:$PATH \"$(command -v cargo-tauri || echo $HOME/projects/test/.cargo/bin/cargo-tauri)\" build --bundles deb && ls -1 ${workspaceFolder}/target/release/bundle/deb/"
+        },
+        {
+            "type": "node-terminal",
+            "request": "launch",
+            "name": "Handy-App bauen (APK)",
+            "cwd": "${workspaceFolder}",
+            "command": "bash scripts/android-apk.sh"
+        },
+        {
+            "type": "node-terminal",
+            "request": "launch",
+            "name": "Handy-App bauen und aufs Handy installieren",
+            "cwd": "${workspaceFolder}",
+            "command": "bash scripts/android-apk.sh --install"
+        },
+        {
+            "type": "node-terminal",
+            "request": "launch",
+            "name": "Handy-Protokoll (logcat, nur Amber Player)",
+            "cwd": "${workspaceFolder}",
+            "command": "ADB=$HOME/projects/test/.android-sdk/platform-tools/adb; $ADB logcat -v time --pid=$($ADB shell pidof de.amberplayer.app)"
+        }
+    ]
+}

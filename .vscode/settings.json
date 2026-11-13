@@ -1,0 +1,96 @@
+{
+  // ===== Amber Player: Rust (Cargo-Workspace) + Tauri-Oberfläche (HTML/JS) + Android (Gradle/Kotlin) =====
+  // Ziel: VS Code startet schnell und lädt nichts Schweres vor (kein Java-Server, kein Gradle, kein C++-Index).
+
+  // Java/Gradle/Maven: Die Android-Projekte (crates/app/gen/android, crates/mobile-plugin/android)
+  // sollen NICHT importiert werden – das würde den Java-Server und Gradle starten.
+  "java.import.gradle.enabled": false,
+  "java.import.maven.enabled": false,
+  "java.autobuild.enabled": false,
+  "java.server.launchMode": "LightWeight",
+  "java.import.generatesMetadataFilesAtProjectRoot": false,
+  "java.configuration.updateBuildConfiguration": "disabled",
+  "java.import.exclusions": ["**/*"],
+  "java.showBuildStatusOnStart.enabled": false,
+  "gradle.autoDetect": "off",
+  "gradle.allowParallelRun": false,
+
+  // C/C++ und CMake: nichts analysieren (Oboe/NDK werden über Cargo gebaut)
+  "C_Cpp.intelliSenseEngine": "disabled",
+  "C_Cpp.autocomplete": "disabled",
+  "C_Cpp.errorSquiggles": "disabled",
+  "cmake.configureOnOpen": false,
+  "cmake.automaticReconfigure": false,
+
+  // C#/.NET: nichts laden
+  "dotnet.automaticallyCreateSolutionInWorkspace": false,
+  "dotnet.defaultSolution": "disable",
+
+  // Rust (falls rust-analyzer einmal installiert wird): Build-Ordner und generierten Android-Code auslassen
+  "rust-analyzer.files.excludeDirs": ["target", "crates/app/gen", "crates/mobile-plugin/android"],
+  "rust-analyzer.cargo.allTargets": false,
+
+  // Große und erzeugte Ordner nicht überwachen
+  "files.watcherExclude": {
+    "**/target/**": true,
+    "**/.git/objects/**": true,
+    "**/node_modules/**": true,
+    "**/build/**": true,
+    "**/.gradle/**": true,
+    "**/.kotlin/**": true,
+    "**/.tauri/**": true,
+    "crates/app/gen/android/app/src/main/jniLibs/**": true,
+    "crates/app/gen/android/app/src/main/assets/**": true,
+    "crates/app/gen/schemas/**": true,
+    "*.exe": true
+  },
+
+  // Bei der Suche auslassen
+  "search.exclude": {
+    "**/target": true,
+    "**/node_modules": true,
+    "**/build": true,
+    "**/.gradle": true,
+    "**/.kotlin": true,
+    "**/.tauri": true,
+    "crates/app/gen/schemas": true,
+    "crates/app/gen/android/app/src/main/jniLibs": true,
+    "crates/app/gen/android/app/src/main/assets": true,
+    "Cargo.lock": true
+  },
+
+  // Im Explorer ausblenden (Build-Ausgaben, die man nie von Hand anfasst)
+  "files.exclude": {
+    "**/target": true,
+    "**/.gradle": true,
+    "**/.kotlin": true,
+    "**/.tauri": true,
+    "crates/app/gen/android/app/build": true,
+    "crates/app/gen/android/buildSrc/build": true,
+    "crates/mobile-plugin/android/build": true,
+    "windows-media-player-11.exe": true
+  },
+
+  // Python (Quellen-Plugins): nur offene Dateien prüfen
+  "python.analysis.indexing": false,
+  "python.analysis.diagnosticMode": "openFilesOnly",
+  "python.analysis.exclude": ["**/target", "**/build", "**/.gradle", "crates/app/gen"],
+
+  // Todo Tree: nur offene Dateien statt beim Start alles durchsuchen
+  "todo-tree.tree.scanMode": "open files",
+
+  // Dateitypen
+  "files.associations": {
+    "*.kts": "kotlin",
+    "tauri.conf.json": "jsonc",
+    "capabilities/*.json": "jsonc"
+  },
+  "files.encoding": "utf8",
+  "files.eol": "\n",
+  "editor.tabSize": 4,
+  "[javascript]": { "editor.tabSize": 2 },
+  "[css]": { "editor.tabSize": 2 },
+  "[html]": { "editor.tabSize": 2 },
+  "[json]": { "editor.tabSize": 2 },
+  "[jsonc]": { "editor.tabSize": 2 }
+}

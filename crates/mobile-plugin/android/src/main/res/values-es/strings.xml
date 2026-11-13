@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="amber_channel">Reproducción</string>
+    <string name="amber_channel_desc">Sonando ahora en Amber Player</string>
+    <string name="amber_prev">Anterior</string>
+    <string name="amber_pause">Pausa</string>
+    <string name="amber_play">Reproducir</string>
+    <string name="amber_next">Siguiente</string>
+</resources>

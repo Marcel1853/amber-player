@@ -1,0 +1,12 @@
+[package]
+name = "tauri-plugin-amber-mobile"
+description = "Android-Teil von Amber Player: Hintergrund-Wiedergabe, Benachrichtigung, Medientasten, Berechtigungen"
+version.workspace = true
+edition.workspace = true
+links = "tauri-plugin-amber-mobile"
+
+[dependencies]
+tauri = { version = "2", features = [] }
+
+[build-dependencies]
+tauri-plugin = { version = "2", features = ["build"] }

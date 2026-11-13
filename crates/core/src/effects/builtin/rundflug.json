@@ -1,0 +1,15 @@
+{
+  "id": "rundflug",
+  "name": "8D-Rundflug",
+  "author": "Amber Player",
+  "description": "Die Musik wandert langsam um deinen Kopf – am besten mit Kopfhörern",
+  "params": [
+    { "id": "tempo", "name": "Tempo", "min": 0.05, "max": 1, "default": 0.15, "step": 0.05, "unit": "Hz" },
+    { "id": "tiefe", "name": "Tiefe", "min": 0, "max": 100, "default": 80, "step": 5, "unit": "%" }
+  ],
+  "chain": [
+    { "type": "width", "amount": 0.4 },
+    { "type": "autopan", "rate": "tempo", "depth": "tiefe / 100" },
+    { "type": "echo", "time": 45, "feedback": 0.2, "mix": 0.15 }
+  ]
+}

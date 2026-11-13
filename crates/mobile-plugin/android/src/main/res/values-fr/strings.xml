@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="amber_channel">Lecture</string>
+    <string name="amber_channel_desc">En cours de lecture dans Amber Player</string>
+    <string name="amber_prev">Précédent</string>
+    <string name="amber_pause">Pause</string>
+    <string name="amber_play">Lecture</string>
+    <string name="amber_next">Suivant</string>
+</resources>

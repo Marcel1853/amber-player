@@ -1,0 +1,20 @@
+{
+  "id": "bass-booster",
+  "name": "Bass-Booster",
+  "author": "Amber Player",
+  "description": "Mehr Druck im Tiefbass, ohne dass es dröhnt",
+  "params": [
+    { "id": "staerke", "name": "Stärke", "min": 0, "max": 12, "default": 6, "step": 0.5, "unit": "dB" },
+    { "id": "frequenz", "name": "Bis Frequenz", "min": 40, "max": 200, "default": 90, "step": 5, "unit": "Hz" }
+  ],
+  "presets": [
+    { "name": "Dezent", "values": [3, 80] },
+    { "name": "Club", "values": [9, 100] },
+    { "name": "Kopfhörer", "values": [6, 60] }
+  ],
+  "chain": [
+    { "type": "lowshelf", "freq": "frequenz", "gain": "staerke", "q": 0.8 },
+    { "type": "peaking", "freq": "frequenz * 2.5", "gain": "-staerke / 4", "q": 1.2 },
+    { "type": "gain", "db": "-staerke / 3" }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "telefon",
+  "name": "Telefon",
+  "author": "Beispiel",
+  "description": "Klingt wie durchs Telefon – Vorlage für eigene Klang-Plugins",
+  "params": [
+    { "id": "staerke", "name": "Stärke", "min": 0, "max": 100, "default": 100, "step": 5, "unit": "%" }
+  ],
+  "mix": "staerke / 100",
+  "chain": [
+    { "type": "highpass", "freq": 400, "q": 0.9 },
+    { "type": "lowpass", "freq": 3200, "q": 0.9 },
+    { "type": "saturate", "drive": 2.5 },
+    { "type": "width", "amount": 0 },
+    { "type": "gain", "db": 2 }
+  ]
+}

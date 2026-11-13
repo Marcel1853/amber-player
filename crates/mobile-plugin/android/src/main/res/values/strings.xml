@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Texte der Wiedergabe-Benachrichtigung (Standard: Englisch) -->
+<resources>
+    <string name="amber_channel">Playback</string>
+    <string name="amber_channel_desc">Now playing in Amber Player</string>
+    <string name="amber_prev">Previous</string>
+    <string name="amber_pause">Pause</string>
+    <string name="amber_play">Play</string>
+    <string name="amber_next">Next</string>
+</resources>

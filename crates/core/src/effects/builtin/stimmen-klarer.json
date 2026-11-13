@@ -1,0 +1,15 @@
+{
+  "id": "stimmen-klarer",
+  "name": "Stimmen klarer",
+  "author": "Amber Player",
+  "description": "Hebt Stimmen hervor – gut für Hörbücher, Podcasts und leise Gesangsstellen",
+  "params": [
+    { "id": "staerke", "name": "Stärke", "min": 0, "max": 100, "default": 50, "step": 5, "unit": "%" }
+  ],
+  "chain": [
+    { "type": "highpass", "freq": "60 + staerke", "q": 0.7 },
+    { "type": "peaking", "freq": 250, "gain": "-staerke / 25", "q": 1.0 },
+    { "type": "peaking", "freq": 2800, "gain": "staerke / 14", "q": 0.9 },
+    { "type": "compressor", "threshold": "-12 - staerke / 8", "ratio": "1 + staerke / 30", "attack": 8, "release": 120, "makeup": "staerke / 30" }
+  ]
+}

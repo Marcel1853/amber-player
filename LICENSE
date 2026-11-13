@@ -1,0 +1,69 @@
+Amber Player – Lizenz
+Copyright © 2026 Marcel1853. Alle Rechte vorbehalten.
+
+Amber Player ist kein Open-Source-Projekt. Der Quellcode ist öffentlich einsehbar,
+gehört aber allein dem Urheber.
+
+1. ERLAUBT
+   a) Den Quellcode und die Dokumentation ansehen und lesen.
+   b) Die vom Urheber veröffentlichten Programmpakete (z. B. .deb, .rpm, .AppImage, .apk)
+      kostenlos installieren und für private und berufliche Zwecke benutzen.
+   c) Eigene Plugins für Amber Player schreiben (Klang-Plugins, Visualisierungen,
+      Quellen-Plugins) und diese frei weitergeben – siehe Abschnitt 3.
+
+2. NICHT ERLAUBT – außer mit vorheriger schriftlicher Erlaubnis des Urhebers
+   a) Den Quellcode ganz oder in Teilen kopieren, verändern oder in andere Programme
+      übernehmen.
+   b) Eigene oder veränderte Versionen von Amber Player bauen und weitergeben,
+      veröffentlichen oder verkaufen.
+   c) Amber Player oder Teile davon unter anderem Namen anbieten.
+   d) Die Programmpakete gegen Geld anbieten oder mit Werbung versehen weitergeben.
+
+3. AUSNAHMEN
+   a) Die Plugin-Vorlagen im Ordner examples/plugins/ sowie die Code-Beispiele in der
+      Dokumentation (docs/) dürfen frei kopiert, verändert und für eigene Plugins
+      verwendet werden.
+   b) Das TouchDeck-Plugin im Ordner integrations/touchdeck/ steht unter seiner eigenen
+      Lizenz (MIT, siehe integrations/touchdeck/LICENSE).
+   c) Programmbibliotheken anderer Urheber, die Amber Player verwendet, stehen unter
+      ihren eigenen Lizenzen.
+
+4. HAFTUNG
+   Amber Player wird ohne jede Gewährleistung bereitgestellt. Der Urheber haftet nicht
+   für Schäden, die durch die Benutzung entstehen, soweit dies gesetzlich zulässig ist.
+
+Für Anfragen (z. B. eine Erlaubnis nach Abschnitt 2): über GitHub an Marcel1853.
+
+------------------------------------------------------------------------------------------
+
+Amber Player – License (English translation; the German text above is authoritative)
+Copyright © 2026 Marcel1853. All rights reserved.
+
+Amber Player is not open source. The source code is publicly visible but remains the
+sole property of the author.
+
+1. YOU MAY
+   a) View and read the source code and documentation.
+   b) Install and use the program packages published by the author (e.g. .deb, .rpm,
+      .AppImage, .apk) free of charge for private and professional purposes.
+   c) Write your own plugins for Amber Player (sound plugins, visualizers, source plugins)
+      and share them freely – see section 3.
+
+2. YOU MAY NOT – without the author's prior written permission
+   a) Copy, modify or reuse the source code in whole or in part in other programs.
+   b) Build, distribute, publish or sell your own or modified versions of Amber Player.
+   c) Offer Amber Player or parts of it under a different name.
+   d) Sell the program packages or redistribute them with advertising.
+
+3. EXCEPTIONS
+   a) The plugin templates in examples/plugins/ and the code examples in the
+      documentation (docs/) may be freely copied, modified and used for your own plugins.
+   b) The TouchDeck plugin in integrations/touchdeck/ is covered by its own license
+      (MIT, see integrations/touchdeck/LICENSE).
+   c) Third-party libraries used by Amber Player are covered by their own licenses.
+
+4. LIABILITY
+   Amber Player is provided without any warranty. To the extent permitted by law, the
+   author is not liable for any damage resulting from its use.
+
+For requests (e.g. permission under section 2): contact Marcel1853 via GitHub.

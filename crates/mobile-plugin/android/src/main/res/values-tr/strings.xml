@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="amber_channel">Çalma</string>
+    <string name="amber_channel_desc">Amber Player’da çalıyor</string>
+    <string name="amber_prev">Önceki</string>
+    <string name="amber_pause">Duraklat</string>
+    <string name="amber_play">Çal</string>
+    <string name="amber_next">Sonraki</string>
+</resources>

@@ -1,0 +1,16 @@
+target/
+# Generiert: Schemas; das Android-Projekt unter gen/android wird mit eingecheckt
+crates/app/gen/schemas/
+crates/app/gen/android/tauri.settings.gradle
+crates/app/gen/android/buildSrc/build/
+crates/app/gen/android/buildSrc/.gradle/
+crates/mobile-plugin/android/build/
+crates/mobile-plugin/android/.gradle/
+
+# Fremde Datei aus dem ursprünglichen Plan – gehört nicht ins Repo
+windows-media-player-11.exe
+
+# Private Plugins (nur auf diesem PC, nie auf GitHub)
+private/
+
+crates/mobile-plugin/android/.tauri/

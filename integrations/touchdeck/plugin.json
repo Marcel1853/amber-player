@@ -1,0 +1,743 @@
+{
+  "id": "amber-player",
+  "name": "Amber Player",
+  "version": "1.0.0",
+  "author": "Marcel1853",
+  "license": "MIT",
+  "description": {
+    "en": "Control the Amber Player music player: play/pause, skip, volume, shuffle, repeat, favourites, playlists, equalizer presets and sleep timer. Shows the current song, progress and volume live. Talks only to Amber Player on this PC or in your home network.",
+    "de": "Steuert den Musik-Player Amber Player: Play/Pause, Titel springen, Lautstärke, Zufall, Wiederholen, Favoriten, Playlisten, Equalizer-Presets und Sleep-Timer. Zeigt Titel, Fortschritt und Lautstärke live. Spricht nur mit Amber Player auf diesem PC oder im Heimnetz."
+  },
+  "main": "plugin.js",
+  "permissions": {
+    "http": [
+      "lan"
+    ]
+  },
+  "settings": [
+    {
+      "key": "url",
+      "label": {
+        "en": "Amber Player address",
+        "de": "Adresse von Amber Player"
+      },
+      "type": "text",
+      "default": "http://127.0.0.1:7878"
+    },
+    {
+      "key": "token",
+      "label": {
+        "en": "Token (only if Amber Player is shared in the home network)",
+        "de": "Token (nur wenn Amber Player im Heimnetz freigegeben ist)"
+      },
+      "type": "password",
+      "default": ""
+    },
+    {
+      "key": "interval",
+      "label": {
+        "en": "Refresh live displays every … seconds",
+        "de": "Live-Anzeigen alle … Sekunden aktualisieren"
+      },
+      "type": "number",
+      "default": 1
+    }
+  ],
+  "lives": [
+    {
+      "id": "now",
+      "label": {
+        "en": "Now playing (title – artist)",
+        "de": "Läuft gerade (Titel – Interpret)"
+      }
+    },
+    {
+      "id": "title",
+      "label": {
+        "en": "Title",
+        "de": "Titel"
+      }
+    },
+    {
+      "id": "artist",
+      "label": {
+        "en": "Artist",
+        "de": "Interpret"
+      }
+    },
+    {
+      "id": "album",
+      "label": {
+        "en": "Album",
+        "de": "Album"
+      }
+    },
+    {
+      "id": "progress",
+      "label": {
+        "en": "Progress (bar)",
+        "de": "Fortschritt (Balken)"
+      }
+    },
+    {
+      "id": "state",
+      "label": {
+        "en": "Playing (on while playing)",
+        "de": "Wiedergabe (an, solange Musik läuft)"
+      }
+    },
+    {
+      "id": "volume",
+      "label": {
+        "en": "Volume (bar)",
+        "de": "Lautstärke (Balken)"
+      }
+    },
+    {
+      "id": "shuffle",
+      "label": {
+        "en": "Shuffle",
+        "de": "Zufallswiedergabe"
+      }
+    },
+    {
+      "id": "repeat",
+      "label": {
+        "en": "Repeat",
+        "de": "Wiederholen"
+      }
+    },
+    {
+      "id": "favorite",
+      "label": {
+        "en": "Current song is a favourite",
+        "de": "Laufender Titel ist Favorit"
+      }
+    },
+    {
+      "id": "eq",
+      "label": {
+        "en": "Equalizer on/off",
+        "de": "Equalizer an/aus"
+      }
+    },
+    {
+      "id": "sleep",
+      "label": {
+        "en": "Sleep timer",
+        "de": "Sleep-Timer"
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "toggle",
+      "label": {
+        "en": "Play / pause",
+        "de": "Abspielen / Pause"
+      },
+      "icon": "⏯️",
+      "fields": []
+    },
+    {
+      "id": "play",
+      "label": {
+        "en": "Play",
+        "de": "Abspielen"
+      },
+      "icon": "▶️",
+      "fields": []
+    },
+    {
+      "id": "pause",
+      "label": {
+        "en": "Pause",
+        "de": "Pause"
+      },
+      "icon": "⏸️",
+      "fields": []
+    },
+    {
+      "id": "stop",
+      "label": {
+        "en": "Stop",
+        "de": "Stopp"
+      },
+      "icon": "⏹️",
+      "fields": []
+    },
+    {
+      "id": "next",
+      "label": {
+        "en": "Next song",
+        "de": "Nächster Titel"
+      },
+      "icon": "⏭️",
+      "fields": []
+    },
+    {
+      "id": "prev",
+      "label": {
+        "en": "Previous song",
+        "de": "Voriger Titel"
+      },
+      "icon": "⏮️",
+      "fields": []
+    },
+    {
+      "id": "volume",
+      "label": {
+        "en": "Volume",
+        "de": "Lautstärke"
+      },
+      "icon": "🔊",
+      "fields": [
+        {
+          "key": "mode",
+          "label": {
+            "en": "Mode",
+            "de": "Modus"
+          },
+          "type": "select",
+          "default": "set",
+          "options": [
+            {
+              "value": "set",
+              "label": {
+                "en": "Set to",
+                "de": "Setzen auf"
+              }
+            },
+            {
+              "value": "up",
+              "label": {
+                "en": "Louder (+5)",
+                "de": "Lauter (+5)"
+              }
+            },
+            {
+              "value": "down",
+              "label": {
+                "en": "Quieter (−5)",
+                "de": "Leiser (−5)"
+              }
+            }
+          ]
+        },
+        {
+          "key": "value",
+          "label": {
+            "en": "Volume (0–100)",
+            "de": "Lautstärke (0–100)"
+          },
+          "type": "number",
+          "min": 0,
+          "max": 100,
+          "default": 50,
+          "showIf": {
+            "mode": [
+              "set"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mute",
+      "label": {
+        "en": "Mute on/off",
+        "de": "Stumm an/aus"
+      },
+      "icon": "🔇",
+      "fields": []
+    },
+    {
+      "id": "seek",
+      "label": {
+        "en": "Jump in song",
+        "de": "Im Titel springen"
+      },
+      "icon": "⏩",
+      "fields": [
+        {
+          "key": "mode",
+          "label": {
+            "en": "Direction",
+            "de": "Richtung"
+          },
+          "type": "select",
+          "default": "forward",
+          "options": [
+            {
+              "value": "forward",
+              "label": {
+                "en": "10 s forward",
+                "de": "10 s vor"
+              }
+            },
+            {
+              "value": "back",
+              "label": {
+                "en": "10 s back",
+                "de": "10 s zurück"
+              }
+            },
+            {
+              "value": "to",
+              "label": {
+                "en": "To position",
+                "de": "An Stelle"
+              }
+            }
+          ]
+        },
+        {
+          "key": "seconds",
+          "label": {
+            "en": "Position in seconds",
+            "de": "Stelle in Sekunden"
+          },
+          "type": "number",
+          "min": 0,
+          "default": 0,
+          "showIf": {
+            "mode": [
+              "to"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "shuffle",
+      "label": {
+        "en": "Shuffle",
+        "de": "Zufallswiedergabe"
+      },
+      "icon": "🔀",
+      "fields": [
+        {
+          "key": "mode",
+          "label": {
+            "en": "Mode",
+            "de": "Modus"
+          },
+          "type": "select",
+          "default": "toggle",
+          "options": [
+            {
+              "value": "toggle",
+              "label": {
+                "en": "Toggle",
+                "de": "Umschalten"
+              }
+            },
+            {
+              "value": "on",
+              "label": {
+                "en": "On",
+                "de": "An"
+              }
+            },
+            {
+              "value": "off",
+              "label": {
+                "en": "Off",
+                "de": "Aus"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "repeat",
+      "label": {
+        "en": "Repeat",
+        "de": "Wiederholen"
+      },
+      "icon": "🔁",
+      "fields": [
+        {
+          "key": "mode",
+          "label": {
+            "en": "Mode",
+            "de": "Modus"
+          },
+          "type": "select",
+          "default": "cycle",
+          "options": [
+            {
+              "value": "cycle",
+              "label": {
+                "en": "Next mode (off → all → one)",
+                "de": "Weiterschalten (aus → alle → einen)"
+              }
+            },
+            {
+              "value": "off",
+              "label": {
+                "en": "Off",
+                "de": "Aus"
+              }
+            },
+            {
+              "value": "all",
+              "label": {
+                "en": "All",
+                "de": "Alle"
+              }
+            },
+            {
+              "value": "one",
+              "label": {
+                "en": "This song",
+                "de": "Diesen Titel"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "favorite",
+      "label": {
+        "en": "Current song: favourite on/off",
+        "de": "Laufender Titel: Favorit an/aus"
+      },
+      "icon": "❤️",
+      "fields": []
+    },
+    {
+      "id": "playlist",
+      "label": {
+        "en": "Play playlist",
+        "de": "Playlist abspielen"
+      },
+      "icon": "📃",
+      "fields": [
+        {
+          "key": "name",
+          "label": {
+            "en": "Playlist name or ID",
+            "de": "Name oder ID der Playlist"
+          },
+          "type": "text"
+        },
+        {
+          "key": "shuffle",
+          "label": {
+            "en": "Shuffle",
+            "de": "Zufällig"
+          },
+          "type": "checkbox",
+          "default": false
+        }
+      ]
+    },
+    {
+      "id": "music",
+      "label": {
+        "en": "Play from library",
+        "de": "Aus der Bibliothek abspielen"
+      },
+      "icon": "🎵",
+      "fields": [
+        {
+          "key": "artist",
+          "label": {
+            "en": "Artist (empty = any)",
+            "de": "Interpret (leer = alle)"
+          },
+          "type": "text"
+        },
+        {
+          "key": "album",
+          "label": {
+            "en": "Album (empty = any)",
+            "de": "Album (leer = alle)"
+          },
+          "type": "text"
+        },
+        {
+          "key": "genre",
+          "label": {
+            "en": "Genre (empty = any)",
+            "de": "Genre (leer = alle)"
+          },
+          "type": "text"
+        },
+        {
+          "key": "search",
+          "label": {
+            "en": "Search term (empty = none)",
+            "de": "Suchbegriff (leer = keiner)"
+          },
+          "type": "text"
+        },
+        {
+          "key": "favorites",
+          "label": {
+            "en": "Favourites only",
+            "de": "Nur Favoriten"
+          },
+          "type": "checkbox",
+          "default": false
+        },
+        {
+          "key": "shuffle",
+          "label": {
+            "en": "Shuffle",
+            "de": "Zufällig"
+          },
+          "type": "checkbox",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "effect",
+      "label": {
+        "en": "Sound effect",
+        "de": "Klangeffekt"
+      },
+      "icon": "🎛️",
+      "fields": [
+        {
+          "key": "effect",
+          "label": {
+            "en": "Effect",
+            "de": "Effekt"
+          },
+          "type": "select",
+          "default": "equalizer",
+          "options": [
+            {
+              "value": "equalizer",
+              "label": "Equalizer"
+            },
+            {
+              "value": "crossfeed",
+              "label": {
+                "en": "Headphone crossfeed",
+                "de": "Kopfhörer-Crossfeed"
+              }
+            },
+            {
+              "value": "stereo_width",
+              "label": {
+                "en": "Stereo width",
+                "de": "Stereobreite"
+              }
+            },
+            {
+              "value": "limiter",
+              "label": {
+                "en": "Preamp & limiter",
+                "de": "Vorverstärker & Limiter"
+              }
+            }
+          ]
+        },
+        {
+          "key": "mode",
+          "label": {
+            "en": "Mode",
+            "de": "Modus"
+          },
+          "type": "select",
+          "default": "toggle",
+          "options": [
+            {
+              "value": "toggle",
+              "label": {
+                "en": "Toggle",
+                "de": "Umschalten"
+              }
+            },
+            {
+              "value": "on",
+              "label": {
+                "en": "On",
+                "de": "An"
+              }
+            },
+            {
+              "value": "off",
+              "label": {
+                "en": "Off",
+                "de": "Aus"
+              }
+            },
+            {
+              "value": "preset",
+              "label": {
+                "en": "Load preset",
+                "de": "Preset laden"
+              }
+            }
+          ]
+        },
+        {
+          "key": "preset",
+          "label": {
+            "en": "Preset (e.g. Rock, Pop, Bass, Klassik, Stimme, Neutral)",
+            "de": "Preset (z. B. Rock, Pop, Bass, Klassik, Stimme, Neutral)"
+          },
+          "type": "text",
+          "showIf": {
+            "mode": [
+              "preset"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "sleep",
+      "label": {
+        "en": "Sleep timer",
+        "de": "Sleep-Timer"
+      },
+      "icon": "🌙",
+      "fields": [
+        {
+          "key": "minutes",
+          "label": {
+            "en": "Pause after … minutes (0 = off)",
+            "de": "Pausieren nach … Minuten (0 = aus)"
+          },
+          "type": "number",
+          "min": 0,
+          "max": 600,
+          "default": 30
+        }
+      ]
+    },
+    {
+      "id": "status",
+      "label": {
+        "en": "Current song (as data)",
+        "de": "Aktueller Titel (als Daten)"
+      },
+      "icon": "📊",
+      "fields": [],
+      "returns": [
+        {
+          "key": "title",
+          "label": {
+            "en": "Title",
+            "de": "Titel"
+          },
+          "unit": "text"
+        },
+        {
+          "key": "artist",
+          "label": {
+            "en": "Artist",
+            "de": "Interpret"
+          },
+          "unit": "text"
+        },
+        {
+          "key": "album",
+          "label": "Album",
+          "unit": "text"
+        },
+        {
+          "key": "position",
+          "label": {
+            "en": "Position",
+            "de": "Position"
+          },
+          "unit": "seconds"
+        },
+        {
+          "key": "duration",
+          "label": {
+            "en": "Length",
+            "de": "Länge"
+          },
+          "unit": "seconds"
+        },
+        {
+          "key": "volume",
+          "label": {
+            "en": "Volume",
+            "de": "Lautstärke"
+          },
+          "unit": "percent"
+        }
+      ]
+    }
+  ],
+  "triggers": [
+    {
+      "id": "track",
+      "label": {
+        "en": "New song started",
+        "de": "Neuer Titel gestartet"
+      },
+      "icon": "🎵",
+      "fields": [
+        {
+          "key": "artist",
+          "label": {
+            "en": "Artist (empty = any)",
+            "de": "Interpret (leer = jeder)"
+          },
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "id": "state",
+      "label": {
+        "en": "Playback started / paused / stopped",
+        "de": "Wiedergabe gestartet / pausiert / gestoppt"
+      },
+      "icon": "⏯️",
+      "fields": [
+        {
+          "key": "state",
+          "label": {
+            "en": "State (empty = any)",
+            "de": "Zustand (leer = jeder)"
+          },
+          "type": "select",
+          "default": "",
+          "options": [
+            {
+              "value": "",
+              "label": {
+                "en": "Any",
+                "de": "Jeder"
+              }
+            },
+            {
+              "value": "playing",
+              "label": {
+                "en": "Playing",
+                "de": "Läuft"
+              }
+            },
+            {
+              "value": "paused",
+              "label": {
+                "en": "Paused",
+                "de": "Pausiert"
+              }
+            },
+            {
+              "value": "stopped",
+              "label": {
+                "en": "Stopped",
+                "de": "Gestoppt"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

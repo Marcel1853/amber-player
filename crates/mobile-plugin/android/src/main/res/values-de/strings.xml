@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="amber_channel">Wiedergabe</string>
+    <string name="amber_channel_desc">Läuft gerade in Amber Player</string>
+    <string name="amber_prev">Zurück</string>
+    <string name="amber_pause">Pause</string>
+    <string name="amber_play">Abspielen</string>
+    <string name="amber_next">Weiter</string>
+</resources>

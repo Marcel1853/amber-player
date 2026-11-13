@@ -1,0 +1,19 @@
+{
+  "id": "echo",
+  "name": "Echo",
+  "author": "Amber Player",
+  "description": "Wiederholungen wie in einer Halle oder am Berg",
+  "params": [
+    { "id": "zeit", "name": "Abstand", "min": 50, "max": 1200, "default": 380, "step": 10, "unit": "ms" },
+    { "id": "wiederholung", "name": "Wiederholungen", "min": 0, "max": 90, "default": 35, "step": 1, "unit": "%" },
+    { "id": "anteil", "name": "Anteil", "min": 0, "max": 100, "default": 30, "step": 1, "unit": "%" }
+  ],
+  "presets": [
+    { "name": "Kleiner Raum", "values": [90, 20, 20] },
+    { "name": "Berg", "values": [700, 45, 40] }
+  ],
+  "chain": [
+    { "type": "echo", "time": "zeit", "feedback": "wiederholung / 100", "mix": "anteil / 100" },
+    { "type": "gain", "db": "-anteil / 25" }
+  ]
+}

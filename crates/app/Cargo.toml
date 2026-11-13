@@ -1,0 +1,43 @@
+[package]
+name = "amber-player"
+description = "Moderner Musik-Player mit Playlisten, Effekt-Plugins, HTTP-API und MCP-Server"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+name = "amber_player_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# Am Handy ohne HTTP-API und MCP-Server (das Handy ist dort nur Gegenstelle)
+amber-core = { path = "../core", default-features = false }
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+log.workspace = true
+tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-dialog = "2"
+# Android-Teil (Benachrichtigung, Medientasten); am PC leer
+tauri-plugin-amber-mobile = { path = "../mobile-plugin" }
+env_logger = "0.11"
+rand = "0.8"
+dirs = "5"
+qrcode = { version = "0.14", default-features = false, features = ["svg"] }
+# Senderlogos fürs Radio laden (gleiche Version wie im Kern)
+ureq = "2"
+
+
+# Nur am PC: Medientasten (MPRIS), Leistensymbol-Fenster, nur ein Player gleichzeitig
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+amber-core = { path = "../core", features = ["server"] }
+tauri-plugin-single-instance = "2"
+souvlaki = "0.8"
+raw-window-handle = "0.6"
+
+# Android: Protokoll ins Handy-Log (logcat)
+[target.'cfg(target_os = "android")'.dependencies]
+android_logger = "0.14"

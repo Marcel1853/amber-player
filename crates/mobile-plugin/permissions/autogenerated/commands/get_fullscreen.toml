@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-get-fullscreen"
+description = "Enables the get_fullscreen command without any pre-configured scope."
+commands.allow = ["get_fullscreen"]
+
+[[permission]]
+identifier = "deny-get-fullscreen"
+description = "Denies the get_fullscreen command without any pre-configured scope."
+commands.deny = ["get_fullscreen"]

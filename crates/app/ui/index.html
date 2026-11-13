@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Amber Player</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Linke Spalte: der Player selbst -->
+    <aside id="deck">
+      <div class="deck-glow" id="deckGlow"></div>
+      <button class="icon-btn deck-close" id="deckClose" title="Schließen"><span data-icon="chevron-down"></span></button>
+      <div class="brand">
+        <div class="brand-logo" data-icon="wave"></div>
+        <span>Amber <em>Player</em></span>
+      </div>
+
+      <div class="disc-wrap">
+        <div class="disc" id="disc"></div>
+        <div class="cover-big" id="barCover" title="Zum Album"></div>
+      </div>
+
+      <div class="meta">
+        <div class="t" id="barTitle">Nichts ausgewählt</div>
+        <div class="a" id="barArtist"></div>
+        <div class="al" id="barAlbum"></div>
+      </div>
+
+      <div class="progress">
+        <input type="range" id="seek" min="0" max="1000" value="0" step="1" />
+        <div class="times"><span id="pos">0:00</span><span id="dur">0:00</span></div>
+      </div>
+
+      <div class="controls">
+        <button class="ctl" id="shuffle" title="Zufallswiedergabe (S)"><span data-icon="shuffle"></span></button>
+        <button class="ctl" id="prev" title="Zurück (Strg+←)"><span data-icon="prev" data-fill></span></button>
+        <button class="ctl play" id="play" title="Abspielen (Leertaste)"><span data-icon="play" data-fill></span></button>
+        <button class="ctl" id="next" title="Weiter (Strg+→)"><span data-icon="next" data-fill></span></button>
+        <button class="ctl" id="repeat" title="Wiederholen (R)"><span data-icon="repeat"></span></button>
+      </div>
+
+      <div class="deck-row">
+        <button class="ctl small" id="mute" title="Stumm (M)"><span data-icon="volume"></span></button>
+        <input type="range" class="vol" id="volume" min="0" max="100" value="70" />
+        <button class="ctl small" id="barFav" title="Favorit"><span data-icon="heart"></span></button>
+        <button class="ctl small" id="sleep" title="Sleep-Timer"><span data-icon="moon"></span></button>
+        <button class="ctl small" id="vizBtn" title="Visualisierung (V)"><span data-icon="activity"></span></button>
+      </div>
+
+      <div class="upnext">
+        <div class="upnext-head">
+          <span>Als Nächstes</span>
+          <button class="link-btn" id="clearQueue" title="Alles nach dem laufenden Titel entfernen">Leeren</button>
+        </div>
+        <div class="q-list" id="queueList"></div>
+      </div>
+    </aside>
+
+    <!-- Rechte Seite: Bibliothek -->
+    <main id="main">
+      <header class="top">
+        <div class="nav-btns">
+          <button class="icon-btn" id="back" title="Zurück"><span data-icon="chevron-left"></span></button>
+          <button class="icon-btn" id="forward" title="Vor"><span data-icon="chevron-right"></span></button>
+        </div>
+        <nav class="tabs" id="tabs">
+          <button data-view="tracks">Titel</button>
+          <button data-view="albums">Alben</button>
+          <button data-view="artists">Interpreten</button>
+          <button data-view="genres">Genres</button>
+          <button data-view="playlists">Playlisten</button>
+          <button data-view="radio">Radio</button>
+          <button data-view="online" id="onlineTab" hidden>Online</button>
+          <button data-view="favorites">Favoriten</button>
+          <button data-view="recent">Verlauf</button>
+        </nav>
+        <label class="search">
+          <span data-icon="search"></span>
+          <input id="search" type="search" placeholder="Suchen …" autocomplete="off" spellcheck="false" />
+        </label>
+        <button class="icon-btn" data-view="effects" title="Effekte"><span data-icon="sliders"></span></button>
+        <button class="icon-btn" data-view="settings" title="Einstellungen"><span data-icon="settings"></span></button>
+      </header>
+      <div id="scanInfo"><span class="txt"></span><div class="bar"><div></div></div></div>
+      <section id="view"></section>
+      <div id="dropTray"></div>
+    </main>
+  </div>
+
+  <!-- Handy: Navigationsleiste unten -->
+  <nav id="bottomNav">
+    <button data-view="tracks"><span data-icon="music"></span><small>Titel</small></button>
+    <button data-view="albums"><span data-icon="disc"></span><small>Alben</small></button>
+    <button data-view="playlists"><span data-icon="playlist"></span><small>Playlisten</small></button>
+    <button data-view="radio"><span data-icon="radio"></span><small>Radio</small></button>
+    <button id="moreBtn"><span data-icon="list"></span><small>Mehr</small></button>
+  </nav>
+
+  <!-- Visualisierung: zeichnet ein Web Worker mit Plugins auf die Leinwand -->
+  <div id="visual">
+    <canvas id="vizCanvas"></canvas>
+    <div class="viz-top">
+      <div class="viz-modes" id="vizModes"></div>
+      <div class="viz-tools">
+        <button class="viz-btn" id="vizFull" title="Vollbild (F)"><span data-icon="maximize"></span></button>
+        <button class="viz-btn" id="vizClose" title="Schließen (Esc)"><span data-icon="x"></span></button>
+      </div>
+    </div>
+    <div class="viz-bottom">
+      <div class="viz-now"><div class="t" id="vizTitle"></div><div class="a" id="vizArtist"></div></div>
+      <div class="viz-ctl">
+        <button class="viz-btn" id="vizPrev" title="Zurück"><span data-icon="prev" data-fill></span></button>
+        <button class="viz-btn big" id="vizPlay" title="Abspielen / Pause"><span data-icon="play" data-fill></span></button>
+        <button class="viz-btn" id="vizNext" title="Weiter"><span data-icon="next" data-fill></span></button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal"></div>
+  <div id="toasts"></div>
+
+  <script src="i18n.js"></script>
+  <script src="lang/en.js"></script>
+  <script src="lang/es.js"></script>
+  <script src="lang/fr.js"></script>
+  <script src="lang/it.js"></script>
+  <script src="lang/nl.js"></script>
+  <script src="lang/pl.js"></script>
+  <script src="lang/tr.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

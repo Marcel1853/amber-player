@@ -1,0 +1,20 @@
+{
+  "id": "altes-radio",
+  "name": "Altes Radio",
+  "author": "Amber Player",
+  "description": "Klingt wie aus einem alten Röhrenradio: schmal, warm und leicht verzerrt",
+  "params": [
+    { "id": "alter", "name": "Alter", "min": 0, "max": 100, "default": 70, "step": 1, "unit": "%" }
+  ],
+  "presets": [
+    { "name": "Küchenradio", "values": [55] },
+    { "name": "Grammophon", "values": [100] }
+  ],
+  "chain": [
+    { "type": "highpass", "freq": "150 + alter * 4", "q": 0.8 },
+    { "type": "lowpass", "freq": "6000 - alter * 35", "q": 0.9 },
+    { "type": "peaking", "freq": 1200, "gain": "alter / 12", "q": 1.0 },
+    { "type": "saturate", "drive": "1 + alter / 25" },
+    { "type": "width", "amount": "1 - alter / 100" }
+  ]
+}
