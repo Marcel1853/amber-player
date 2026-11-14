@@ -2,6 +2,8 @@
 
 Once the phone app is paired with Amber Player on your PC, you can
 
+<table><tr><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/handy-pc.png" alt="Controlling the PC on the phone" width="260"><br><sub>Controlling the PC on the phone</sub></td><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/tablet-pc.png" alt="and on the tablet (landscape)" width="560"><br><sub>and on the tablet (landscape)</sub></td></tr></table>
+
 - **control the PC:** see what's playing, play/pause, skip, volume, start tracks and playlists
   on the PC,
 - **stream from the PC:** search the PC's music and listen to tracks or whole playlists on your

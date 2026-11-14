@@ -3,6 +3,9 @@
 Open them with **V** or the icon in the player. Choose the visualizer at the top; at the bottom
 you see the title (long names scroll) and the controls.
 
+<table><tr><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/pc-visualisierung.png" alt="Ring with a spinning cover"><br><sub>Ring with a spinning cover</sub></td><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/pc-auswahl.png" alt="Picker with search, stars and plugin packages"><br><sub>Picker with search, stars and plugin packages</sub></td></tr></table>
+<table><tr><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/pc-polarlicht.png" alt="Aurora from the “Nachtfahrt” package"><br><sub>Aurora from the “Nachtfahrt” package</sub></td><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/handy-visualisierung.png" alt="On the phone behind “Now playing”" width="260"><br><sub>On the phone behind “Now playing”</sub></td></tr></table>
+
 | Visualizer | Description |
 |---|---|
 | **Bars** | frequency bars with reflection and falling peaks |

@@ -4,6 +4,8 @@
 (an/aus), Regler und oft fertige **Presets**. Änderungen wirken sofort auf die laufende Musik
 und werden gespeichert.
 
+<table><tr><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/pc-effekte.png" alt="Klangeffekte am PC – hier der Hall mit allen Reglern"><br><sub>Klangeffekte am PC – hier der Hall mit allen Reglern</sub></td></tr></table>
+
 ## Mitgelieferte Effekte
 
 | Effekt | Wofür |

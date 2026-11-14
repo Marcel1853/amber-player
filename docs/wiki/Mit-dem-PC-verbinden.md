@@ -2,6 +2,8 @@
 
 Ist die Handy-App mit dem Amber Player am PC gekoppelt, kannst du
 
+<table><tr><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/handy-pc.png" alt="PC steuern am Handy" width="260"><br><sub>PC steuern am Handy</sub></td><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/tablet-pc.png" alt="und am Tablet (quer)" width="560"><br><sub>und am Tablet (quer)</sub></td></tr></table>
+
 - **den PC fernsteuern:** sehen, was läuft, Play/Pause, Titel wechseln, Lautstärke, Titel und
   Playlisten am PC starten,
 - **vom PC streamen:** in der Musik des PCs suchen und Titel oder ganze Playlisten auf dem

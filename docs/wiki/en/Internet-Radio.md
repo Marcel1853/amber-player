@@ -3,6 +3,9 @@
 Amber Player searches the free station database [radio-browser.info](https://www.radio-browser.info)
 with more than 50,000 stations from all over the world.
 
+<table><tr><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/handy-radio.png" alt="Radio on the phone" width="240"><br><sub>Radio on the phone</sub></td><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/tablet-radio.png" alt="on the tablet" width="560"><br><sub>on the tablet</sub></td></tr></table>
+<table><tr><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/tablet-visualisierung.png" alt="Visualizer “Ring” with the station logo" width="560"><br><sub>Visualizer “Ring” with the station logo</sub></td></tr></table>
+
 ## Find and listen
 
 1. Open **Radio**. Without a search term you see the most popular stations of the selected

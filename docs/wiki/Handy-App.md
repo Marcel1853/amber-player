@@ -4,6 +4,8 @@ Die Android-App ist ein vollwertiger Amber Player: eigene Bibliothek, Playlisten
 Visualisierungen und Radio – auch ganz ohne PC. Mit einem gekoppelten PC kommen Fernsteuerung
 und Streaming dazu, siehe [Mit dem PC verbinden](Mit-dem-PC-verbinden.md).
 
+<table><tr><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/handy-laeuft-gerade.png" alt="Läuft gerade" width="240"><br><sub>Läuft gerade</sub></td><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/handy-visualisierung.png" alt="Mit Visualisierung dahinter" width="240"><br><sub>Mit Visualisierung dahinter</sub></td><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/handy-mehr.png" alt="„Mehr“ mit „Leiste anpassen“" width="240"><br><sub>„Mehr“ mit „Leiste anpassen“</sub></td></tr></table>
+
 Installation: [Installation → Android](Installation.md#android-handy-und-tablet)
 
 ## Aufbau

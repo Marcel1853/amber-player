@@ -1,5 +1,7 @@
 # Bedienung
 
+
+<table><tr><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/pc-bibliothek.png" alt="Amber Player am PC: links „Läuft gerade“ und Als Nächstes, rechts die Bibliothek"><br><sub>Amber Player am PC: links „Läuft gerade“ und Als Nächstes, rechts die Bibliothek</sub></td></tr></table>
 ## Die Oberfläche
 
 **Am PC** hat Amber Player zwei Bereiche:

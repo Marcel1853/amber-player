@@ -3,6 +3,9 @@
 Öffnen mit **V** oder dem Symbol in der Player-Leiste. Oben links wählst du das Motiv, unten
 siehst du den Titel (lange Namen laufen durch) und die Steuerung.
 
+<table><tr><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/pc-visualisierung.png" alt="Ring mit drehendem Cover"><br><sub>Ring mit drehendem Cover</sub></td><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/pc-auswahl.png" alt="Auswahl mit Suche, Sternen und Plugin-Paketen"><br><sub>Auswahl mit Suche, Sternen und Plugin-Paketen</sub></td></tr></table>
+<table><tr><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/pc-polarlicht.png" alt="Polarlicht aus dem Paket „Nachtfahrt“"><br><sub>Polarlicht aus dem Paket „Nachtfahrt“</sub></td><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/handy-visualisierung.png" alt="Am Handy hinter „Läuft gerade“" width="260"><br><sub>Am Handy hinter „Läuft gerade“</sub></td></tr></table>
+
 ## Auswahl
 
 Der Knopf oben links öffnet die Liste aller Visualisierungen – geordnet nach **Favoriten**,

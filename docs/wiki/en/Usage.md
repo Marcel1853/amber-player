@@ -1,5 +1,7 @@
 # Usage
 
+
+<table><tr><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/pc-bibliothek.png" alt="Amber Player on the PC: “Now playing” and Up next on the left, the library on the right"><br><sub>Amber Player on the PC: “Now playing” and Up next on the left, the library on the right</sub></td></tr></table>
 ## The interface
 
 **On the PC** Amber Player has two areas:

@@ -3,6 +3,9 @@
 Amber Player durchsucht die freie Senderdatenbank [radio-browser.info](https://www.radio-browser.info)
 mit über 50.000 Sendern aus aller Welt.
 
+<table><tr><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/handy-radio.png" alt="Radio am Handy" width="240"><br><sub>Radio am Handy</sub></td><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/tablet-radio.png" alt="am Tablet" width="560"><br><sub>am Tablet</sub></td></tr></table>
+<table><tr><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/tablet-visualisierung.png" alt="Visualisierung „Ring“ mit Senderlogo" width="560"><br><sub>Visualisierung „Ring“ mit Senderlogo</sub></td></tr></table>
+
 ## Sender finden und hören
 
 1. **Radio** öffnen. Ohne Suchbegriff siehst du die beliebtesten Sender des gewählten Landes.

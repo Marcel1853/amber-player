@@ -4,6 +4,8 @@ Open them with the **sliders icon** at the top of the library. Each effect has a
 sliders and often ready-made **presets**. Changes apply immediately to the music that's playing
 and are saved.
 
+<table><tr><td align="center" valign="top"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/pc-effekte.png" alt="Sound effects on the PC – here the reverb with all sliders"><br><sub>Sound effects on the PC – here the reverb with all sliders</sub></td></tr></table>
+
 ## Included effects
 
 | Effect | Purpose |
