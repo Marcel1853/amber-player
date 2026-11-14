@@ -1,0 +1,51 @@
+{
+  "id": "amber-de-esser",
+  "name": "Amber Zischlaute zähmen",
+  "author": "Marcel1853",
+  "description": "Dämpft scharfe S-Laute und schrille Höhen bei Stimmen",
+  "params": [
+    {
+      "id": "staerke",
+      "name": "Stärke",
+      "min": 0,
+      "max": 100,
+      "default": 50,
+      "step": 5,
+      "unit": "%"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Leicht",
+      "values": [
+        25
+      ]
+    },
+    {
+      "name": "Normal",
+      "values": [
+        50
+      ]
+    },
+    {
+      "name": "Stark",
+      "values": [
+        85
+      ]
+    }
+  ],
+  "chain": [
+    {
+      "type": "peaking",
+      "freq": 5500,
+      "gain": "-staerke / 20",
+      "q": 2
+    },
+    {
+      "type": "peaking",
+      "freq": 7000,
+      "gain": "-staerke / 9",
+      "q": 2.5
+    }
+  ]
+}

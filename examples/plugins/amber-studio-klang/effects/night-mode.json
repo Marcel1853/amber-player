@@ -1,0 +1,19 @@
+{
+  "id": "amber-night-mode",
+  "name": "Amber Nachtmodus",
+  "author": "Marcel1853",
+  "description": "Leise hören ohne Lautstärkesprünge: gebändigte Bässe und Spitzen",
+  "params": [
+    { "id": "staerke", "name": "Stärke", "min": 0, "max": 100, "default": 60, "step": 5, "unit": "%" }
+  ],
+  "presets": [
+    { "name": "Abend", "values": [40] },
+    { "name": "Nacht", "values": [70] },
+    { "name": "Flüsterleise", "values": [100] }
+  ],
+  "chain": [
+    { "type": "lowshelf", "freq": 120, "gain": "-staerke / 12", "q": 0.7 },
+    { "type": "highshelf", "freq": 6500, "gain": "-staerke / 40", "q": 0.7 },
+    { "type": "compressor", "threshold": "-18 - staerke / 6", "ratio": "2 + staerke / 20", "attack": 10, "release": 200, "makeup": "staerke / 20" }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "id": "amber-mitsingen",
+  "name": "Amber Mitsingen",
+  "author": "Marcel1853",
+  "description": "Dämpft den Gesangsbereich, damit du besser mitsingen kannst (Gesang lässt sich nicht ganz entfernen)",
+  "params": [
+    {
+      "id": "gesang",
+      "name": "Gesang dämpfen",
+      "min": 0,
+      "max": 100,
+      "default": 50,
+      "step": 5,
+      "unit": "%"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Leicht",
+      "values": [
+        25
+      ]
+    },
+    {
+      "name": "Karaoke",
+      "values": [
+        60
+      ]
+    },
+    {
+      "name": "Stark",
+      "values": [
+        100
+      ]
+    }
+  ],
+  "chain": [
+    {
+      "type": "peaking",
+      "freq": 1200,
+      "gain": "-gesang / 9",
+      "q": 0.6
+    },
+    {
+      "type": "peaking",
+      "freq": 3000,
+      "gain": "-gesang / 16",
+      "q": 0.7
+    },
+    {
+      "type": "width",
+      "amount": "1 + gesang / 160"
+    },
+    {
+      "type": "gain",
+      "db": "gesang / 60"
+    }
+  ]
+}

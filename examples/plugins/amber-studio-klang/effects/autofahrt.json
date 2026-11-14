@@ -1,0 +1,69 @@
+{
+  "id": "amber-autofahrt",
+  "name": "Amber Autofahrt",
+  "author": "Marcel1853",
+  "description": "Gleicht Fahrgeräusche aus: kräftigerer Bass, klarere Mitten, ruhigere Lautstärke",
+  "params": [
+    {
+      "id": "laerm",
+      "name": "Fahrgeräusch",
+      "min": 0,
+      "max": 100,
+      "default": 50,
+      "step": 5,
+      "unit": "%"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Stadt",
+      "values": [
+        30
+      ]
+    },
+    {
+      "name": "Landstraße",
+      "values": [
+        55
+      ]
+    },
+    {
+      "name": "Autobahn",
+      "values": [
+        85
+      ]
+    }
+  ],
+  "chain": [
+    {
+      "type": "lowshelf",
+      "freq": 80,
+      "gain": "laerm / 10",
+      "q": 0.7
+    },
+    {
+      "type": "peaking",
+      "freq": 2800,
+      "gain": "laerm / 16",
+      "q": 0.8
+    },
+    {
+      "type": "highshelf",
+      "freq": 8000,
+      "gain": "laerm / 20",
+      "q": 0.7
+    },
+    {
+      "type": "compressor",
+      "threshold": "-16 - laerm / 6",
+      "ratio": "2 + laerm / 25",
+      "attack": 12,
+      "release": 180,
+      "makeup": "laerm / 20"
+    },
+    {
+      "type": "gain",
+      "db": "-laerm / 14"
+    }
+  ]
+}

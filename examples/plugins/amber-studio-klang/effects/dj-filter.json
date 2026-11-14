@@ -1,0 +1,85 @@
+{
+  "id": "amber-dj-filter",
+  "name": "Amber DJ-Filter",
+  "author": "Marcel1853",
+  "description": "Bass oder Höhen abschneiden wie am DJ-Pult, mit Resonanz",
+  "params": [
+    {
+      "id": "tief",
+      "name": "Bass abschneiden",
+      "min": 20,
+      "max": 2000,
+      "default": 20,
+      "step": 20,
+      "unit": "Hz"
+    },
+    {
+      "id": "hoch",
+      "name": "Höhen abschneiden",
+      "min": 2000,
+      "max": 20000,
+      "default": 20000,
+      "step": 500,
+      "unit": "Hz"
+    },
+    {
+      "id": "reso",
+      "name": "Resonanz",
+      "min": 0,
+      "max": 100,
+      "default": 20,
+      "step": 5,
+      "unit": "%"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Aus",
+      "values": [
+        20,
+        20000,
+        20
+      ]
+    },
+    {
+      "name": "Bass weg",
+      "values": [
+        400,
+        20000,
+        30
+      ]
+    },
+    {
+      "name": "Dumpf",
+      "values": [
+        20,
+        2500,
+        30
+      ]
+    },
+    {
+      "name": "Sweep",
+      "values": [
+        600,
+        3500,
+        60
+      ]
+    }
+  ],
+  "chain": [
+    {
+      "type": "highpass",
+      "freq": "tief",
+      "q": "0.707 + reso / 40"
+    },
+    {
+      "type": "lowpass",
+      "freq": "hoch",
+      "q": "0.707 + reso / 40"
+    },
+    {
+      "type": "gain",
+      "db": "-reso / 40"
+    }
+  ]
+}

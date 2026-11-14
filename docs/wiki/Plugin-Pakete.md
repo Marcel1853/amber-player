@@ -157,6 +157,8 @@ Im Quellcode unter [`examples/plugins/`](https://github.com/Marcel1853/amber-pla
 alle mit MIT-Lizenz; fertig gepackt hängen sie an jedem
 [Release](https://github.com/Marcel1853/amber-player/releases):
 
+- `amber-studio/` – **30 Visualisierungen**, z. B. Synthwave, Galaxie, Schallplatte, Gewitter, Runner
+- `amber-studio-klang/` – **20 Klangeffekte**, z. B. Nachtmodus, Kino, Autofahrt, Gaming-Headset, Mitsingen
 - `nachtfahrt/` – **mehrere Teile:** Klangeffekte „Kassette“ und „Stadion“, Visualisierung „Polarlicht“
 - `telefon/` – ein Klangeffekt (Kurzform mit `type`)
 - `sternenfeld/` – eine Visualisierung (Kurzform mit `type`)

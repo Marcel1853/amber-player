@@ -1,0 +1,186 @@
+{
+  "id": "amber-studio",
+  "name": "Amber Studio",
+  "version": "2.0.0",
+  "author": "Marcel1853",
+  "description": "30 Visualisierungen für Amber Player, die der Player nicht mitbringt",
+  "license": "MIT",
+  "homepage": "https://github.com/Marcel1853/amber-player",
+  "contents": [
+    {
+      "type": "visualizer",
+      "file": "visualizers/aurora-flow.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/particle-pulse.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/cover-glow.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/spectrogram.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/tunnel.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/skyline.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/warp.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/fireworks.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/led-matrix.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/vu-meter.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/rain.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/kaleidoscope.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/synthwave.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/pulse-line.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/galaxy.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/runner.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/matrix.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/snow.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/vinyl.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/spirograph.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/solar.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/hexgrid.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/terrain.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/cube.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/storm.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/pendulum.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/fireflies.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/radar.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/bubbles.js"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/ship.js"
+    }
+  ],
+  "translations": {
+    "en": {
+      "30 Visualisierungen für Amber Player, die der Player nicht mitbringt": "30 visualizers for Amber Player that don't come with the player",
+      "Fließende Lichtwellen mit dynamischen Farbverläufen": "Flowing waves of light with dynamic colour gradients",
+      "Bewegliche Partikel, die auf Bass und Lautstärke reagieren": "Moving particles that react to bass and volume",
+      "Pulsierendes Cover mit Lichthof und schwebendem Staub": "Pulsing cover with a halo and floating dust",
+      "Amber Wasserfall": "Amber Waterfall",
+      "Spektrogramm: Frequenzen von unten nach oben, die Zeit läuft von rechts nach links": "Spectrogram: frequencies from bottom to top, time runs from right to left",
+      "Flug durch einen Ringtunnel, der mit dem Bass beschleunigt": "Flight through a ring tunnel that speeds up with the bass",
+      "Nächtliche Skyline: Gebäudehöhe und beleuchtete Fenster folgen dem Spektrum": "Night skyline: building heights and lit windows follow the spectrum",
+      "Amber Sternenreise": "Amber Star Journey",
+      "Sterne fliegen als Lichtspuren auf dich zu, schneller bei lauter Musik": "Stars fly towards you as light trails, faster with loud music",
+      "Amber Feuerwerk": "Amber Fireworks",
+      "Raketen steigen bei Bass-Schlägen auf und explodieren in den Akzentfarben": "Rockets rise on bass hits and burst in the accent colours",
+      "Amber LED-Matrix": "Amber LED Matrix",
+      "Leuchtpunkte in Spalten und Zeilen wie an einer Hi-Fi-Anlage": "Glowing dots in columns and rows like on a hi-fi system",
+      "Amber VU-Meter": "Amber VU Meter",
+      "Analoge Zeigerinstrumente mit träger Nadel": "Analogue meters with a lazy needle",
+      "Amber Regen": "Amber Rain",
+      "Regentropfen, die mit der Lautstärke stärker werden, und Wellen bei Bass-Schlägen": "Raindrops that grow heavier with the volume, and ripples on bass hits",
+      "Amber Kaleidoskop": "Amber Kaleidoscope",
+      "Achtfach gespiegelte Muster, geformt vom Spektrum": "Eightfold mirrored patterns shaped by the spectrum",
+      "Retro-Sonnenuntergang mit Gitterstraße, die Berge folgen dem Spektrum": "Retro sunset with a grid road, the mountains follow the spectrum",
+      "Amber Puls": "Amber Pulse",
+      "Herzmonitor-Linie: Bass-Schläge werden zu Ausschlägen": "Heart monitor line: bass hits become spikes",
+      "Amber Galaxie": "Amber Galaxy",
+      "Rotierende Spiralgalaxie, Sterne leuchten mit ihrem Frequenzband": "Rotating spiral galaxy, stars glow with their frequency band",
+      "Spiel-Optik: ein Läufer rennt durch eine Neon-Welt, weicht aus, springt und sammelt Orbs": "Game look: a runner races through a neon world, dodges, jumps and collects orbs",
+      "Fallende Zeichenspalten in den Akzentfarben, Bass-Schläge lassen sie aufblitzen": "Falling columns of characters in the accent colours, bass hits make them flash",
+      "Amber Schnee": "Amber Snow",
+      "Sanfter Schneefall in der Nacht, Bass-Schläge wirbeln Windstöße auf": "Gentle snowfall at night, bass hits stir up gusts of wind",
+      "Amber Schallplatte": "Amber Vinyl",
+      "Drehende Schallplatte mit Cover-Label, Tonarm und Lichtreflexen": "Spinning record with a cover label, tonearm and light reflections",
+      "Spirograph-Kurven, deren Form vom Klang gesteuert wird": "Spirograph curves whose shape is driven by the sound",
+      "Amber Sonnensystem": "Amber Solar System",
+      "Planeten auf Umlaufbahnen, Größe und Leuchten folgen dem Spektrum": "Planets in orbit, size and glow follow the spectrum",
+      "Amber Waben": "Amber Honeycomb",
+      "Sechseck-Raster: Frequenzen leuchten von innen nach außen, Bass-Schläge senden Wellen": "Hexagon grid: frequencies light up from the inside out, bass hits send waves",
+      "Amber Gebirge": "Amber Mountains",
+      "Drahtgitter-Berge fließen auf dich zu, ihre Höhe kommt aus dem Spektrum": "Wireframe mountains flow towards you, their height comes from the spectrum",
+      "Amber Würfel": "Amber Cubes",
+      "Rotierende 3D-Drahtwürfel, die mit dem Bass pulsieren": "Rotating 3D wireframe cubes that pulse with the bass",
+      "Amber Gewitter": "Amber Thunderstorm",
+      "Dunkler Himmel, bei Bass-Schlägen zucken verzweigte Blitze": "Dark sky, branching lightning flashes on bass hits",
+      "Amber Pendelwelle": "Amber Pendulum Wave",
+      "16 Pendel schwingen mit verschiedenen Frequenzen und bilden wandernde Wellen": "16 pendulums swing at different frequencies and form travelling waves",
+      "Amber Glühwürmchen": "Amber Fireflies",
+      "Ein Schwarm Glühwürmchen, der mit der Musik leuchtet": "A swarm of fireflies glowing with the music",
+      "Radarschirm mit kreisendem Strahl, der Frequenzen als Ziele aufleuchten lässt": "Radar screen with a sweeping beam that lights up frequencies as targets",
+      "Amber Seifenblasen": "Amber Soap Bubbles",
+      "Schimmernde Blasen steigen auf, Größe und Anzahl folgen der Musik": "Shimmering bubbles rise, size and number follow the music",
+      "Amber Raumschiff": "Amber Spaceship",
+      "Spiel-Optik: Ein Raumschiff weicht Asteroiden aus und schießt im Takt": "Game look: a spaceship dodges asteroids and fires to the beat"
+    }
+  }
+}

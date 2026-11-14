@@ -1,0 +1,80 @@
+{
+  "id": "amber-radiostimme",
+  "name": "Amber Radiostimme",
+  "author": "Marcel1853",
+  "description": "Warme, nahe Stimme wie im Radiostudio",
+  "params": [
+    {
+      "id": "naehe",
+      "name": "Nähe",
+      "min": 0,
+      "max": 100,
+      "default": 50,
+      "step": 5,
+      "unit": "%"
+    },
+    {
+      "id": "praesenz",
+      "name": "Präsenz",
+      "min": 0,
+      "max": 100,
+      "default": 40,
+      "step": 5,
+      "unit": "%"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Nachrichten",
+      "values": [
+        30,
+        60
+      ]
+    },
+    {
+      "name": "Nachtradio",
+      "values": [
+        80,
+        30
+      ]
+    },
+    {
+      "name": "Podcast",
+      "values": [
+        55,
+        45
+      ]
+    }
+  ],
+  "chain": [
+    {
+      "type": "highpass",
+      "freq": 70,
+      "q": 0.7
+    },
+    {
+      "type": "lowshelf",
+      "freq": 160,
+      "gain": "naehe / 10",
+      "q": 0.7
+    },
+    {
+      "type": "peaking",
+      "freq": 3000,
+      "gain": "praesenz / 12",
+      "q": 0.9
+    },
+    {
+      "type": "compressor",
+      "threshold": -20,
+      "ratio": 3,
+      "attack": 5,
+      "release": 120,
+      "makeup": 3
+    },
+    {
+      "type": "gain",
+      "db": "-naehe / 20"
+    }
+  ]
+}

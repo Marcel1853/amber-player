@@ -1,0 +1,97 @@
+{
+  "id": "amber-gaming",
+  "name": "Amber Gaming-Headset",
+  "author": "Marcel1853",
+  "description": "Schritte und Richtungen besser hören, Explosionen und Dröhnen bändigen",
+  "params": [
+    {
+      "id": "schritte",
+      "name": "Schritte hören",
+      "min": 0,
+      "max": 100,
+      "default": 50,
+      "step": 5,
+      "unit": "%"
+    },
+    {
+      "id": "dampf",
+      "name": "Bass dämpfen",
+      "min": 0,
+      "max": 100,
+      "default": 30,
+      "step": 5,
+      "unit": "%"
+    },
+    {
+      "id": "weite",
+      "name": "Raumgefühl",
+      "min": 100,
+      "max": 150,
+      "default": 120,
+      "step": 5,
+      "unit": "%"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shooter",
+      "values": [
+        70,
+        40,
+        130
+      ]
+    },
+    {
+      "name": "Ausgewogen",
+      "values": [
+        50,
+        30,
+        120
+      ]
+    },
+    {
+      "name": "Rennspiel",
+      "values": [
+        25,
+        10,
+        110
+      ]
+    }
+  ],
+  "chain": [
+    {
+      "type": "lowshelf",
+      "freq": 120,
+      "gain": "-dampf / 12",
+      "q": 0.7
+    },
+    {
+      "type": "peaking",
+      "freq": 3200,
+      "gain": "schritte / 12",
+      "q": 1
+    },
+    {
+      "type": "peaking",
+      "freq": 6500,
+      "gain": "schritte / 25",
+      "q": 1
+    },
+    {
+      "type": "width",
+      "amount": "weite / 100"
+    },
+    {
+      "type": "compressor",
+      "threshold": -14,
+      "ratio": 3,
+      "attack": 8,
+      "release": 140,
+      "makeup": 2
+    },
+    {
+      "type": "gain",
+      "db": "-schritte / 30"
+    }
+  ]
+}

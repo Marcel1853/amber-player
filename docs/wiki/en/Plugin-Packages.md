@@ -154,6 +154,8 @@ In the source code under [`examples/plugins/`](https://github.com/Marcel1853/amb
 all MIT-licensed; ready-packed files are attached to every
 [release](https://github.com/Marcel1853/amber-player/releases):
 
+- `amber-studio/` – **30 visualizers**, e.g. Synthwave, Galaxy, Vinyl, Thunderstorm, Runner
+- `amber-studio-klang/` – **20 sound effects**, e.g. Night mode, Cinema, Car ride, Gaming headset, Sing-along
 - `nachtfahrt/` – **several parts:** sound effects “Kassette” and “Stadion”, visualizer “Polarlicht”
 - `telefon/` – one sound effect (short form with `type`)
 - `sternenfeld/` – one visualizer (short form with `type`)

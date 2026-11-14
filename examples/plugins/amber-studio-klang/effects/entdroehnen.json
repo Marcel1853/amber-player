@@ -1,0 +1,68 @@
+{
+  "id": "amber-entdroehnen",
+  "name": "Amber Entdröhnen",
+  "author": "Marcel1853",
+  "description": "Nimmt dröhnende Bässe und Matsch heraus, hilfreich in hallenden Räumen",
+  "params": [
+    {
+      "id": "tief",
+      "name": "Dröhnen",
+      "min": 0,
+      "max": 100,
+      "default": 40,
+      "step": 5,
+      "unit": "%"
+    },
+    {
+      "id": "mitte",
+      "name": "Matsch",
+      "min": 0,
+      "max": 100,
+      "default": 30,
+      "step": 5,
+      "unit": "%"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Dezent",
+      "values": [
+        20,
+        15
+      ]
+    },
+    {
+      "name": "Kleiner Raum",
+      "values": [
+        50,
+        35
+      ]
+    },
+    {
+      "name": "Starker Hall",
+      "values": [
+        80,
+        60
+      ]
+    }
+  ],
+  "chain": [
+    {
+      "type": "highpass",
+      "freq": 30,
+      "q": 0.7
+    },
+    {
+      "type": "peaking",
+      "freq": 100,
+      "gain": "-tief / 9",
+      "q": 1.2
+    },
+    {
+      "type": "peaking",
+      "freq": 250,
+      "gain": "-mitte / 12",
+      "q": 1
+    }
+  ]
+}

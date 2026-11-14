@@ -1,0 +1,51 @@
+{
+  "id": "amber-weichzeichner",
+  "name": "Amber Weichzeichner",
+  "author": "Marcel1853",
+  "description": "Entschärft harte, grelle Höhen für entspanntes Hören",
+  "params": [
+    {
+      "id": "weich",
+      "name": "Weichheit",
+      "min": 0,
+      "max": 100,
+      "default": 50,
+      "step": 5,
+      "unit": "%"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Leicht",
+      "values": [
+        25
+      ]
+    },
+    {
+      "name": "Entspannt",
+      "values": [
+        55
+      ]
+    },
+    {
+      "name": "Sehr weich",
+      "values": [
+        90
+      ]
+    }
+  ],
+  "chain": [
+    {
+      "type": "peaking",
+      "freq": 3500,
+      "gain": "-weich / 20",
+      "q": 0.8
+    },
+    {
+      "type": "highshelf",
+      "freq": 6000,
+      "gain": "-weich / 8",
+      "q": 0.7
+    }
+  ]
+}

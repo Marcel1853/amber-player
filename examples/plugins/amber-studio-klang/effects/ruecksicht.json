@@ -1,0 +1,64 @@
+{
+  "id": "amber-ruecksicht",
+  "name": "Amber Rücksicht (Mietwohnung)",
+  "author": "Marcel1853",
+  "description": "Weniger Bass, der durch Wände dringt, aber die Musik bleibt hörbar",
+  "params": [
+    {
+      "id": "ruecksicht",
+      "name": "Rücksicht",
+      "min": 0,
+      "max": 100,
+      "default": 60,
+      "step": 5,
+      "unit": "%"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Abend",
+      "values": [
+        40
+      ]
+    },
+    {
+      "name": "Nacht",
+      "values": [
+        70
+      ]
+    },
+    {
+      "name": "Ruhezeit",
+      "values": [
+        100
+      ]
+    }
+  ],
+  "chain": [
+    {
+      "type": "highpass",
+      "freq": "35 + ruecksicht * 0.4",
+      "q": 0.7
+    },
+    {
+      "type": "lowshelf",
+      "freq": 100,
+      "gain": "-ruecksicht / 5",
+      "q": 0.7
+    },
+    {
+      "type": "peaking",
+      "freq": 2500,
+      "gain": "ruecksicht / 25",
+      "q": 0.8
+    },
+    {
+      "type": "compressor",
+      "threshold": "-18 - ruecksicht / 8",
+      "ratio": "3 + ruecksicht / 25",
+      "attack": 10,
+      "release": 200,
+      "makeup": 2
+    }
+  ]
+}

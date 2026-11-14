@@ -1,0 +1,61 @@
+{
+  "id": "amber-loudness",
+  "name": "Amber Loudness-Kontur",
+  "author": "Marcel1853",
+  "description": "Gleicht aus, dass leise Musik weniger Bässe und Höhen hat",
+  "params": [
+    {
+      "id": "kontur",
+      "name": "Kontur",
+      "min": 0,
+      "max": 100,
+      "default": 50,
+      "step": 5,
+      "unit": "%"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Dezent",
+      "values": [
+        20
+      ]
+    },
+    {
+      "name": "Normal",
+      "values": [
+        40
+      ]
+    },
+    {
+      "name": "Sehr leise hören",
+      "values": [
+        80
+      ]
+    }
+  ],
+  "chain": [
+    {
+      "type": "lowshelf",
+      "freq": 100,
+      "gain": "kontur / 9",
+      "q": 0.7
+    },
+    {
+      "type": "peaking",
+      "freq": 2500,
+      "gain": "-kontur / 30",
+      "q": 0.7
+    },
+    {
+      "type": "highshelf",
+      "freq": 9000,
+      "gain": "kontur / 16",
+      "q": 0.7
+    },
+    {
+      "type": "gain",
+      "db": "-kontur / 12"
+    }
+  ]
+}

@@ -535,5 +535,7 @@ I18N.pl = {
  "Als .amberplugin-Datei speichern, z. B. zum Weitergeben": "Zapisz jako plik .amberplugin, np. aby go przekazać",
  "Teilen": "Udostępnij",
  "Exportieren": "Eksportuj",
- "Diese Systemversion unterstützt keine Visualisierungen.": "Ta wersja systemu nie obsługuje wizualizacji."
+ "Diese Systemversion unterstützt keine Visualisierungen.": "Ta wersja systemu nie obsługuje wizualizacji.",
+ "Einzelnen Klangeffekt (.json) installieren": "Zainstaluj pojedynczy efekt dźwiękowy (.json)",
+ "Regler wirken sofort und bleiben gespeichert. Neu installierte Klangeffekte erscheinen nach einem Neustart der App.": "Suwaki działają od razu i są zapisywane. Nowo zainstalowane efekty pojawią się po ponownym uruchomieniu aplikacji."
 };

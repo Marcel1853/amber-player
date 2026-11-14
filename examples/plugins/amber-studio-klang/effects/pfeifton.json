@@ -1,0 +1,69 @@
+{
+  "id": "amber-pfeifton",
+  "name": "Amber Pfeifton-Filter",
+  "author": "Marcel1853",
+  "description": "Schmaler Kerbfilter gegen Pfeifen, Brummen oder störende Einzeltöne",
+  "params": [
+    {
+      "id": "freq",
+      "name": "Frequenz",
+      "min": 50,
+      "max": 12000,
+      "default": 3000,
+      "step": 10,
+      "unit": "Hz"
+    },
+    {
+      "id": "tiefe",
+      "name": "Tiefe",
+      "min": 0,
+      "max": 24,
+      "default": 12,
+      "step": 1,
+      "unit": "dB"
+    },
+    {
+      "id": "schaerfe",
+      "name": "Schärfe",
+      "min": 1,
+      "max": 20,
+      "default": 8,
+      "step": 1,
+      "unit": "Q"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brummen 50 Hz",
+      "values": [
+        50,
+        18,
+        12
+      ]
+    },
+    {
+      "name": "Pfeifen 3 kHz",
+      "values": [
+        3000,
+        14,
+        10
+      ]
+    },
+    {
+      "name": "Zischen 7 kHz",
+      "values": [
+        7000,
+        10,
+        6
+      ]
+    }
+  ],
+  "chain": [
+    {
+      "type": "peaking",
+      "freq": "freq",
+      "gain": "-tiefe",
+      "q": "schaerfe"
+    }
+  ]
+}

@@ -9,6 +9,41 @@ neu zu übersetzen.
 
 ![Amber Player](https://img.shields.io/badge/Linux%20%7C%20Android-Amber%20Player-f2a03d)
 
+![Amber Player am PC](https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/pc-bibliothek.png)
+
+<table>
+<tr>
+<td width="33%"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/handy-visualisierung.png" alt="Handy: Visualisierung hinter den Tasten"></td>
+<td width="33%"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/handy-pc.png" alt="Handy: PC fernsteuern"></td>
+<td width="33%"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/handy-radio.png" alt="Handy: Internetradio"></td>
+</tr>
+<tr>
+<td align="center"><sub>Handy: Visualisierung hinter den Tasten</sub></td>
+<td align="center"><sub>Handy: PC fernsteuern</sub></td>
+<td align="center"><sub>Handy: Internetradio</sub></td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td width="50%"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/pc-effekte.png" alt="Klangeffekte mit Hall"></td>
+<td width="50%"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/pc-visualisierung.png" alt="Visualisierung „Ring“ mit Cover"></td>
+</tr>
+<tr>
+<td align="center"><sub>Klangeffekte mit Hall</sub></td>
+<td align="center"><sub>Visualisierung „Ring“ mit Cover</sub></td>
+</tr>
+<tr>
+<td><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/tablet-pc.png" alt="Tablet: PC steuern"></td>
+<td><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/tablet-auswahl.png" alt="Tablet: Visualisierung wählen"></td>
+</tr>
+<tr>
+<td align="center"><sub>Tablet: PC steuern</sub></td>
+<td align="center"><sub>Tablet: Visualisierung wählen</sub></td>
+</tr>
+</table>
+
+
 ## Für Einsteiger
 
 1. [Installation](Installation.md) – PC (Linux) und Handy (Android)

@@ -5,6 +5,40 @@
 **Musik-Player für Linux und Android** – schnell, schön, werbefrei und kostenlos.
 Geschrieben in Rust (Tauri 2, rodio), mit eigener Oberfläche im warmen Dunkel-Design.
 
+![Amber Player am PC](docs/screenshots/pc-bibliothek.png)
+
+<table>
+<tr>
+<td width="33%"><img src="docs/screenshots/handy-visualisierung.png" alt="Handy: Visualisierung hinter den Tasten"></td>
+<td width="33%"><img src="docs/screenshots/handy-pc.png" alt="Handy: PC fernsteuern"></td>
+<td width="33%"><img src="docs/screenshots/handy-radio.png" alt="Handy: Internetradio"></td>
+</tr>
+<tr>
+<td align="center"><sub>Handy: Visualisierung hinter den Tasten</sub></td>
+<td align="center"><sub>Handy: PC fernsteuern</sub></td>
+<td align="center"><sub>Handy: Internetradio</sub></td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td width="50%"><img src="docs/screenshots/pc-effekte.png" alt="Klangeffekte mit Hall"></td>
+<td width="50%"><img src="docs/screenshots/pc-visualisierung.png" alt="Visualisierung „Ring“ mit Cover"></td>
+</tr>
+<tr>
+<td align="center"><sub>Klangeffekte mit Hall</sub></td>
+<td align="center"><sub>Visualisierung „Ring“ mit Cover</sub></td>
+</tr>
+<tr>
+<td><img src="docs/screenshots/tablet-pc.png" alt="Tablet: PC steuern"></td>
+<td><img src="docs/screenshots/tablet-auswahl.png" alt="Tablet: Visualisierung wählen"></td>
+</tr>
+<tr>
+<td align="center"><sub>Tablet: PC steuern</sub></td>
+<td align="center"><sub>Tablet: Visualisierung wählen</sub></td>
+</tr>
+</table>
+
 ---
 
 ## Was Amber Player kann
@@ -32,6 +66,9 @@ Geschrieben in Rust (Tauri 2, rodio), mit eigener Oberfläche im warmen Dunkel-D
 - **Eigene Plugins** ohne den Player neu zu bauen: Klangeffekte als JSON-Datei (ohne
   Programmieren), Visualisierungen und Online-Quellen in JavaScript – als `.amberplugin` mit
   eigener Lizenz und Übersetzungen, **teilbar** über Quick Share, Bluetooth oder Messenger.
+- **Fertige Pakete** bei jedem [Release](https://github.com/Marcel1853/amber-player/releases):
+  *Amber Studio* (30 Visualisierungen) und *Amber Studio Klang* (20 Klangeffekte, z. B.
+  Nachtmodus, Kino, Autofahrt, Gaming-Headset), dazu Vorlagen für eigene.
 
 **Handy und PC zusammen**
 - **Android-App** mit allen Funktionen zum Hören: Bibliothek, Playlisten, Effekte,

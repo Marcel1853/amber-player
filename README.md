@@ -5,6 +5,40 @@
 **A music player for Linux and Android** – fast, good-looking, free and without ads.
 Written in Rust (Tauri 2, rodio), with its own interface in a warm dark design.
 
+![Amber Player on the PC](docs/screenshots/pc-bibliothek.png)
+
+<table>
+<tr>
+<td width="33%"><img src="docs/screenshots/handy-visualisierung.png" alt="Phone: visualizer behind the controls"></td>
+<td width="33%"><img src="docs/screenshots/handy-pc.png" alt="Phone: remote control for the PC"></td>
+<td width="33%"><img src="docs/screenshots/handy-radio.png" alt="Phone: internet radio"></td>
+</tr>
+<tr>
+<td align="center"><sub>Phone: visualizer behind the controls</sub></td>
+<td align="center"><sub>Phone: remote control for the PC</sub></td>
+<td align="center"><sub>Phone: internet radio</sub></td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td width="50%"><img src="docs/screenshots/pc-effekte.png" alt="Sound effects with reverb"></td>
+<td width="50%"><img src="docs/screenshots/pc-visualisierung.png" alt="Visualizer “Ring” with cover"></td>
+</tr>
+<tr>
+<td align="center"><sub>Sound effects with reverb</sub></td>
+<td align="center"><sub>Visualizer “Ring” with cover</sub></td>
+</tr>
+<tr>
+<td><img src="docs/screenshots/tablet-pc.png" alt="Tablet: controlling the PC"></td>
+<td><img src="docs/screenshots/tablet-auswahl.png" alt="Tablet: choosing a visualizer"></td>
+</tr>
+<tr>
+<td align="center"><sub>Tablet: controlling the PC</sub></td>
+<td align="center"><sub>Tablet: choosing a visualizer</sub></td>
+</tr>
+</table>
+
 ---
 
 ## What Amber Player can do
@@ -32,6 +66,9 @@ Written in Rust (Tauri 2, rodio), with its own interface in a warm dark design.
 - **Your own plugins** without rebuilding the player: sound effects as a JSON file (no
   programming), visualizers and online sources in JavaScript – packed as `.amberplugin` with
   their own license and translations, and **shared** via Quick Share, Bluetooth or messengers.
+- **Ready-made packages** with every [release](https://github.com/Marcel1853/amber-player/releases):
+  *Amber Studio* (30 visualizers) and *Amber Studio Sound* (20 sound effects, e.g. night mode,
+  cinema, car ride, gaming headset), plus templates for your own.
 
 **Phone and PC together**
 - **Android app** with everything for listening: library, playlists, effects, visualizers,

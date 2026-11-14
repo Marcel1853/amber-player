@@ -1495,13 +1495,18 @@ async function renderEffects(el, v, fresh) {
   if (!fresh()) return;
   fxPackages = pk.packages || [];
   addPluginTexts(fxPackages);
-  const actions = `${pkgInstallBtn()}${plugBtn('effects', 'Plugin-Ordner öffnen', 'btn')}
-    <span class="hint" style="margin:0">${esc(IS_ANDROID ? tx('Eigenes Klang-Plugin (.json) auswählen; es wirkt nach dem nächsten Start der App.') : tx('Eigene Klang-Plugins als .json hineinlegen, dann Amber Player neu starten.'))} ${wikiLink('effects', tx('Anleitung im Wiki'))}</span>`;
+  // Kompakt: ein Hauptknopf, daneben kleine Symbole (einzelne Datei, Ordner, Anleitung)
+  const actions = `${pkgInstallBtn('btn small primary')}
+    <button class="icon-btn" ${IS_ANDROID ? 'data-plugdir="effects"' : 'data-plugimport="effects"'} title="${esc(tx('Einzelnen Klangeffekt (.json) installieren'))}">${icon('import')}</button>
+    ${IS_ANDROID ? '' : `<button class="icon-btn" data-plugdir="effects" title="${esc(tx('Plugin-Ordner öffnen'))}">${icon('folder')}</button>`}
+    <a href="#" class="icon-btn" data-wiki="effects" title="${esc(tx('Anleitung im Wiki'))}">?</a>`;
   const errors = info.errors.length
     ? `<div class="plugin-errors"><b>Nicht geladen:</b>${info.errors.map((e) => `<div>${esc(e)}</div>`).join('')}</div>`
     : '';
-  el.innerHTML = `${head({ kind: 'Klang', title: 'Effekte', sub: 'Plugins wirken sofort auf die laufende Wiedergabe und werden gespeichert.', actions })}
-    <div class="scroll pad">${errors}<div class="fx-list">${effects.map(fxCard).join('')}</div></div>`;
+  el.innerHTML = `${head({ kind: 'Klang', title: 'Effekte', actions })}
+    <div class="scroll pad">${errors}
+      <p class="fx-note">${esc(tx('Regler wirken sofort und bleiben gespeichert. Neu installierte Klangeffekte erscheinen nach einem Neustart der App.'))}</p>
+      <div class="fx-list">${effects.map(fxCard).join('')}</div></div>`;
   for (const b of $$('[data-plugdir]', el)) b.addEventListener('click', () => plugAction(b.dataset.plugdir));
   for (const b of $$('[data-plugimport]', el)) b.addEventListener('click', () => importPlugin(b.dataset.plugimport));
 
@@ -1767,7 +1772,9 @@ async function renderSettings(el, v, fresh) {
       ${packages.errors.length ? `<div class="plugin-errors"><b>${esc(tx('Nicht geladen:'))}</b>${packages.errors.map((e) => `<div>${esc(e)}</div>`).join('')}</div>` : ''}
       ${viz.list.length ? `<div class="plug-list">${viz.list.map((v) => {
         const o = pluginOrigin(v.source, packages.packages);
-        return `<div><b data-raw>${esc(tx(v.name))}</b><span data-raw>${esc(o ? o.label : tx('Mitgeliefert'))}${v.author ? ` · ${esc(v.author)}` : ''}</span></div>`;
+        // Bei Paketen steht der Autor schon in der Herkunft
+        const author = v.author && !o?.key?.startsWith('p:') ? ` · ${esc(v.author)}` : '';
+        return `<div><b data-raw>${esc(tx(v.name))}</b><span data-raw>${esc(o ? o.label : tx('Mitgeliefert'))}${author}</span></div>`;
       }).join('')}</div>` : ''}
     </div>
 

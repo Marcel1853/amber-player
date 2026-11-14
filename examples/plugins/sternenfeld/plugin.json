@@ -7,5 +7,12 @@
   "description": "Sterne fliegen auf dich zu, der Bass gibt das Tempo vor – Vorlage für eigene Visualisierungen",
   "license": "MIT",
   "main": "visualizer.js",
-  "homepage": "https://github.com/Marcel1853/amber-player/tree/main/examples/plugins/sternenfeld"
+  "homepage": "https://github.com/Marcel1853/amber-player/tree/main/examples/plugins/sternenfeld",
+  "translations": {
+    "en": {
+      "Sternenfeld": "Starfield",
+      "Sterne fliegen auf dich zu, der Bass gibt das Tempo vor – Vorlage für eigene Visualisierungen": "Stars fly towards you, the bass sets the pace – a template for your own visualizers",
+      "Sterne fliegen auf dich zu, der Bass gibt das Tempo vor": "Stars fly towards you, the bass sets the pace"
+    }
+  }
 }

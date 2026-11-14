@@ -535,5 +535,7 @@ I18N.nl = {
  "Als .amberplugin-Datei speichern, z. B. zum Weitergeben": "Opslaan als .amberplugin-bestand, bijv. om door te geven",
  "Teilen": "Delen",
  "Exportieren": "Exporteren",
- "Diese Systemversion unterstützt keine Visualisierungen.": "Deze systeemversie ondersteunt geen visualisaties."
+ "Diese Systemversion unterstützt keine Visualisierungen.": "Deze systeemversie ondersteunt geen visualisaties.",
+ "Einzelnen Klangeffekt (.json) installieren": "Los geluidseffect (.json) installeren",
+ "Regler wirken sofort und bleiben gespeichert. Neu installierte Klangeffekte erscheinen nach einem Neustart der App.": "Schuifregelaars werken meteen en worden opgeslagen. Nieuw geïnstalleerde effecten verschijnen na een herstart van de app."
 };

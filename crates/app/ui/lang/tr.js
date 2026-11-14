@@ -535,5 +535,7 @@ I18N.tr = {
  "Als .amberplugin-Datei speichern, z. B. zum Weitergeben": "Örneğin paylaşmak için .amberplugin dosyası olarak kaydet",
  "Teilen": "Paylaş",
  "Exportieren": "Dışa aktar",
- "Diese Systemversion unterstützt keine Visualisierungen.": "Bu sistem sürümü görselleştirmeleri desteklemiyor."
+ "Diese Systemversion unterstützt keine Visualisierungen.": "Bu sistem sürümü görselleştirmeleri desteklemiyor.",
+ "Einzelnen Klangeffekt (.json) installieren": "Tek ses efekti yükle (.json)",
+ "Regler wirken sofort und bleiben gespeichert. Neu installierte Klangeffekte erscheinen nach einem Neustart der App.": "Kaydırıcılar hemen etkili olur ve kaydedilir. Yeni yüklenen ses efektleri uygulama yeniden başlatılınca görünür."
 };

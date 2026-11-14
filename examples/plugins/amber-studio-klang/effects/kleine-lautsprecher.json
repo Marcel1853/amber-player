@@ -1,0 +1,62 @@
+{
+  "id": "amber-kleine-lautsprecher",
+  "name": "Amber Kleine Lautsprecher",
+  "author": "Marcel1853",
+  "description": "Mehr gefühlter Bass auf Laptop- und Handylautsprechern",
+  "params": [
+    {
+      "id": "kompensation",
+      "name": "Kompensation",
+      "min": 0,
+      "max": 100,
+      "default": 60,
+      "step": 5,
+      "unit": "%"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Handy",
+      "values": [
+        80
+      ]
+    },
+    {
+      "name": "Laptop",
+      "values": [
+        60
+      ]
+    },
+    {
+      "name": "Dezent",
+      "values": [
+        30
+      ]
+    }
+  ],
+  "chain": [
+    {
+      "type": "saturate",
+      "drive": "1 + kompensation / 60"
+    },
+    {
+      "type": "highpass",
+      "freq": "80 + kompensation * 1.2",
+      "q": 0.7
+    },
+    {
+      "type": "peaking",
+      "freq": 220,
+      "gain": "kompensation / 20",
+      "q": 0.9
+    },
+    {
+      "type": "compressor",
+      "threshold": -16,
+      "ratio": 3,
+      "attack": 10,
+      "release": 150,
+      "makeup": "kompensation / 25"
+    }
+  ]
+}

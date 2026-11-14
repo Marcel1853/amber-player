@@ -535,5 +535,7 @@ I18N.fr = {
  "Als .amberplugin-Datei speichern, z. B. zum Weitergeben": "Enregistrer en fichier .amberplugin, par ex. pour le transmettre",
  "Teilen": "Partager",
  "Exportieren": "Exporter",
- "Diese Systemversion unterstützt keine Visualisierungen.": "Cette version du système ne prend pas en charge les visualisations."
+ "Diese Systemversion unterstützt keine Visualisierungen.": "Cette version du système ne prend pas en charge les visualisations.",
+ "Einzelnen Klangeffekt (.json) installieren": "Installer un effet sonore isolé (.json)",
+ "Regler wirken sofort und bleiben gespeichert. Neu installierte Klangeffekte erscheinen nach einem Neustart der App.": "Les réglages agissent aussitôt et sont enregistrés. Les effets nouvellement installés apparaissent après un redémarrage de l’app."
 };

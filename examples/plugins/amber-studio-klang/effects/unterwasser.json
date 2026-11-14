@@ -1,0 +1,22 @@
+{
+  "id": "amber-unterwasser",
+  "name": "Amber Unterwasser",
+  "author": "Marcel1853",
+  "description": "Klingt, als würde die Musik unter Wasser laufen: dumpf, schmal, mit blubberndem Echo",
+  "params": [
+    { "id": "tiefe", "name": "Tiefe", "min": 0, "max": 100, "default": 50, "step": 5, "unit": "%" },
+    { "id": "blubb", "name": "Blubbern", "min": 0, "max": 40, "default": 12, "step": 2, "unit": "%" }
+  ],
+  "presets": [
+    { "name": "Schwimmbad", "values": [30, 8] },
+    { "name": "Tauchgang", "values": [60, 15] },
+    { "name": "Tiefsee", "values": [95, 25] }
+  ],
+  "chain": [
+    { "type": "lowpass", "freq": "14000 - tiefe * 115", "q": 0.9 },
+    { "type": "lowshelf", "freq": 150, "gain": "tiefe / 25", "q": 0.7 },
+    { "type": "width", "amount": "1 - tiefe / 200" },
+    { "type": "echo", "time": 90, "feedback": 0.5, "mix": "blubb / 100" },
+    { "type": "gain", "db": "-tiefe / 30" }
+  ]
+}

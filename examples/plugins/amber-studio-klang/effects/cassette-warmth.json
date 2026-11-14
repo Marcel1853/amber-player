@@ -1,0 +1,22 @@
+{
+  "id": "cassette-warmth",
+  "name": "Cassette Warmth",
+  "author": "Marcel1853",
+  "description": "Analoge Wärme: mehr Bass, weichere Höhen, leichte Sättigung",
+  "params": [
+    { "id": "waerme", "name": "Wärme", "min": 0, "max": 100, "default": 50, "step": 1, "unit": "%" },
+    { "id": "alter", "name": "Alter", "min": 0, "max": 100, "default": 30, "step": 1, "unit": "%" }
+  ],
+  "presets": [
+    { "name": "Dezent", "values": [25, 15] },
+    { "name": "Vintage", "values": [60, 50] },
+    { "name": "Abgenutztes Band", "values": [85, 90] }
+  ],
+  "chain": [
+    { "type": "lowshelf", "freq": 130, "gain": "waerme / 14", "q": 0.7 },
+    { "type": "peaking", "freq": 3500, "gain": "-waerme / 25", "q": 0.8 },
+    { "type": "lowpass", "freq": "16000 - alter * 100", "q": 0.7 },
+    { "type": "saturate", "drive": "1 + waerme / 70 + alter / 90" },
+    { "type": "gain", "db": "-waerme / 28 - alter / 120" }
+  ]
+}

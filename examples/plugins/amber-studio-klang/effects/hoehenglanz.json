@@ -1,0 +1,19 @@
+{
+  "id": "amber-hoehenglanz",
+  "name": "Amber Höhenglanz",
+  "author": "Marcel1853",
+  "description": "Mehr Luft und Glanz in den Höhen für dumpfe Aufnahmen",
+  "params": [
+    { "id": "glanz", "name": "Glanz", "min": 0, "max": 100, "default": 40, "step": 5, "unit": "%" }
+  ],
+  "presets": [
+    { "name": "Dezent", "values": [25] },
+    { "name": "Klar", "values": [55] },
+    { "name": "Brillant", "values": [85] }
+  ],
+  "chain": [
+    { "type": "peaking", "freq": 5500, "gain": "glanz / 25", "q": 0.8 },
+    { "type": "highshelf", "freq": 9500, "gain": "glanz / 9", "q": 0.7 },
+    { "type": "gain", "db": "-glanz / 22" }
+  ]
+}

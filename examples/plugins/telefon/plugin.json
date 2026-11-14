@@ -7,5 +7,12 @@
   "description": "Klingt wie durchs Telefon – Vorlage für eigene Klang-Plugins",
   "license": "MIT",
   "main": "effect.json",
-  "homepage": "https://github.com/Marcel1853/amber-player/tree/main/examples/plugins/telefon"
+  "homepage": "https://github.com/Marcel1853/amber-player/tree/main/examples/plugins/telefon",
+  "translations": {
+    "en": {
+      "Telefon": "Telephone",
+      "Klingt wie durchs Telefon – Vorlage für eigene Klang-Plugins": "Sounds like a phone call – a template for your own sound plugins",
+      "Stärke": "Strength"
+    }
+  }
 }

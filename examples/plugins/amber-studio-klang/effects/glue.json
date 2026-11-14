@@ -1,0 +1,71 @@
+{
+  "id": "amber-glue",
+  "name": "Amber Glue-Kompressor",
+  "author": "Marcel1853",
+  "description": "Verdichtet den Klang, damit leise und laute Stellen zusammenwachsen",
+  "params": [
+    {
+      "id": "schwelle",
+      "name": "Schwelle",
+      "min": -40,
+      "max": -5,
+      "default": -20,
+      "step": 1,
+      "unit": "dB"
+    },
+    {
+      "id": "ratio",
+      "name": "Verhältnis",
+      "min": 1,
+      "max": 10,
+      "default": 2.5,
+      "step": 0.5,
+      "unit": ":1"
+    },
+    {
+      "id": "makeup",
+      "name": "Ausgleich",
+      "min": 0,
+      "max": 12,
+      "default": 2,
+      "step": 1,
+      "unit": "dB"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sanft",
+      "values": [
+        -16,
+        2,
+        1
+      ]
+    },
+    {
+      "name": "Fest",
+      "values": [
+        -24,
+        4,
+        4
+      ]
+    },
+    {
+      "name": "Begrenzend",
+      "values": [
+        -30,
+        8,
+        6
+      ]
+    }
+  ],
+  "chain": [
+    {
+      "type": "compressor",
+      "threshold": "schwelle",
+      "ratio": "ratio",
+      "attack": 30,
+      "release": 200,
+      "makeup": "makeup"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "id": "dynamic-punch",
+  "name": "Dynamic Punch",
+  "author": "Marcel1853",
+  "description": "Kräftigere Drums und kontrollierte Dynamik",
+  "params": [
+    { "id": "punch", "name": "Punch", "min": 0, "max": 100, "default": 50, "step": 1, "unit": "%" },
+    { "id": "druck", "name": "Druck", "min": 0, "max": 100, "default": 40, "step": 1, "unit": "%" }
+  ],
+  "presets": [
+    { "name": "Sanft", "values": [30, 20] },
+    { "name": "Drums nach vorn", "values": [70, 50] },
+    { "name": "Maximal", "values": [100, 80] }
+  ],
+  "chain": [
+    { "type": "peaking", "freq": 90, "gain": "punch / 14", "q": 1.0 },
+    { "type": "peaking", "freq": 3500, "gain": "punch / 20", "q": 0.9 },
+    { "type": "compressor", "threshold": "-12 - druck / 8", "ratio": "1.5 + druck / 25", "attack": 25, "release": 140, "makeup": "druck / 30" },
+    { "type": "gain", "db": "-punch / 30" }
+  ]
+}

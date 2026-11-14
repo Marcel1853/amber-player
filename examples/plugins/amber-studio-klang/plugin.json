@@ -1,0 +1,204 @@
+{
+  "id": "amber-studio-klang",
+  "name": "Amber Studio Klang",
+  "version": "1.0.0",
+  "author": "Marcel1853",
+  "description": "20 Klangeffekte für Amber Player, die der Player nicht mitbringt",
+  "license": "MIT",
+  "homepage": "https://github.com/Marcel1853/amber-player",
+  "contents": [
+    {
+      "type": "effect",
+      "file": "effects/cassette-warmth.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/dynamic-punch.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/night-mode.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/hoehenglanz.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/unterwasser.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/overdrive.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/loudness.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/dj-filter.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/glue.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/de-esser.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/entdroehnen.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/weichzeichner.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/kleine-lautsprecher.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/radiostimme.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/kino.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/gaming.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/autofahrt.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/ruecksicht.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/mitsingen.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/pfeifton.json"
+    }
+  ],
+  "translations": {
+    "en": {
+      "Amber Studio Klang": "Amber Studio Sound",
+      "20 Klangeffekte für Amber Player, die der Player nicht mitbringt": "20 sound effects for Amber Player that don't come with the player",
+      "Analoge Wärme: mehr Bass, weichere Höhen, leichte Sättigung": "Analogue warmth: more bass, softer treble, light saturation",
+      "Wärme": "Warmth",
+      "Alter": "Age",
+      "Dezent": "Subtle",
+      "Abgenutztes Band": "Worn tape",
+      "Kräftigere Drums und kontrollierte Dynamik": "Punchier drums and controlled dynamics",
+      "Druck": "Pressure",
+      "Sanft": "Gentle",
+      "Drums nach vorn": "Drums forward",
+      "Maximal": "Maximum",
+      "Amber Nachtmodus": "Amber Night Mode",
+      "Leise hören ohne Lautstärkesprünge: gebändigte Bässe und Spitzen": "Listen quietly without volume jumps: tamed bass and peaks",
+      "Stärke": "Strength",
+      "Abend": "Evening",
+      "Nacht": "Night",
+      "Flüsterleise": "Whisper quiet",
+      "Amber Höhenglanz": "Amber Treble Shine",
+      "Mehr Luft und Glanz in den Höhen für dumpfe Aufnahmen": "More air and sparkle in the treble for dull recordings",
+      "Glanz": "Shine",
+      "Klar": "Clear",
+      "Brillant": "Brilliant",
+      "Amber Unterwasser": "Amber Underwater",
+      "Klingt, als würde die Musik unter Wasser laufen: dumpf, schmal, mit blubberndem Echo": "Sounds as if the music were playing underwater: muffled, narrow, with a bubbling echo",
+      "Tiefe": "Depth",
+      "Blubbern": "Bubbling",
+      "Schwimmbad": "Swimming pool",
+      "Tauchgang": "Dive",
+      "Tiefsee": "Deep sea",
+      "Rauer, übersteuerter Klang von Crunch bis Fuzz": "Rough, overdriven sound from crunch to fuzz",
+      "Ton": "Tone",
+      "Amber Loudness-Kontur": "Amber Loudness Contour",
+      "Gleicht aus, dass leise Musik weniger Bässe und Höhen hat": "Makes up for quiet music having less bass and treble",
+      "Kontur": "Contour",
+      "Sehr leise hören": "Very quiet listening",
+      "Amber DJ-Filter": "Amber DJ Filter",
+      "Bass oder Höhen abschneiden wie am DJ-Pult, mit Resonanz": "Cut bass or treble like on a DJ mixer, with resonance",
+      "Bass abschneiden": "Cut bass",
+      "Höhen abschneiden": "Cut treble",
+      "Resonanz": "Resonance",
+      "Aus": "Off",
+      "Bass weg": "No bass",
+      "Dumpf": "Muffled",
+      "Amber Glue-Kompressor": "Amber Glue Compressor",
+      "Verdichtet den Klang, damit leise und laute Stellen zusammenwachsen": "Compresses the sound so quiet and loud parts blend together",
+      "Schwelle": "Threshold",
+      "Verhältnis": "Ratio",
+      "Ausgleich": "Make-up",
+      "Fest": "Tight",
+      "Begrenzend": "Limiting",
+      "Amber Zischlaute zähmen": "Amber De-esser",
+      "Dämpft scharfe S-Laute und schrille Höhen bei Stimmen": "Tames sharp S sounds and shrill treble in voices",
+      "Leicht": "Light",
+      "Stark": "Strong",
+      "Amber Entdröhnen": "Amber De-boom",
+      "Nimmt dröhnende Bässe und Matsch heraus, hilfreich in hallenden Räumen": "Removes booming bass and mud, helpful in echoey rooms",
+      "Dröhnen": "Boom",
+      "Matsch": "Mud",
+      "Kleiner Raum": "Small room",
+      "Starker Hall": "Strong echo",
+      "Amber Weichzeichner": "Amber Softener",
+      "Entschärft harte, grelle Höhen für entspanntes Hören": "Softens harsh, glaring treble for relaxed listening",
+      "Weichheit": "Softness",
+      "Entspannt": "Relaxed",
+      "Sehr weich": "Very soft",
+      "Amber Kleine Lautsprecher": "Amber Small Speakers",
+      "Mehr gefühlter Bass auf Laptop- und Handylautsprechern": "More perceived bass on laptop and phone speakers",
+      "Kompensation": "Compensation",
+      "Handy": "Phone",
+      "Amber Radiostimme": "Amber Radio Voice",
+      "Warme, nahe Stimme wie im Radiostudio": "Warm, close voice like in a radio studio",
+      "Nähe": "Closeness",
+      "Präsenz": "Presence",
+      "Nachrichten": "News",
+      "Nachtradio": "Late-night radio",
+      "Amber Kino": "Amber Cinema",
+      "Wuchtiger Bass, weite Bühne und erhaltene Dynamik wie im Kino": "Powerful bass, a wide stage and preserved dynamics like in the cinema",
+      "Wucht": "Impact",
+      "Weite": "Width",
+      "Dynamik-Schutz": "Dynamics protection",
+      "Dialoge": "Dialogue",
+      "Amber Gaming-Headset": "Amber Gaming Headset",
+      "Schritte und Richtungen besser hören, Explosionen und Dröhnen bändigen": "Hear footsteps and directions better, tame explosions and rumble",
+      "Schritte hören": "Hear footsteps",
+      "Bass dämpfen": "Reduce bass",
+      "Raumgefühl": "Sense of space",
+      "Ausgewogen": "Balanced",
+      "Rennspiel": "Racing game",
+      "Amber Autofahrt": "Amber Car Ride",
+      "Gleicht Fahrgeräusche aus: kräftigerer Bass, klarere Mitten, ruhigere Lautstärke": "Compensates for road noise: stronger bass, clearer mids, steadier volume",
+      "Fahrgeräusch": "Road noise",
+      "Stadt": "City",
+      "Landstraße": "Country road",
+      "Autobahn": "Motorway",
+      "Amber Rücksicht (Mietwohnung)": "Amber Considerate (flat)",
+      "Weniger Bass, der durch Wände dringt, aber die Musik bleibt hörbar": "Less bass coming through the walls, while the music stays audible",
+      "Rücksicht": "Consideration",
+      "Ruhezeit": "Quiet hours",
+      "Amber Mitsingen": "Amber Sing-along",
+      "Dämpft den Gesangsbereich, damit du besser mitsingen kannst (Gesang lässt sich nicht ganz entfernen)": "Reduces the vocal range so you can sing along better (vocals can't be removed completely)",
+      "Gesang dämpfen": "Reduce vocals",
+      "Amber Pfeifton-Filter": "Amber Tone Filter",
+      "Schmaler Kerbfilter gegen Pfeifen, Brummen oder störende Einzeltöne": "Narrow notch filter against whistling, hum or annoying single tones",
+      "Frequenz": "Frequency",
+      "Schärfe": "Sharpness",
+      "Brummen 50 Hz": "Hum 50 Hz",
+      "Pfeifen 3 kHz": "Whistle 3 kHz",
+      "Zischen 7 kHz": "Hiss 7 kHz"
+    }
+  }
+}

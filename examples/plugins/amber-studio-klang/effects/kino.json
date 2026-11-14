@@ -1,0 +1,91 @@
+{
+  "id": "amber-kino",
+  "name": "Amber Kino",
+  "author": "Marcel1853",
+  "description": "Wuchtiger Bass, weite Bühne und erhaltene Dynamik wie im Kino",
+  "params": [
+    {
+      "id": "wucht",
+      "name": "Wucht",
+      "min": 0,
+      "max": 100,
+      "default": 50,
+      "step": 5,
+      "unit": "%"
+    },
+    {
+      "id": "weite",
+      "name": "Weite",
+      "min": 100,
+      "max": 180,
+      "default": 130,
+      "step": 5,
+      "unit": "%"
+    },
+    {
+      "id": "dynamik",
+      "name": "Dynamik-Schutz",
+      "min": 0,
+      "max": 100,
+      "default": 40,
+      "step": 5,
+      "unit": "%"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Film",
+      "values": [
+        50,
+        130,
+        40
+      ]
+    },
+    {
+      "name": "Action",
+      "values": [
+        85,
+        150,
+        30
+      ]
+    },
+    {
+      "name": "Dialoge",
+      "values": [
+        25,
+        115,
+        70
+      ]
+    }
+  ],
+  "chain": [
+    {
+      "type": "lowshelf",
+      "freq": 70,
+      "gain": "wucht / 9",
+      "q": 0.7
+    },
+    {
+      "type": "peaking",
+      "freq": 3000,
+      "gain": "wucht / 25",
+      "q": 0.8
+    },
+    {
+      "type": "width",
+      "amount": "weite / 100"
+    },
+    {
+      "type": "compressor",
+      "threshold": "-14 - dynamik / 6",
+      "ratio": "1.5 + dynamik / 40",
+      "attack": 20,
+      "release": 180,
+      "makeup": 0
+    },
+    {
+      "type": "gain",
+      "db": "-wucht / 12"
+    }
+  ]
+}

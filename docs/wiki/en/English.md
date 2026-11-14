@@ -2,6 +2,40 @@
 
 # Welcome to Amber Player
 
+![Amber Player on the PC](https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/pc-bibliothek.png)
+
+<table>
+<tr>
+<td width="33%"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/handy-visualisierung.png" alt="Phone: visualizer behind the controls"></td>
+<td width="33%"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/handy-pc.png" alt="Phone: remote control for the PC"></td>
+<td width="33%"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/handy-radio.png" alt="Phone: internet radio"></td>
+</tr>
+<tr>
+<td align="center"><sub>Phone: visualizer behind the controls</sub></td>
+<td align="center"><sub>Phone: remote control for the PC</sub></td>
+<td align="center"><sub>Phone: internet radio</sub></td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td width="50%"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/pc-effekte.png" alt="Sound effects with reverb"></td>
+<td width="50%"><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/pc-visualisierung.png" alt="Visualizer “Ring” with cover"></td>
+</tr>
+<tr>
+<td align="center"><sub>Sound effects with reverb</sub></td>
+<td align="center"><sub>Visualizer “Ring” with cover</sub></td>
+</tr>
+<tr>
+<td><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/tablet-pc.png" alt="Tablet: controlling the PC"></td>
+<td><img src="https://raw.githubusercontent.com/Marcel1853/amber-player/main/docs/screenshots/tablet-auswahl.png" alt="Tablet: choosing a visualizer"></td>
+</tr>
+<tr>
+<td align="center"><sub>Tablet: controlling the PC</sub></td>
+<td align="center"><sub>Tablet: choosing a visualizer</sub></td>
+</tr>
+</table>
+
 Amber Player is a free, ad-free music player for **Linux** and **Android**. It plays your own
 music collection, internet radio and music streamed from your PC to your phone. Sound effects
 and visualizers are plugins – you can build your own without recompiling the player.
