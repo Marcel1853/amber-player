@@ -94,7 +94,14 @@ impl Player {
         let (events, _) = broadcast::channel(64);
         let effects = PluginHost::load(Some(&Library::plugin_dir("effects")), Some(library.clone()));
         let analyzer = Arc::new(Analyzer::default());
-        let sources = Arc::new(Sources::load(&Library::plugin_dir("sources")));
+        let mut sources = Sources::load(&Library::plugin_dir("sources"));
+        // Online-Quellen aus Plugin-Paketen nur, wenn „Erweiterte Plugins erlauben“ an ist.
+        if library.setting_as::<bool>(crate::packages::EXTENDED_SETTING).unwrap_or(false) {
+            let (parts, errors) = crate::packages::source_parts();
+            sources.errors.extend(errors);
+            sources.add_js(parts);
+        }
+        let sources = Arc::new(sources);
         match library.prune_online() {
             Ok(n) if n > 0 => log::info!("{n} unbenutzte Online-Titel aufgeräumt"),
             Err(e) => log::warn!("Aufräumen der Online-Titel: {e:#}"),

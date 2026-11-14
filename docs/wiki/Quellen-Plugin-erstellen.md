@@ -2,123 +2,156 @@
 
 Ein Quellen-Plugin bindet Musik aus einem Online-Dienst ein: Es **sucht**, liest **Playlisten**
 und liefert **abspielbare Adressen**. Amber Player streamt die Musik – gespeichert wird nichts.
-Quellen-Plugins gibt es nur am PC.
 
-> **Achtung:** Ein Quellen-Plugin ist ein Programm und läuft mit deinen Rechten. Beachte außerdem
-> die Nutzungsbedingungen des Dienstes, den du einbindest.
+Es gibt zwei Arten:
 
-## Aufbau
+| Art | Läuft auf | Sprache | Ins Netz |
+|---|---|---|---|
+| **Online-Quelle** im Plugin-Paket (empfohlen) | PC und Handy | JavaScript | nur zu freigegebenen Adressen |
+| Programm-Plugin | nur PC | beliebig (z. B. Python) | uneingeschränkt |
 
-Jedes Plugin ist ein Ordner in `~/.local/share/amber-player/sources/`:
+> **Beachte** die Nutzungsbedingungen des Dienstes, den du einbindest, und umgehe keine
+> Zugangssperren oder Schutzmaßnahmen.
+
+## Online-Quelle (JavaScript)
+
+Eine Online-Quelle ist ein **erweitertes Plugin**: Sie läuft abgeschottet in einer eigenen kleinen
+JavaScript-Umgebung im Player – ohne Zugriff auf Dateien, Programme oder den Rest des Geräts.
+Ins Internet darf sie nur über `amber.http`, nur per **https** und nur zu den Adressen, die in der
+`plugin.json` stehen. Aktiv wird sie erst, wenn der Nutzer unter **Einstellungen → Plugins →
+Erweiterte Plugins** zustimmt.
+
+### Aufbau
 
 ```
-sources/
-└── meine-quelle/
-    ├── plugin.json     ← Beschreibung
-    └── plugin.py       ← das Programm (beliebige Sprache)
+meine-quelle/
+├── plugin.json
+├── source.js
+├── LICENSE
+└── README.md
 ```
-
-### plugin.json
 
 ```json
 {
   "id": "meine-quelle",
   "name": "Meine Quelle",
-  "description": "Freie Musik aus meinem Archiv",
+  "version": "1.0.0",
+  "author": "Dein Name",
+  "license": "MIT",
+  "contents": [{ "type": "source", "file": "source.js" }],
+  "permissions": { "network": ["api.example.org", "*.cdn.example.org"] }
+}
+```
+
+`permissions.network` ist Pflicht: `example.org` erlaubt genau diese Adresse, `*.example.org`
+zusätzlich alle Unteradressen. Weiterleitungen werden nicht verfolgt.
+
+### source.js
+
+```js
+amber.source({
+  id: 'meine-quelle',
+  name: 'Meine Quelle',
+  description: 'Freie Musik aus meinem Archiv',
+  icon: '♪',
+
+  search(query, limit) {
+    const r = amber.http.get('https://api.example.org/search?q=' + encodeURIComponent(query));
+    if (!r.ok) throw new Error('Suche fehlgeschlagen: ' + r.status);
+    return JSON.parse(r.body).tracks.slice(0, limit).map((t) => ({
+      id: String(t.id),
+      title: t.title,
+      artist: t.artist,
+      duration_ms: t.seconds * 1000,
+      thumbnail: t.image,
+    }));
+  },
+
+  // optional – nur wenn der Dienst Playlisten hat
+  playlist(url) {
+    const id = url.split('/').pop();
+    const p = JSON.parse(amber.http.get('https://api.example.org/playlists/' + id).body);
+    return { name: p.name, items: p.tracks.map((t) => ({ id: String(t.id), title: t.title, artist: t.artist })) };
+  },
+
+  resolve(id) {
+    const t = JSON.parse(amber.http.get('https://api.example.org/tracks/' + id).body);
+    return { url: t.stream_url, headers: {} };
+  },
+});
+```
+
+| Funktion | Pflicht | Rückgabe |
+|---|---|---|
+| `search(query, limit)` | nein* | Liste von Einträgen |
+| `playlist(url)` | nein | `{ name, items: [Einträge] }` |
+| `resolve(id)` | ja | `{ url, headers }` – die abspielbare Adresse |
+
+\* Ohne `search` gibt es im Reiter **Online** kein Suchfeld.
+
+Ein **Eintrag**: `{ id, title, artist, duration_ms, thumbnail }`. `resolve` wird bei **jedem
+Abspielen** neu gefragt. Die Adresse sollte Range-Anfragen erlauben (sonst kein Spulen). Am besten
+AAC (MP4/M4A), MP3, FLAC oder Ogg Vorbis.
+
+### Hilfen in `amber`
+
+| Aufruf | Wirkung |
+|---|---|
+| `amber.http.get(url, headers)` | GET-Anfrage, Antwort `{ status, ok, headers, body }` |
+| `amber.http.post(url, body, headers)` | POST; ein Objekt als `body` wird als JSON gesendet |
+| `amber.http.request({ method, url, headers, body })` | beliebige Anfrage |
+| `amber.log(...)` | Meldung ins Protokoll |
+
+Die Aufrufe sind **synchron** – kein `await` nötig. Grenzen: 64 MB Speicher, 10 Sekunden
+Rechenzeit je Aufruf (Wartezeit im Netz zählt nicht mit), 40 Netzanfragen je Aufruf, 8 MB je
+Antwort.
+
+### Ausprobieren und weitergeben
+
+Ohne den Player zu starten – im Quellcode-Ordner von Amber Player:
+
+```sh
+cargo run -p amber-core --example source-probe -- meine-quelle search "test"
+cargo run -p amber-core --example source-probe -- meine-quelle resolve 123 --decode
+```
+
+`--decode` öffnet die gelieferte Adresse und dekodiert ein Stück (ohne Ton) – so siehst du, ob der
+Player sie wirklich abspielen kann. Gepackt wird mit
+`python3 scripts/plugin-pack.py meine-quelle/` → `meine-quelle.amberplugin`, siehe
+[Plugin-Pakete](Plugin-Pakete.md).
+
+## Programm-Plugin (nur PC)
+
+Die ältere Art: ein Ordner in `~/.local/share/amber-player/sources/` mit `plugin.json` und einem
+beliebigen Programm. Es läuft mit den Rechten des Nutzers – nur aus vertrauenswürdigen Quellen
+installieren.
+
+```json
+{
+  "id": "meine-quelle",
+  "name": "Meine Quelle",
   "icon": "♪",
   "command": ["python3", "plugin.py"],
   "features": ["search", "playlist"]
 }
 ```
 
-| Feld | Bedeutung |
-|---|---|
-| `id` | eindeutige Kennung (Buchstaben, Ziffern, `-`, `_`) |
-| `name`, `description`, `icon` | Anzeige im Reiter **Online** |
-| `command` | Programmaufruf, gestartet im Plugin-Ordner |
-| `features` | `search` (Suche) und/oder `playlist` (Playlist-Link übernehmen) |
-
-## Das Protokoll
-
-Für **jede Anfrage** startet Amber Player das Programm, schreibt **eine Zeile JSON** auf die
-Standardeingabe und liest **eine Zeile JSON** als Antwort von der Standardausgabe. Andere
-Ausgaben (Protokoll, Fehler) gehören auf die Standardfehlerausgabe.
+Für jede Anfrage startet Amber Player das Programm, schreibt **eine Zeile JSON** auf die
+Standardeingabe und liest **eine Zeile JSON** als Antwort:
 
 | Anfrage | Antwort |
 |---|---|
 | `{"action":"search","query":"…","limit":25}` | `{"items":[Eintrag, …]}` |
-| `{"action":"playlist","url":"…"}` | `{"name":"…","items":[Eintrag, …]}` |
-| `{"action":"resolve","id":"…"}` | `{"url":"https://…","headers":{"…":"…"}}` |
+| `{"action":"playlist","url":"…"}` | `{"name":"…","items":[…]}` |
+| `{"action":"resolve","id":"…"}` | `{"url":"https://…","headers":{…}}` |
 | bei einem Fehler | `{"error":"verständliche Meldung"}` |
 
-Ein **Eintrag** sieht so aus:
+Testen: `echo '{"action":"search","query":"test","limit":5}' | python3 plugin.py`
 
-```json
-{ "id": "abc123", "title": "Titel", "artist": "Interpret", "duration_ms": 215000, "thumbnail": "https://…/bild.jpg" }
-```
+## Im Player
 
-- `id` ist deine eigene Kennung des Titels; Amber Player gibt sie bei `resolve` zurück.
-- `resolve` wird **bei jedem Abspielen** neu gefragt – Adressen bei Online-Diensten laufen oft ab.
-- Die Adresse sollte **Range-Anfragen** erlauben, sonst geht Spulen nicht.
-- Am besten liefern: AAC (MP4/M4A), MP3, FLAC oder Ogg Vorbis.
-- `headers` ist optional (z. B. für einen `User-Agent`, den der Dienst verlangt).
-
-## Beispiel in Python
-
-Ein vollständiges, kleines Plugin, das Titel aus einer eigenen Liste anbietet:
-
-```python
-#!/usr/bin/env python3
-"""Beispiel-Quelle für Amber Player: Titel aus einer festen Liste."""
-import json
-import sys
-
-TITEL = [
-    {"id": "1", "title": "Morgenlicht", "artist": "Beispiel", "duration_ms": 180000,
-     "thumbnail": "", "url": "https://example.org/musik/morgenlicht.mp3"},
-    {"id": "2", "title": "Abendrot", "artist": "Beispiel", "duration_ms": 240000,
-     "thumbnail": "", "url": "https://example.org/musik/abendrot.mp3"},
-]
-
-def eintrag(t):
-    return {k: t[k] for k in ("id", "title", "artist", "duration_ms", "thumbnail")}
-
-def main():
-    anfrage = json.loads(sys.stdin.readline())
-    aktion = anfrage.get("action")
-    if aktion == "search":
-        q = anfrage.get("query", "").lower()
-        treffer = [eintrag(t) for t in TITEL if q in (t["title"] + " " + t["artist"]).lower()]
-        antwort = {"items": treffer[: anfrage.get("limit", 25)]}
-    elif aktion == "playlist":
-        antwort = {"name": "Alle Titel", "items": [eintrag(t) for t in TITEL]}
-    elif aktion == "resolve":
-        t = next((t for t in TITEL if t["id"] == anfrage.get("id")), None)
-        antwort = {"url": t["url"], "headers": {}} if t else {"error": "Titel nicht gefunden"}
-    else:
-        antwort = {"error": f"Unbekannte Anfrage: {aktion}"}
-    print(json.dumps(antwort))
-
-if __name__ == "__main__":
-    main()
-```
-
-## Testen ohne Amber Player
-
-Du kannst das Plugin direkt im Terminal ausprobieren:
-
-```sh
-cd ~/.local/share/amber-player/sources/meine-quelle
-echo '{"action":"search","query":"abend","limit":5}' | python3 plugin.py
-echo '{"action":"resolve","id":"2"}' | python3 plugin.py
-```
-
-## Wie es sich im Player verhält
-
-- Nach dem Neustart erscheint der Reiter **Online** mit Suche und – bei `playlist` – dem Knopf
-  „Playlist übernehmen“.
+- Nach dem Neustart erscheint der Reiter **Online** (am Handy unter **Mehr**).
 - Online-Titel verhalten sich wie eigene: Warteschlange, Favoriten, Playlisten, Effekte und
   Visualisierung funktionieren.
-- In Titel/Alben/Interpreten tauchen sie erst auf, wenn sie benutzt wurden (gespielt, Favorit
-  oder in einer Playlist). Nur gesuchte Titel räumt Amber Player nach einem Tag wieder weg.
-- Über die API: `/api/online/search`, `/api/online/play`, `/api/online/import`.
+- In Titel/Alben/Interpreten tauchen sie erst auf, wenn sie benutzt wurden; nur gesuchte Titel
+  räumt Amber Player nach einem Tag wieder weg.

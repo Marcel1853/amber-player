@@ -68,18 +68,39 @@ pub struct Resolved {
     pub headers: std::collections::HashMap<String, String>,
 }
 
+/// Wie ein Quellen-Plugin läuft.
+enum Backend {
+    /// Externes Programm im Plugin-Ordner (nur am PC).
+    Process(PathBuf),
+    /// JavaScript-Plugin aus einem Plugin-Paket („erweitertes Plugin“, PC und Handy).
+    Js(crate::jssource::JsSource),
+}
+
 pub struct SourcePlugin {
     pub info: SourceInfo,
-    dir: PathBuf,
+    backend: Backend,
 }
 
 impl SourcePlugin {
     /// Eine Anfrage an das Plugin schicken und die Antwort lesen.
     fn call(&self, request: Value) -> Result<Value> {
+        let dir = match &self.backend {
+            Backend::Process(dir) => dir,
+            Backend::Js(js) => {
+                let action = request["action"].as_str().unwrap_or("");
+                let v = match action {
+                    "search" => json!({ "items": js.call("search", json!([request["query"], request["limit"]]))? }),
+                    "playlist" => js.call("playlist", json!([request["url"]]))?,
+                    "resolve" => js.call("resolve", json!([request["id"]]))?,
+                    _ => bail!("Unbekannte Anfrage {action}"),
+                };
+                return Ok(v);
+            }
+        };
         let (prog, args) = self.info.command.split_first().ok_or_else(|| anyhow!("Plugin ohne „command“"))?;
         let mut child = Command::new(prog)
             .args(args)
-            .current_dir(&self.dir)
+            .current_dir(dir)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
@@ -182,7 +203,7 @@ impl Sources {
                 Ok(info) if plugins.iter().any(|p: &SourcePlugin| p.info.id == info.id) => {
                     errors.push(format!("{}: Die ID „{}“ gibt es schon", d.display(), info.id))
                 }
-                Ok(info) => plugins.push(SourcePlugin { info, dir: d }),
+                Ok(info) => plugins.push(SourcePlugin { info, backend: Backend::Process(d) }),
                 Err(e) => errors.push(format!("{}: {e:#}", d.display())),
             }
         }
@@ -190,6 +211,27 @@ impl Sources {
             log::warn!("Quellen-Plugin: {e}");
         }
         Self { plugins, errors }
+    }
+
+    /// JavaScript-Quellen aus Plugin-Paketen dazuladen („erweiterte Plugins“).
+    /// Jedes Teil: (Quelle für Meldungen, Code, erlaubte Adressen).
+    pub fn add_js(&mut self, parts: Vec<(String, Result<String>, Vec<String>)>) {
+        for (label, code, hosts) in parts {
+            let started = code.and_then(|code| crate::jssource::JsSource::start(&label, code, hosts));
+            match started {
+                Ok(js) if self.plugins.iter().any(|p| p.info.id == js.info.id) => {
+                    self.errors.push(format!("{label}: Die ID „{}“ gibt es schon", js.info.id));
+                }
+                Ok(js) => {
+                    log::info!("Online-Quelle geladen: {} ({label})", js.info.name);
+                    self.plugins.push(SourcePlugin { info: js.info.clone(), backend: Backend::Js(js) });
+                }
+                Err(e) => {
+                    log::warn!("Online-Quelle: {e:#}");
+                    self.errors.push(format!("{e:#}"));
+                }
+            }
+        }
     }
 
     pub fn list(&self) -> Vec<SourceInfo> {

@@ -493,7 +493,23 @@ pub fn install_plugin_package(files: std::collections::HashMap<String, String>) 
     Ok(json!({
         "id": m.id, "name": m.name, "version": m.version,
         "effects": m.count(Kind::Effect), "visualizers": m.count(Kind::Visualizer),
+        "sources": m.count(Kind::Source),
     }))
+}
+
+/// „Erweiterte Plugins erlauben“: Online-Quellen aus Plugin-Paketen dürfen ins Internet
+/// (nur zu den Adressen, die das Paket angibt). Gilt nach dem nächsten Start.
+#[tauri::command]
+pub fn extended_plugins(ctx: State<'_, Ctx>) -> bool {
+    ctx.player.library().setting_as::<bool>(amber_core::packages::EXTENDED_SETTING).unwrap_or(false)
+}
+
+#[tauri::command]
+pub fn set_extended_plugins(ctx: State<'_, Ctx>, on: bool) -> R<()> {
+    ctx.player
+        .library()
+        .set_setting_json(amber_core::packages::EXTENDED_SETTING, &on)
+        .map_err(|e| format!("{e:#}"))
 }
 
 /// Alle installierten Plugin-Pakete mit Version, Autor und Lizenz.

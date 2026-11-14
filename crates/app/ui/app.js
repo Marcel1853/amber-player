@@ -1237,11 +1237,26 @@ async function unzipText(buffer) {
 /** Plugin-Paket (ZIP) installieren. */
 async function installPackage(file) {
   const files = await unzipText(await file.arrayBuffer());
+  // Online-Quellen dürfen ins Internet – vorher zeigen, wohin, und bestätigen lassen.
+  let manifest = {};
+  try {
+    manifest = JSON.parse(files['plugin.json'] || '{}');
+  } catch {}
+  const sources = (manifest.contents || []).filter((c) => c.type === 'source').length || (manifest.type === 'source' ? 1 : 0);
+  if (sources) {
+    const hosts = (manifest.permissions?.network || []).join(', ') || '–';
+    const ok = await dialog({
+      title: tx('„{name}“ möchte ins Internet', { name: manifest.name || manifest.id || '?' }),
+      text: tx('Das Paket enthält eine Online-Quelle. Sie darf nur diese Adressen erreichen: {hosts}. Installiere es nur, wenn du der Quelle vertraust. Aktiv wird sie erst, wenn „Erweiterte Plugins erlauben“ eingeschaltet ist.', { hosts }),
+      ok: tx('Installieren'),
+    });
+    if (!ok) return;
+  }
   const m = await call('install_plugin_package', { files });
   if (m.visualizers && (await vizEnsure())) await vizLoad();
   toast(
-    m.effects
-      ? tx('„{name}“ installiert ({parts}) – Klangeffekte wirken nach dem nächsten Start der App', { name: m.name, parts: packageParts(m) })
+    m.effects || m.sources
+      ? tx('„{name}“ installiert ({parts}) – Klangeffekte und Online-Quellen wirken nach dem nächsten Start der App', { name: m.name, parts: packageParts(m) })
       : tx('„{name}“ installiert ({parts})', { name: m.name, parts: packageParts(m) }),
     'ok',
   );
@@ -1253,6 +1268,7 @@ function packageParts(p) {
   return [
     p.effects ? plural(p.effects, 'Klangeffekt', 'Klangeffekte') : '',
     p.visualizers ? plural(p.visualizers, 'Visualisierung', 'Visualisierungen') : '',
+    p.sources ? plural(p.sources, 'Online-Quelle', 'Online-Quellen') : '',
   ]
     .filter(Boolean)
     .join(' · ');
@@ -1503,6 +1519,13 @@ async function renderSettings(el, v, fresh) {
         <span class="k">Visualisierungen</span>
         <span style="display:flex;gap:10px;align-items:center">${plugBtn('visualizers')}<button class="btn small" id="vizReload">${icon('refresh')} Neu laden</button><span class="hint" style="margin:0">${esc(tx('.amberplugin-Paket oder .js'))}</span></span>
       </div>
+      <div class="kv">
+        <span class="k">${esc(tx('Erweiterte Plugins'))}</span>
+        <span style="display:flex;align-items:center;gap:12px">
+          <label class="switch"><input type="checkbox" id="extendedOn"><span></span></label>
+          <span class="hint" style="margin:0">${esc(tx('Erlaubt Online-Quellen aus Plugin-Paketen, ins Internet zu gehen – nur zu den Adressen, die das Paket angibt. Gilt nach dem nächsten Start der App.'))}</span>
+        </span>
+      </div>
       <h3 style="margin-top:18px">Installierte Plugins</h3>
       ${packages.packages.length
         ? `<div class="pkg-list">${packages.packages.map((p) => `<div class="pkg">
@@ -1625,6 +1648,27 @@ async function renderSettings(el, v, fresh) {
   for (const b of $$('[data-qr]', el)) b.addEventListener('click', () => streamDialog(streams.links[Number(b.dataset.qr)]));
   $('[data-act="lan-on"]', el)?.addEventListener('click', enableLan);
   $('[data-act="pair"]', el)?.addEventListener('click', pairDialog);
+  const extBox = $('#extendedOn', el);
+  if (extBox) {
+    invoke('extended_plugins').then((on) => (extBox.checked = !!on)).catch(() => {});
+    extBox.addEventListener('change', async () => {
+      if (extBox.checked) {
+        const ok = await dialog({
+          title: tx('Erweiterte Plugins erlauben?'),
+          text: tx('Online-Quellen aus Plugin-Paketen dürfen dann ins Internet, jeweils nur zu den Adressen, die sie bei der Installation angegeben haben. Sie laufen abgeschottet ohne Zugriff auf deine Dateien. Erlaube das nur für Pakete, denen du vertraust.'),
+          ok: tx('Erlauben'),
+        });
+        if (!ok) {
+          extBox.checked = false;
+          return;
+        }
+      }
+      try {
+        await call('set_extended_plugins', { on: extBox.checked });
+        toast(tx('Gespeichert – gilt nach dem nächsten Start von Amber Player'), 'ok');
+      } catch {}
+    });
+  }
   $('[data-act="update-download"]', el)?.addEventListener('click', downloadUpdate);
   $('[data-act="update-check"]', el)?.addEventListener('click', () => checkUpdates(true));
   $('#updateAuto', el)?.addEventListener('change', (e) => {

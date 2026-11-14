@@ -1,6 +1,6 @@
 # Plugin-Pakete
 
-Klangeffekte und Visualisierungen werden als **Plugin-Paket** weitergegeben: eine Datei mit der
+Klangeffekte, Visualisierungen und Online-Quellen werden als **Plugin-Paket** weitergegeben: eine Datei mit der
 Endung **`.amberplugin`**. Ein Paket kann **einen oder mehrere Teile** enthalten – zum Beispiel
 drei Klangeffekte und zwei Visualisierungen – und hat **seine eigene Lizenz**. Amber Player
 installiert es mit einem Klick, am PC und am Handy.
@@ -48,7 +48,8 @@ Dateien als `plugin.json`, die Teile, `LICENSE` und `README` sind nicht erlaubt.
 |---|---|---|
 | `id` | ja | 1–32 Zeichen aus Buchstaben, Ziffern, `-`, `_`; bestimmt den Ordnernamen |
 | `name` | ja | Anzeigename des Pakets |
-| `contents` | ja* | Liste der Teile: `type` (`effect` oder `visualizer`) und `file` (Pfad im Paket) – bis zu 32 Teile |
+| `contents` | ja* | Liste der Teile: `type` (`effect`, `visualizer` oder `source`) und `file` (Pfad im Paket) – bis zu 32 Teile |
+| `permissions` | bei `source` | `{ "network": ["api.example.org", "*.example.org"] }` – Adressen, die Online-Quellen erreichen dürfen, siehe [Quellen-Plugin erstellen](Quellen-Plugin-erstellen.md) |
 | `version` | | z. B. `1.0.0` – erscheint in den Einstellungen |
 | `author` | | dein Name |
 | `description` | | kurze Beschreibung |

@@ -7,6 +7,7 @@ pub mod covers;
 pub mod decoder;
 pub mod effects;
 pub mod httpsource;
+pub mod jssource;
 pub mod library;
 pub mod m3u;
 #[cfg(feature = "server")]

@@ -423,5 +423,15 @@ I18N.tr = {
  "Album": "Albüm",
  "Equalizer": "Ekolayzer",
  "Echo": "Yankı",
- "Online": "Çevrim içi"
+ "Online": "Çevrim içi",
+ "„{name}“ möchte ins Internet": "“{name}” internete erişmek istiyor",
+ "Das Paket enthält eine Online-Quelle. Sie darf nur diese Adressen erreichen: {hosts}. Installiere es nur, wenn du der Quelle vertraust. Aktiv wird sie erst, wenn „Erweiterte Plugins erlauben“ eingeschaltet ist.": "Paket bir çevrim içi kaynak içeriyor. Yalnızca şu adreslere erişebilir: {hosts}. Yalnızca kaynağa güveniyorsan yükle. “Gelişmiş eklentilere izin ver” açıkken etkin olur.",
+ "„{name}“ installiert ({parts}) – Klangeffekte und Online-Quellen wirken nach dem nächsten Start der App": "“{name}” yüklendi ({parts}) – ses efektleri ve çevrim içi kaynaklar uygulama yeniden açıldığında etkin olur",
+ "1|Online-Quelle": "çevrim içi kaynak",
+ "n|Online-Quellen": "çevrim içi kaynak",
+ "Erweiterte Plugins": "Gelişmiş eklentiler",
+ "Erlaubt Online-Quellen aus Plugin-Paketen, ins Internet zu gehen – nur zu den Adressen, die das Paket angibt. Gilt nach dem nächsten Start der App.": "Eklenti paketlerindeki çevrim içi kaynakların internete erişmesine izin verir – yalnızca paketin belirttiği adreslere. Uygulama yeniden açıldığında geçerli olur.",
+ "Erweiterte Plugins erlauben?": "Gelişmiş eklentilere izin verilsin mi?",
+ "Online-Quellen aus Plugin-Paketen dürfen dann ins Internet, jeweils nur zu den Adressen, die sie bei der Installation angegeben haben. Sie laufen abgeschottet ohne Zugriff auf deine Dateien. Erlaube das nur für Pakete, denen du vertraust.": "Eklenti paketlerindeki çevrim içi kaynaklar internete erişebilir, her biri yalnızca kurulumda belirttiği adreslere. Dosyalarına erişimi olmadan yalıtılmış çalışırlar. Yalnızca güvendiğin paketler için izin ver.",
+ "Erlauben": "İzin ver"
 };

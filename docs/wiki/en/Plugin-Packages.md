@@ -1,6 +1,6 @@
 # Plugin packages
 
-Sound effects and visualizers are shared as a **plugin package**: a file ending in
+Sound effects, visualizers and online sources are shared as a **plugin package**: a file ending in
 **`.amberplugin`**. A package can contain **one or several parts** – for example three sound
 effects and two visualizers – and has **its own license**. Amber Player installs it with one
 click, on the PC and on the phone.
@@ -48,7 +48,8 @@ Parts may sit directly in the package or in **one** subfolder (e.g. `effects/`).
 |---|---|---|
 | `id` | yes | 1–32 characters: letters, digits, `-`, `_`; determines the folder name |
 | `name` | yes | the package's display name |
-| `contents` | yes* | list of parts: `type` (`effect` or `visualizer`) and `file` (path in the package) – up to 32 parts |
+| `contents` | yes* | list of parts: `type` (`effect`, `visualizer` or `source`) and `file` (path in the package) – up to 32 parts |
+| `permissions` | with `source` | `{ "network": ["api.example.org", "*.example.org"] }` – addresses online sources may reach, see [Creating a source plugin](Creating-a-Source-Plugin.md) |
 | `version` | | e.g. `1.0.0` – shown in the settings |
 | `author` | | your name |
 | `description` | | short description |

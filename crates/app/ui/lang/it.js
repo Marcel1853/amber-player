@@ -423,5 +423,15 @@ I18N.it = {
  "Album": "Album",
  "Equalizer": "Equalizer",
  "Echo": "Eco",
- "Online": "Online"
+ "Online": "Online",
+ "„{name}“ möchte ins Internet": "«{name}» vuole accedere a Internet",
+ "Das Paket enthält eine Online-Quelle. Sie darf nur diese Adressen erreichen: {hosts}. Installiere es nur, wenn du der Quelle vertraust. Aktiv wird sie erst, wenn „Erweiterte Plugins erlauben“ eingeschaltet ist.": "Il pacchetto contiene una sorgente online. Può raggiungere solo questi indirizzi: {hosts}. Installalo solo se ti fidi della sorgente. Diventa attiva solo quando «Consenti plugin avanzati» è attivo.",
+ "„{name}“ installiert ({parts}) – Klangeffekte und Online-Quellen wirken nach dem nächsten Start der App": "«{name}» installato ({parts}) – effetti audio e sorgenti online attivi al prossimo avvio dell’app",
+ "1|Online-Quelle": "sorgente online",
+ "n|Online-Quellen": "sorgenti online",
+ "Erweiterte Plugins": "Plugin avanzati",
+ "Erlaubt Online-Quellen aus Plugin-Paketen, ins Internet zu gehen – nur zu den Adressen, die das Paket angibt. Gilt nach dem nächsten Start der App.": "Consente alle sorgenti online dei pacchetti di accedere a Internet, solo agli indirizzi indicati dal pacchetto. Vale dal prossimo avvio dell’app.",
+ "Erweiterte Plugins erlauben?": "Consentire i plugin avanzati?",
+ "Online-Quellen aus Plugin-Paketen dürfen dann ins Internet, jeweils nur zu den Adressen, die sie bei der Installation angegeben haben. Sie laufen abgeschottet ohne Zugriff auf deine Dateien. Erlaube das nur für Pakete, denen du vertraust.": "Le sorgenti online dei pacchetti potranno accedere a Internet, ognuna solo agli indirizzi dichiarati all’installazione. Girano isolate, senza accesso ai tuoi file. Consentilo solo per pacchetti di cui ti fidi.",
+ "Erlauben": "Consenti"
 };

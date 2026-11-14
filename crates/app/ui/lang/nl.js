@@ -423,5 +423,15 @@ I18N.nl = {
  "Album": "Album",
  "Equalizer": "Equalizer",
  "Echo": "Echo",
- "Online": "Online"
+ "Online": "Online",
+ "„{name}“ möchte ins Internet": "‘{name}’ wil het internet op",
+ "Das Paket enthält eine Online-Quelle. Sie darf nur diese Adressen erreichen: {hosts}. Installiere es nur, wenn du der Quelle vertraust. Aktiv wird sie erst, wenn „Erweiterte Plugins erlauben“ eingeschaltet ist.": "Het pakket bevat een online bron. Die mag alleen deze adressen bereiken: {hosts}. Installeer het alleen als je de bron vertrouwt. Hij wordt pas actief als ‘Uitgebreide plugins toestaan’ aanstaat.",
+ "„{name}“ installiert ({parts}) – Klangeffekte und Online-Quellen wirken nach dem nächsten Start der App": "‘{name}’ geïnstalleerd ({parts}) – geluidseffecten en online bronnen werken na de volgende start van de app",
+ "1|Online-Quelle": "online bron",
+ "n|Online-Quellen": "online bronnen",
+ "Erweiterte Plugins": "Uitgebreide plugins",
+ "Erlaubt Online-Quellen aus Plugin-Paketen, ins Internet zu gehen – nur zu den Adressen, die das Paket angibt. Gilt nach dem nächsten Start der App.": "Laat online bronnen uit pluginpakketten het internet op – alleen naar de adressen die het pakket opgeeft. Geldt na de volgende start van de app.",
+ "Erweiterte Plugins erlauben?": "Uitgebreide plugins toestaan?",
+ "Online-Quellen aus Plugin-Paketen dürfen dann ins Internet, jeweils nur zu den Adressen, die sie bei der Installation angegeben haben. Sie laufen abgeschottet ohne Zugriff auf deine Dateien. Erlaube das nur für Pakete, denen du vertraust.": "Online bronnen uit pluginpakketten mogen dan het internet op, elk alleen naar de adressen die ze bij de installatie hebben opgegeven. Ze draaien afgeschermd, zonder toegang tot je bestanden. Sta dit alleen toe voor pakketten die je vertrouwt.",
+ "Erlauben": "Toestaan"
 };

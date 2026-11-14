@@ -423,5 +423,15 @@ I18N.en = {
  "Album": "Album",
  "Equalizer": "Equalizer",
  "Echo": "Echo",
- "Online": "Online"
+ "Online": "Online",
+ "„{name}“ möchte ins Internet": "“{name}” wants to access the internet",
+ "Das Paket enthält eine Online-Quelle. Sie darf nur diese Adressen erreichen: {hosts}. Installiere es nur, wenn du der Quelle vertraust. Aktiv wird sie erst, wenn „Erweiterte Plugins erlauben“ eingeschaltet ist.": "The package contains an online source. It may only reach these addresses: {hosts}. Only install it if you trust the source. It only becomes active once “Allow extended plugins” is turned on.",
+ "„{name}“ installiert ({parts}) – Klangeffekte und Online-Quellen wirken nach dem nächsten Start der App": "“{name}” installed ({parts}) – sound effects and online sources take effect after the next app start",
+ "1|Online-Quelle": "online source",
+ "n|Online-Quellen": "online sources",
+ "Erweiterte Plugins": "Extended plugins",
+ "Erlaubt Online-Quellen aus Plugin-Paketen, ins Internet zu gehen – nur zu den Adressen, die das Paket angibt. Gilt nach dem nächsten Start der App.": "Lets online sources from plugin packages access the internet – only the addresses the package declares. Applies after the next app start.",
+ "Erweiterte Plugins erlauben?": "Allow extended plugins?",
+ "Online-Quellen aus Plugin-Paketen dürfen dann ins Internet, jeweils nur zu den Adressen, die sie bei der Installation angegeben haben. Sie laufen abgeschottet ohne Zugriff auf deine Dateien. Erlaube das nur für Pakete, denen du vertraust.": "Online sources from plugin packages may then access the internet, each only the addresses they declared during installation. They run sandboxed without access to your files. Only allow this for packages you trust.",
+ "Erlauben": "Allow"
 };

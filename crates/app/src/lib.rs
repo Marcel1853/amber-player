@@ -173,6 +173,8 @@ pub fn run() {
             commands::install_plugin_package,
             commands::plugin_packages,
             commands::remove_plugin_package,
+            commands::extended_plugins,
+            commands::set_extended_plugins,
             commands::pc_info,
             commands::pc_pair,
             commands::pc_unpair,

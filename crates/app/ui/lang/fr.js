@@ -423,5 +423,15 @@ I18N.fr = {
  "Album": "Album",
  "Equalizer": "Égaliseur",
  "Echo": "Écho",
- "Online": "En ligne"
+ "Online": "En ligne",
+ "„{name}“ möchte ins Internet": "« {name} » veut accéder à Internet",
+ "Das Paket enthält eine Online-Quelle. Sie darf nur diese Adressen erreichen: {hosts}. Installiere es nur, wenn du der Quelle vertraust. Aktiv wird sie erst, wenn „Erweiterte Plugins erlauben“ eingeschaltet ist.": "Le paquet contient une source en ligne. Elle ne peut joindre que ces adresses : {hosts}. Ne l’installe que si tu fais confiance à la source. Elle n’est active qu’une fois « Autoriser les plugins avancés » activé.",
+ "„{name}“ installiert ({parts}) – Klangeffekte und Online-Quellen wirken nach dem nächsten Start der App": "« {name} » installé ({parts}) – effets sonores et sources en ligne actifs au prochain démarrage de l’app",
+ "1|Online-Quelle": "source en ligne",
+ "n|Online-Quellen": "sources en ligne",
+ "Erweiterte Plugins": "Plugins avancés",
+ "Erlaubt Online-Quellen aus Plugin-Paketen, ins Internet zu gehen – nur zu den Adressen, die das Paket angibt. Gilt nach dem nächsten Start der App.": "Autorise les sources en ligne des paquets à accéder à Internet – uniquement aux adresses indiquées par le paquet. Appliqué au prochain démarrage de l’app.",
+ "Erweiterte Plugins erlauben?": "Autoriser les plugins avancés ?",
+ "Online-Quellen aus Plugin-Paketen dürfen dann ins Internet, jeweils nur zu den Adressen, die sie bei der Installation angegeben haben. Sie laufen abgeschottet ohne Zugriff auf deine Dateien. Erlaube das nur für Pakete, denen du vertraust.": "Les sources en ligne des paquets pourront alors accéder à Internet, chacune uniquement aux adresses déclarées à l’installation. Elles tournent isolées, sans accès à tes fichiers. N’autorise cela que pour des paquets de confiance.",
+ "Erlauben": "Autoriser"
 };

@@ -423,5 +423,15 @@ I18N.pl = {
  "Album": "Album",
  "Equalizer": "Korektor",
  "Echo": "Echo",
- "Online": "Online"
+ "Online": "Online",
+ "„{name}“ möchte ins Internet": "„{name}” chce korzystać z internetu",
+ "Das Paket enthält eine Online-Quelle. Sie darf nur diese Adressen erreichen: {hosts}. Installiere es nur, wenn du der Quelle vertraust. Aktiv wird sie erst, wenn „Erweiterte Plugins erlauben“ eingeschaltet ist.": "Pakiet zawiera źródło online. Może łączyć się tylko z tymi adresami: {hosts}. Instaluj go tylko, jeśli ufasz źródłu. Zadziała dopiero po włączeniu „Zezwalaj na rozszerzone wtyczki”.",
+ "„{name}“ installiert ({parts}) – Klangeffekte und Online-Quellen wirken nach dem nächsten Start der App": "Zainstalowano „{name}” ({parts}) – efekty i źródła online zadziałają po ponownym uruchomieniu aplikacji",
+ "1|Online-Quelle": "źródło online",
+ "n|Online-Quellen": "źródła online",
+ "Erweiterte Plugins": "Rozszerzone wtyczki",
+ "Erlaubt Online-Quellen aus Plugin-Paketen, ins Internet zu gehen – nur zu den Adressen, die das Paket angibt. Gilt nach dem nächsten Start der App.": "Pozwala źródłom online z pakietów korzystać z internetu – tylko z adresami podanymi w pakiecie. Działa po ponownym uruchomieniu aplikacji.",
+ "Erweiterte Plugins erlauben?": "Zezwolić na rozszerzone wtyczki?",
+ "Online-Quellen aus Plugin-Paketen dürfen dann ins Internet, jeweils nur zu den Adressen, die sie bei der Installation angegeben haben. Sie laufen abgeschottet ohne Zugriff auf deine Dateien. Erlaube das nur für Pakete, denen du vertraust.": "Źródła online z pakietów będą mogły korzystać z internetu, każde tylko z adresami podanymi przy instalacji. Działają w izolacji, bez dostępu do twoich plików. Zezwalaj tylko na zaufane pakiety.",
+ "Erlauben": "Zezwól"
 };

@@ -27,6 +27,8 @@ use crate::library::Library;
 
 /// Ordner für Pakete im Datenordner.
 pub const PACKAGES_DIR: &str = "packages";
+/// Einstellung „Erweiterte Plugins erlauben“ (Online-Quellen mit Internetzugriff).
+pub const EXTENDED_SETTING: &str = "extended_plugins";
 const MAX_CONTENTS: usize = 32;
 const MAX_FILE: u64 = 512 * 1024;
 const MAX_TOTAL: usize = 2 * 1024 * 1024;
@@ -37,6 +39,8 @@ const MAX_TOTAL: usize = 2 * 1024 * 1024;
 pub enum Kind {
     Effect,
     Visualizer,
+    /// Online-Quelle (JavaScript, „erweitertes Plugin“ mit Internetzugriff auf freigegebene Adressen)
+    Source,
 }
 
 impl Kind {
@@ -45,6 +49,7 @@ impl Kind {
         match self {
             Kind::Effect => "effects",
             Kind::Visualizer => "visualizers",
+            Kind::Source => "sources",
         }
     }
 
@@ -52,13 +57,14 @@ impl Kind {
         match self {
             Kind::Effect => "effect.json",
             Kind::Visualizer => "visualizer.js",
+            Kind::Source => "source.js",
         }
     }
 
     fn ext(self) -> &'static str {
         match self {
             Kind::Effect => ".json",
-            Kind::Visualizer => ".js",
+            Kind::Visualizer | Kind::Source => ".js",
         }
     }
 }
@@ -70,6 +76,15 @@ pub struct Content {
     pub kind: Kind,
     /// Pfad im Paket, z. B. `effects/telefon.json`.
     pub file: String,
+}
+
+/// Rechte eines Pakets.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct Permissions {
+    /// Adressen, die Online-Quellen des Pakets erreichen dürfen, z. B. `"example.org"` oder
+    /// `"*.example.org"` (auch alle Unteradressen). Nur https.
+    pub network: Vec<String>,
 }
 
 /// Inhalt von `plugin.json`.
@@ -91,6 +106,9 @@ pub struct Manifest {
     /// Die Teile des Pakets.
     #[serde(default)]
     pub contents: Vec<Content>,
+    /// Rechte (nur für Online-Quellen nötig).
+    #[serde(default)]
+    pub permissions: Permissions,
     /// Kurzform für Pakete mit einem Teil: Art …
     #[serde(rename = "type", default, skip_serializing)]
     pub kind: Option<Kind>,
@@ -119,6 +137,13 @@ impl Manifest {
                 c.kind.ext()
             );
         }
+        ensure!(m.permissions.network.len() <= 32, "Höchstens 32 Adressen in „permissions.network“");
+        for host in &m.permissions.network {
+            ensure!(valid_host_pattern(host), "Ungültige Adresse in „permissions.network“: {host} (z. B. example.org oder *.example.org)");
+        }
+        if m.count(Kind::Source) > 0 {
+            ensure!(!m.permissions.network.is_empty(), "Online-Quellen brauchen „permissions.network“ mit den Adressen, die sie erreichen dürfen");
+        }
         m.name = m.name.chars().take(40).collect();
         m.version = m.version.chars().take(20).collect();
         m.author = m.author.chars().take(60).collect();
@@ -139,6 +164,7 @@ pub struct Installed {
     pub manifest: Manifest,
     pub effects: usize,
     pub visualizers: usize,
+    pub sources: usize,
     /// Liegt eine Lizenzdatei bei?
     pub license_file: bool,
     pub readme: bool,
@@ -148,6 +174,14 @@ pub struct Installed {
 
 fn valid_id(id: &str) -> bool {
     (1..=32).contains(&id.len()) && id.chars().all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_')
+}
+
+/// `example.org` oder `*.example.org` – nur Buchstaben, Ziffern, Punkte und Bindestriche.
+fn valid_host_pattern(p: &str) -> bool {
+    let host = p.strip_prefix("*.").unwrap_or(p);
+    host.contains('.')
+        && host.len() <= 253
+        && host.split('.').all(|l| !l.is_empty() && l.chars().all(|c| c.is_ascii_alphanumeric() || c == '-'))
 }
 
 fn safe_name(name: &str) -> bool {
@@ -182,6 +216,7 @@ pub fn read(dir: &Path) -> Option<Result<Installed>> {
         Installed {
             effects: manifest.count(Kind::Effect),
             visualizers: manifest.count(Kind::Visualizer),
+            sources: manifest.count(Kind::Source),
             license_file: names.iter().any(|n| is_license(n)),
             readme: names.iter().any(|n| is_readme(n)),
             manifest,
@@ -243,6 +278,24 @@ pub fn contents_in(bases: &[PathBuf], kind: Kind) -> (Vec<(String, Result<String
         }
     }
     (out, errors)
+}
+
+/// Online-Quellen aus den Paketen: (Quelle für Meldungen, Code, erlaubte Adressen).
+pub fn source_parts_in(bases: &[PathBuf]) -> (Vec<(String, Result<String>, Vec<String>)>, Vec<String>) {
+    let (packages, errors) = list_in(bases);
+    let mut out = Vec::new();
+    for p in packages {
+        for c in p.manifest.contents.iter().filter(|c| c.kind == Kind::Source) {
+            let source = format!("{}/{}", p.manifest.id, c.file);
+            let text = std::fs::read_to_string(p.dir.join(&c.file)).map_err(|_| anyhow!("Datei fehlt oder ist nicht lesbar"));
+            out.push((source, text, p.manifest.permissions.network.clone()));
+        }
+    }
+    (out, errors)
+}
+
+pub fn source_parts() -> (Vec<(String, Result<String>, Vec<String>)>, Vec<String>) {
+    source_parts_in(&bases_in(&Library::data_dir()))
 }
 
 /// Teile einer Art aus dem Datenordner von Amber Player.
