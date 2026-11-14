@@ -1,9 +1,11 @@
 # Installing plugins
 
-Sound effects and visualizers come as a **plugin package** – an `.amberplugin` file with one or more
-parts and its own license,
-see [Plugin packages](Plugin-Packages.md). The quickest way is **Install** (Effects or
-Settings → Plugins) – the same on the PC and the phone.
+Sound effects, visualizers and online sources come as a **plugin package** – an `.amberplugin`
+file with one or more parts and its own license, see [Plugin packages](Plugin-Packages.md). The
+quickest way is the **Install plugin** button (at the top of Effects and under Settings →
+Plugins): it accepts any package, whatever it contains – the same on the PC and the phone. When
+the phone is connected to the PC, you can also get packages under **PC → Plugins** straight from
+the PC.
 
 Amber Player knows three kinds of plugins:
 
@@ -11,7 +13,8 @@ Amber Player knows three kinds of plugins:
 |---|---|---|---|
 | **Sound effect** | package (`.amberplugin`) or one `.json` file | PC and phone | after restarting the app |
 | **Visualizer** | package (`.amberplugin`) or one `.js` file | PC and phone | immediately (PC: after “Reload”) |
-| **Source** (online music) | a folder with `plugin.json` and a program | PC only | after restart |
+| **Online source** (online music) | package (`.amberplugin`) with JavaScript | PC and phone | after restart, if “Extended plugins” is on |
+| **Program source** (older kind) | a folder with `plugin.json` and a program | PC only | after restart |
 
 > **Security:** Sound effects are pure descriptions without program code. Visualizers run
 > sandboxed without network or file access. **Source plugins, however, are programs** with the

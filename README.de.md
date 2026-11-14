@@ -23,19 +23,23 @@ Geschrieben in Rust (Tauri 2, rodio), mit eigener Oberfläche im warmen Dunkel-D
   Songtitel und Senderlogo werden angezeigt.
 
 **Klang und Bild**
-- **Klangeffekte als Plugins:** 10-Band-Equalizer mit Presets, Bass-Booster, Stimmen klarer,
-  Kopfhörer-Crossfeed, Stereobreite, Echo, Altes Radio, 8D-Rundflug, Vorverstärker & Limiter.
-  Ein Schutz-Limiter verhindert Übersteuern und Knacken.
-- **Visualisierungen** im Vollbild: Balken, Welle, Ring (mit drehendem Cover) und Nebel.
+- **Klangeffekte als Plugins:** 10-Band-Equalizer mit Presets, Ton (Bass/Höhen), Hall (Größe,
+  Dämpfung, Filter, Nachhallzeit, Vor-Verzögerung, Mix), Stereo & Balance, Bass-Booster, Stimmen
+  klarer, Kopfhörer-Crossfeed, Echo, Altes Radio, 8D-Rundflug, Vorverstärker & Limiter. Eigene
+  Voreinstellungen speichern. Ein Schutz-Limiter verhindert Übersteuern und Knacken.
+- **Visualisierungen:** Balken, Welle, Ring (mit drehendem Cover) und Nebel – im Vollbild oder am
+  Handy direkt hinter den Tasten. Suche, Favoriten und automatischer Wechsel.
 - **Eigene Plugins** ohne den Player neu zu bauen: Klangeffekte als JSON-Datei (ohne
-  Programmieren), Visualisierungen als JavaScript-Datei.
+  Programmieren), Visualisierungen und Online-Quellen in JavaScript – als `.amberplugin` mit
+  eigener Lizenz und Übersetzungen, **teilbar** über Quick Share, Bluetooth oder Messenger.
 
 **Handy und PC zusammen**
 - **Android-App** mit allen Funktionen zum Hören: Bibliothek, Playlisten, Effekte,
   Visualisierungen, Radio. Hintergrund-Wiedergabe mit Benachrichtigung, Sperrbildschirm und
   Kopfhörer-/Bluetooth-Tasten.
-- **Mit dem PC koppeln** (QR-Code scannen): den PC vom Handy aus fernsteuern oder Musik und
-  Playlisten vom PC aufs Handy streamen – ohne Dateien zu kopieren.
+- **Mit dem PC koppeln** (QR-Code direkt in der App scannen): den PC vom Handy aus fernsteuern –
+  Wiedergabe, Spulen, Hauptlautstärke des PCs, Klangeffekte –, Musik und Playlisten ohne Kopieren
+  aufs Handy streamen und Plugins vom PC aufs Handy holen.
 - **Fernsteuerung** über eine HTTP-API (Stream Deck, TouchDeck, Home Assistant, curl) und einen
   eingebauten **MCP-Server** für KI-Assistenten wie Claude.
 

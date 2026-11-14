@@ -331,6 +331,18 @@
           "markdownDescription": "Denies the ignore_battery_optimizations command without any pre-configured scope."
         },
         {
+          "description": "Enables the move_to_back command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-move-to-back",
+          "markdownDescription": "Enables the move_to_back command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the move_to_back command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-move-to-back",
+          "markdownDescription": "Denies the move_to_back command without any pre-configured scope."
+        },
+        {
           "description": "Enables the open_url command without any pre-configured scope.",
           "type": "string",
           "const": "allow-open-url",
@@ -391,6 +403,18 @@
           "markdownDescription": "Denies the set_fullscreen command without any pre-configured scope."
         },
         {
+          "description": "Enables the share_file command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-share-file",
+          "markdownDescription": "Enables the share_file command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the share_file command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-share-file",
+          "markdownDescription": "Denies the share_file command without any pre-configured scope."
+        },
+        {
           "description": "Enables the stop_media command without any pre-configured scope.",
           "type": "string",
           "const": "allow-stop-media",
@@ -415,6 +439,18 @@
           "markdownDescription": "Denies the take_pair_link command without any pre-configured scope."
         },
         {
+          "description": "Enables the take_shared_file command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-take-shared-file",
+          "markdownDescription": "Enables the take_shared_file command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the take_shared_file command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-take-shared-file",
+          "markdownDescription": "Denies the take_shared_file command without any pre-configured scope."
+        },
+        {
           "description": "Enables the update_media command without any pre-configured scope.",
           "type": "string",
           "const": "allow-update-media",
@@ -427,10 +463,10 @@
           "markdownDescription": "Denies the update_media command without any pre-configured scope."
         },
         {
-          "description": "Alles, was die Oberfläche von Amber Player auf Android braucht\n#### This default permission set includes:\n\n- `allow-update-media`\n- `allow-stop-media`\n- `allow-ignore-battery-optimizations`\n- `allow-take-pair-link`\n- `allow-get-fullscreen`\n- `allow-set-fullscreen`\n- `allow-open-url`\n- `allow-check-permissions`\n- `allow-request-permissions`\n- `allow-register-listener`\n- `allow-remove-listener`",
+          "description": "Alles, was die Oberfläche von Amber Player auf Android braucht\n#### This default permission set includes:\n\n- `allow-update-media`\n- `allow-stop-media`\n- `allow-ignore-battery-optimizations`\n- `allow-take-pair-link`\n- `allow-get-fullscreen`\n- `allow-set-fullscreen`\n- `allow-open-url`\n- `allow-move-to-back`\n- `allow-share-file`\n- `allow-take-shared-file`\n- `allow-check-permissions`\n- `allow-request-permissions`\n- `allow-register-listener`\n- `allow-remove-listener`",
           "type": "string",
           "const": "default",
-          "markdownDescription": "Alles, was die Oberfläche von Amber Player auf Android braucht\n#### This default permission set includes:\n\n- `allow-update-media`\n- `allow-stop-media`\n- `allow-ignore-battery-optimizations`\n- `allow-take-pair-link`\n- `allow-get-fullscreen`\n- `allow-set-fullscreen`\n- `allow-open-url`\n- `allow-check-permissions`\n- `allow-request-permissions`\n- `allow-register-listener`\n- `allow-remove-listener`"
+          "markdownDescription": "Alles, was die Oberfläche von Amber Player auf Android braucht\n#### This default permission set includes:\n\n- `allow-update-media`\n- `allow-stop-media`\n- `allow-ignore-battery-optimizations`\n- `allow-take-pair-link`\n- `allow-get-fullscreen`\n- `allow-set-fullscreen`\n- `allow-open-url`\n- `allow-move-to-back`\n- `allow-share-file`\n- `allow-take-shared-file`\n- `allow-check-permissions`\n- `allow-request-permissions`\n- `allow-register-listener`\n- `allow-remove-listener`"
         }
       ]
     }

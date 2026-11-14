@@ -109,6 +109,11 @@ pub struct Manifest {
     /// Rechte (nur für Online-Quellen nötig).
     #[serde(default)]
     pub permissions: Permissions,
+    /// Übersetzungen der Texte im Paket: Sprachcode → { Originaltext → Übersetzung }.
+    /// Gilt für Paketname und -beschreibung sowie Namen, Beschreibungen, Regler und Presets
+    /// der Klangeffekte und Visualisierungen.
+    #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
+    pub translations: std::collections::BTreeMap<String, std::collections::BTreeMap<String, String>>,
     /// Kurzform für Pakete mit einem Teil: Art …
     #[serde(rename = "type", default, skip_serializing)]
     pub kind: Option<Kind>,
@@ -137,6 +142,16 @@ impl Manifest {
                 c.kind.ext()
             );
         }
+        ensure!(m.translations.len() <= 40, "Höchstens 40 Sprachen in „translations“");
+        let mut size = 0;
+        for (lang, table) in &m.translations {
+            ensure!(
+                (2..=5).contains(&lang.len()) && lang.chars().all(|c| c.is_ascii_alphabetic() || c == '-'),
+                "Ungültiger Sprachcode in „translations“: {lang} (z. B. en, fr, pt-BR)"
+            );
+            size += table.iter().map(|(k, v)| k.len() + v.len()).sum::<usize>();
+        }
+        ensure!(size <= 64 * 1024, "„translations“ ist zu groß (höchstens 64 KB)");
         ensure!(m.permissions.network.len() <= 32, "Höchstens 32 Adressen in „permissions.network“");
         for host in &m.permissions.network {
             ensure!(valid_host_pattern(host), "Ungültige Adresse in „permissions.network“: {host} (z. B. example.org oder *.example.org)");
@@ -168,6 +183,9 @@ pub struct Installed {
     /// Liegt eine Lizenzdatei bei?
     pub license_file: bool,
     pub readme: bool,
+    /// Wo das Paket läuft: `pc`, `phone`. Alle Teile eines Pakets (Klangeffekte,
+    /// Visualisierungen, Online-Quellen in JavaScript) laufen auf beiden.
+    pub platforms: Vec<&'static str>,
     #[serde(skip)]
     pub dir: PathBuf,
 }
@@ -219,6 +237,7 @@ pub fn read(dir: &Path) -> Option<Result<Installed>> {
             sources: manifest.count(Kind::Source),
             license_file: names.iter().any(|n| is_license(n)),
             readme: names.iter().any(|n| is_readme(n)),
+            platforms: vec!["pc", "phone"],
             manifest,
             dir: dir.to_path_buf(),
         }
@@ -354,6 +373,104 @@ pub fn install_into(root: &Path, files: &HashMap<String, String>) -> Result<Mani
     Ok(manifest)
 }
 
+/// Alle Dateien eines installierten Pakets (zum Weitergeben, z. B. vom PC aufs Handy) –
+/// genau die Dateien, die [`install_into`] annimmt.
+pub fn files_in(bases: &[PathBuf], id: &str) -> Result<HashMap<String, String>> {
+    ensure!(valid_id(id), "Ungültige Plugin-ID");
+    let (all, _) = list_in(bases);
+    let p = all.into_iter().find(|p| p.manifest.id == id).ok_or_else(|| anyhow!("Plugin-Paket {id} nicht gefunden"))?;
+    let mut files = HashMap::new();
+    files.insert("plugin.json".to_string(), std::fs::read_to_string(p.dir.join("plugin.json"))?);
+    for c in &p.manifest.contents {
+        files.insert(c.file.clone(), std::fs::read_to_string(p.dir.join(&c.file)).with_context(|| format!("{} fehlt", c.file))?);
+    }
+    for e in std::fs::read_dir(&p.dir)?.filter_map(Result::ok) {
+        let name = e.file_name().to_string_lossy().into_owned();
+        if (is_license(&name) || is_readme(&name)) && e.path().is_file() {
+            if let Ok(text) = std::fs::read_to_string(e.path()) {
+                files.insert(name, text);
+            }
+        }
+    }
+    Ok(files)
+}
+
+pub fn files(id: &str) -> Result<HashMap<String, String>> {
+    files_in(&bases_in(&Library::data_dir()), id)
+}
+
+/// Installiertes Paket wieder als `.amberplugin` (ZIP) – zum Teilen mit anderen.
+pub fn export_in(bases: &[PathBuf], id: &str) -> Result<Vec<u8>> {
+    Ok(zip_store(&files_in(bases, id)?))
+}
+
+pub fn export(id: &str) -> Result<Vec<u8>> {
+    export_in(&bases_in(&Library::data_dir()), id)
+}
+
+fn crc32(data: &[u8]) -> u32 {
+    let mut crc = !0u32;
+    for &b in data {
+        crc ^= b as u32;
+        for _ in 0..8 {
+            crc = if crc & 1 != 0 { (crc >> 1) ^ 0xEDB8_8320 } else { crc >> 1 };
+        }
+    }
+    !crc
+}
+
+/// Einfaches ZIP ohne Kompression (Pakete sind klein) – jedes Entpackprogramm liest das.
+fn zip_store(files: &HashMap<String, String>) -> Vec<u8> {
+    let mut names: Vec<&String> = files.keys().collect();
+    names.sort();
+    let mut out = Vec::new();
+    let mut central = Vec::new();
+    const DATE: u16 = (1 << 5) | 1; // 1.1.1980
+    for name in &names {
+        let data = files[*name].as_bytes();
+        let crc = crc32(data);
+        let offset = out.len() as u32;
+        let header = |sig: u32, central_entry: bool| {
+            let mut h = Vec::new();
+            h.extend_from_slice(&sig.to_le_bytes());
+            if central_entry {
+                h.extend_from_slice(&20u16.to_le_bytes()); // erstellt mit
+            }
+            h.extend_from_slice(&20u16.to_le_bytes()); // benötigte Version
+            h.extend_from_slice(&0x0800u16.to_le_bytes()); // Namen in UTF-8
+            h.extend_from_slice(&0u16.to_le_bytes()); // ohne Kompression
+            h.extend_from_slice(&0u16.to_le_bytes()); // Uhrzeit
+            h.extend_from_slice(&DATE.to_le_bytes());
+            h.extend_from_slice(&crc.to_le_bytes());
+            h.extend_from_slice(&(data.len() as u32).to_le_bytes());
+            h.extend_from_slice(&(data.len() as u32).to_le_bytes());
+            h.extend_from_slice(&(name.len() as u16).to_le_bytes());
+            h.extend_from_slice(&0u16.to_le_bytes()); // Extrafeld
+            if central_entry {
+                h.extend_from_slice(&[0; 8]); // Kommentar, Disk, Attribute
+                h.extend_from_slice(&0u32.to_le_bytes()[..2]);
+                h.extend_from_slice(&offset.to_le_bytes());
+            }
+            h.extend_from_slice(name.as_bytes());
+            h
+        };
+        out.extend(header(0x0403_4b50, false));
+        out.extend_from_slice(data);
+        central.extend(header(0x0201_4b50, true));
+    }
+    let cd_offset = out.len() as u32;
+    let cd_size = central.len() as u32;
+    out.extend(central);
+    out.extend_from_slice(&0x0605_4b50u32.to_le_bytes());
+    out.extend_from_slice(&[0; 4]);
+    out.extend_from_slice(&(names.len() as u16).to_le_bytes());
+    out.extend_from_slice(&(names.len() as u16).to_le_bytes());
+    out.extend_from_slice(&cd_size.to_le_bytes());
+    out.extend_from_slice(&cd_offset.to_le_bytes());
+    out.extend_from_slice(&0u16.to_le_bytes());
+    out
+}
+
 /// Paket in den Datenordner von Amber Player installieren.
 pub fn install(files: &HashMap<String, String>) -> Result<Manifest> {
     install_into(&Library::data_dir(), files)
@@ -454,6 +571,59 @@ mod tests {
     }
 
     /// Die Vorlagen in examples/plugins/ müssen sich installieren lassen.
+    #[test]
+    fn files_roundtrip() {
+        // Ein installiertes Paket lässt sich vollständig auslesen und anderswo wieder installieren.
+        let src = tempfile::tempdir().unwrap();
+        let dst = tempfile::tempdir().unwrap();
+        let ex = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../examples/plugins/nachtfahrt");
+        let mut files = HashMap::new();
+        for rel in ["plugin.json", "LICENSE", "README.md", "effects/kassette.json", "effects/stadion.json", "visualizers/polarlicht.js"] {
+            files.insert(rel.to_string(), std::fs::read_to_string(ex.join(rel)).unwrap());
+        }
+        install_into(src.path(), &files).unwrap();
+        let out = files_in(&bases_in(src.path()), "nachtfahrt").unwrap();
+        assert_eq!(out.len(), files.len());
+        install_into(dst.path(), &out).unwrap();
+        assert!(files_in(&bases_in(dst.path()), "nachtfahrt").is_ok());
+        assert!(files_in(&bases_in(src.path()), "../x").is_err());
+    }
+
+    #[test]
+    fn export_is_a_valid_zip() {
+        assert_eq!(crc32(b"123456789"), 0xCBF4_3926);
+        let mut files = HashMap::new();
+        files.insert("plugin.json".to_string(), "{}".to_string());
+        files.insert("effects/ä.json".to_string(), "x".repeat(100));
+        let zip = zip_store(&files);
+        assert_eq!(&zip[..4], b"PK\x03\x04");
+        let eocd = zip.len() - 22;
+        assert_eq!(&zip[eocd..eocd + 4], &0x0605_4b50u32.to_le_bytes());
+        assert_eq!(u16::from_le_bytes([zip[eocd + 10], zip[eocd + 11]]), 2);
+        // Prüfung mit Python, wenn vorhanden: entpackt sich sauber
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("t.amberplugin");
+        std::fs::write(&path, &zip).unwrap();
+        if let Ok(out) = std::process::Command::new("python3")
+            .args(["-c", "import sys,zipfile; z=zipfile.ZipFile(sys.argv[1]); assert z.testzip() is None; print(len(z.read('effects/ä.json')))"])
+            .arg(&path)
+            .output()
+        {
+            if out.status.success() {
+                assert_eq!(String::from_utf8_lossy(&out.stdout).trim(), "100");
+            }
+        }
+    }
+
+    #[test]
+    fn translations_are_checked() {
+        let base = r#"{"id":"t","name":"Test","type":"effect"#;
+        let ok = Manifest::parse(&format!(r#"{base}","translations":{{"en":{{"Test":"Test EN"}},"pt-BR":{{"Test":"Teste"}}}}}}"#)).unwrap();
+        assert_eq!(ok.translations["en"]["Test"], "Test EN");
+        assert!(Manifest::parse(&format!(r#"{base}","translations":{{"../x":{{}}}}}}"#)).is_err());
+        assert!(Manifest::parse(&format!(r#"{base}"}}"#)).unwrap().translations.is_empty());
+    }
+
     #[test]
     fn examples_install() {
         let examples = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../examples/plugins");

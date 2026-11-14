@@ -55,6 +55,7 @@ Parts may sit directly in the package or in **one** subfolder (e.g. `effects/`).
 | `description` | | short description |
 | `license` | | short license name, e.g. `MIT`, `GPL-3.0`, `CC-BY-4.0` or “All rights reserved” |
 | `homepage` | | where the package can be found |
+| `translations` | | translations of the package's texts, see [below](#translations) |
 
 \* **Short form for a single part:** instead of `contents`, just give `"type": "effect"` (or
 `"visualizer"`) and optionally `"main": "effect.json"`.
@@ -62,6 +63,25 @@ Parts may sit directly in the package or in **one** subfolder (e.g. `effects/`).
 Each part is built exactly as described in [Creating a sound plugin](Creating-a-Sound-Plugin.md)
 and [Creating a visualizer](Creating-a-Visualizer.md). The `id` of every single sound effect and
 visualizer must be unique across all installed plugins.
+
+## Translations
+
+Amber Player comes in eight languages – your package can join in. Under `translations`, list per
+language what your package's texts are called there: **original text → translation**.
+
+```json
+"translations": {
+  "en": { "Nachtfahrt": "Night drive", "Kassette": "Cassette", "Alter": "Age", "Neu gekauft": "Brand new" },
+  "fr": { "Nachtfahrt": "Route de nuit", "Kassette": "Cassette", "Alter": "Âge", "Neu gekauft": "Tout neuf" }
+}
+```
+
+- Translated are the **package name and description** plus the **names, descriptions, sliders
+  and presets** of its sound effects and visualizers.
+- Language codes: `de`, `en`, `es`, `fr`, `it`, `nl`, `pl`, `tr`. If a language is missing, Amber
+  Player uses English, otherwise the original text.
+- Writing your package in English? Then translate into German under `"de"`.
+- At most 64 KB. A complete example is `examples/plugins/nachtfahrt/plugin.json`.
 
 ## License
 
@@ -88,12 +108,40 @@ python3 scripts/plugin-pack.py my-package/        # → my-package.amberplugin
 Any ZIP program works too: save the folder's files as a ZIP and change the extension to
 `.amberplugin` (or keep `.zip`).
 
+## PC and phone
+
+All parts of a package – sound effects, visualizers and online sources in JavaScript – run on
+the **PC and the phone**; the settings show this for every package. Only the older program
+plugins for online sources (see [Creating a source plugin](Creating-a-Source-Plugin.md)) run on
+the PC only.
+
+When the phone is connected to the PC, get packages under **PC → Plugins** straight onto the
+phone, see [Connecting to your PC](Connecting-to-your-PC.md).
+
+## Sharing
+
+Pass installed packages on straight from Amber Player – no server needed, even on the go without
+a shared Wi-Fi:
+
+- **On the phone:** Settings → Plugins → **Installed plugins** → **Share**. The Android share menu
+  opens: **Quick Share** or **Bluetooth** (directly from phone to phone, no mobile data),
+  messengers or email.
+- **On the PC:** **Export** saves the `.amberplugin` file, e.g. for a USB stick.
+- **Receiving:** tap the file (or “Share → Amber Player”) – Amber Player shows the name, parts,
+  author and license and asks whether to install it.
+
+Every package has **its own license** – independent of Amber Player. It defines what others may
+do with it, e.g. whether they may modify it or publish it under their own name. Amber Player
+shows it before installing.
+
 ## Install, update, remove
 
 - **Install:** Effects → **Install** or Settings → Plugins → **Install**, choose the file.
   Visualizers are available immediately, sound effects after the next app start.
-- **Update:** install the new version the same way – a package with the same `id` is replaced
-  together with all its parts.
+- **Update:** Settings → Plugins → **Installed plugins** → **Update** and choose the new file –
+  the old package is replaced with all its parts, nothing needs to be removed first. (Installing
+  a package with the same `id` replaces it as well.) On a phone connected to the PC it's even
+  easier: **PC → Plugins → Update**.
 - **Remove:** Settings → Plugins → **Installed plugins** → **Remove**. All parts of the package go
   together.
 

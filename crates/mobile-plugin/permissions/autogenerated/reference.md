@@ -11,6 +11,9 @@ Alles, was die Oberfläche von Amber Player auf Android braucht
 - `allow-get-fullscreen`
 - `allow-set-fullscreen`
 - `allow-open-url`
+- `allow-move-to-back`
+- `allow-share-file`
+- `allow-take-shared-file`
 - `allow-check-permissions`
 - `allow-request-permissions`
 - `allow-register-listener`
@@ -99,6 +102,32 @@ Enables the ignore_battery_optimizations command without any pre-configured scop
 <td>
 
 Denies the ignore_battery_optimizations command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`amber-mobile:allow-move-to-back`
+
+</td>
+<td>
+
+Enables the move_to_back command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`amber-mobile:deny-move-to-back`
+
+</td>
+<td>
+
+Denies the move_to_back command without any pre-configured scope.
 
 </td>
 </tr>
@@ -236,6 +265,32 @@ Denies the set_fullscreen command without any pre-configured scope.
 <tr>
 <td>
 
+`amber-mobile:allow-share-file`
+
+</td>
+<td>
+
+Enables the share_file command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`amber-mobile:deny-share-file`
+
+</td>
+<td>
+
+Denies the share_file command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
 `amber-mobile:allow-stop-media`
 
 </td>
@@ -281,6 +336,32 @@ Enables the take_pair_link command without any pre-configured scope.
 <td>
 
 Denies the take_pair_link command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`amber-mobile:allow-take-shared-file`
+
+</td>
+<td>
+
+Enables the take_shared_file command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`amber-mobile:deny-take-shared-file`
+
+</td>
+<td>
+
+Denies the take_shared_file command without any pre-configured scope.
 
 </td>
 </tr>

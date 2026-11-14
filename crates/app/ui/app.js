@@ -112,6 +112,9 @@ const initials = (name) =>
 // ---------- Symbole ----------
 
 const ICONS = {
+  check: 'M20 6 9 17l-5-5',
+  camera: 'M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
+  save: 'M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7M7 3v4a1 1 0 0 0 1 1h7',
   wave: 'M4 10v4M8 6v12M12 3v18M16 7v10M20 10v4',
   music: 'M9 18V5l12-2v13M6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 19a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
   disc: 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
@@ -746,7 +749,7 @@ function navigate(view, { push = true } = {}) {
     state.forward = [];
   }
   state.view = view;
-  document.body.classList.remove('deck-open');
+  closeDeck();
   if (view.name !== 'search') $('#search').value = '';
   render();
 }
@@ -768,7 +771,7 @@ function goForward() {
 function updateNav() {
   const v = state.view;
   const parent = { album: 'albums', artist: 'artists', genre: 'genres', playlist: 'playlists', most: 'recent' }[v.name] || v.name;
-  for (const b of $$('[data-view]')) b.classList.toggle('active', b.dataset.view === parent);
+  for (const b of $$('[data-view], [data-nav]')) b.classList.toggle('active', (b.dataset.view || b.dataset.nav) === parent);
   $('#back').disabled = !state.back.length;
   $('#forward').disabled = !state.forward.length;
 }
@@ -833,6 +836,42 @@ async function render() {
   }
 }
 
+/**
+ * Bereiche und Einstellungen, die die Suche zusätzlich findet: [Name, Symbol, Ziel, Suchwörter].
+ * Suchwörter auf Deutsch und Englisch; der übersetzte Name zählt immer mit.
+ */
+const JUMPS = [
+  ['PC', 'monitor', { name: 'pc' }, 'pc computer koppeln verbinden pairing connect fernsteuerung remote qr streamen', () => IS_ANDROID],
+  ['Effekte', 'sliders', { name: 'effects' }, 'effekte klang equalizer eq hall reverb bass ton tone balance mono stereo limiter echo effects sound'],
+  ['Einstellungen', 'settings', { name: 'settings' }, 'einstellungen settings optionen options'],
+  ['Musikordner', 'folder', { name: 'settings' }, 'musikordner ordner bibliothek einlesen scan folder library'],
+  ['Sprache', 'settings', { name: 'settings' }, 'sprache language langue idioma'],
+  ['Leiste unten', 'list', { name: 'settings', focus: 'nav' }, 'leiste navigation menü bar tabs anpassen', () => IS_ANDROID || isMobile()],
+  ['Plugins', 'puzzle', { name: 'settings' }, 'plugins plugin paket package installieren install erweiterte'],
+  ['Fernsteuerung', 'remote', { name: 'settings' }, 'fernsteuerung api mcp stream deck touchdeck token heimnetz handy koppeln', () => !IS_ANDROID],
+  ['Radio', 'radio', { name: 'radio' }, 'radio sender station internetradio'],
+  ['Playlisten', 'playlist', { name: 'playlists' }, 'playlisten playlist liste'],
+  ['Favoriten', 'heart', { name: 'favorites' }, 'favoriten favorites herz'],
+  ['Verlauf', 'clock', { name: 'recent' }, 'verlauf history zuletzt meistgespielt'],
+];
+
+function searchJumps(q) {
+  const t = q.trim().toLowerCase();
+  if (t.length < 2) return '';
+  const hits = JUMPS.filter(([label, , , words, ok]) => (!ok || ok()) && `${words} ${label.toLowerCase()} ${tx(label).toLowerCase()}`.split(/\s+/).some((w) => w.startsWith(t)));
+  if (!hits.length) return '';
+  return `<div class="jumps"><span class="k">${esc(tx('Gehe zu'))}</span>${hits
+    .map(([label, ic], i) => `<button class="chip-btn" data-jump="${JUMPS.indexOf(hits[i])}">${icon(ic)}${esc(tx(label))}</button>`)
+    .join('')}</div>`;
+}
+
+function addJumps(el, q) {
+  const html = searchJumps(q);
+  if (!html) return;
+  $('.view-head', el)?.insertAdjacentHTML('afterend', html);
+  for (const b of $$('[data-jump]', el)) b.addEventListener('click', () => navigate({ ...JUMPS[Number(b.dataset.jump)][2] }));
+}
+
 /** Titel-Ansichten: alle, Favoriten, Verlauf, Suche, Album, Interpret, Genre. */
 async function renderTracks(el, v, fresh) {
   const cfg = {
@@ -875,6 +914,7 @@ async function renderTracks(el, v, fresh) {
     }[v.name] || ['music', 'Keine Titel', ''];
     el.innerHTML = head({ kind: cfg.kind, title: cfg.title, actions: cfg.history ? historySeg(v.name) : '' }) + emptyState({ ico: texts[0], title: texts[1], text: texts[2] });
     bindHistorySeg(el);
+    if (v.name === 'search') addJumps(el, v.q);
     return;
   }
 
@@ -901,6 +941,7 @@ async function renderTracks(el, v, fresh) {
     </select>`;
   }
   el.innerHTML = head({ kind: cfg.kind, title: cfg.title, sub, art, round, actions });
+  if (v.name === 'search') addJumps(el, v.q);
   const list = new TrackList(el, tracks, { showAlbum: v.name !== 'album', numbering: cfg.numbering || 'index' });
   state.list = list;
   bindActs(el, { tracks });
@@ -1172,9 +1213,43 @@ async function importPlaylist() {
 // ---------- Effekte ----------
 
 function fmtVal(v, p) {
+  if (p.id === 'balance') {
+    const n = Math.round(Math.abs(v));
+    return n === 0 ? tx('Mitte') : `${v < 0 ? 'L' : 'R'} ${n} %`;
+  }
   const n = Number.isInteger(p.step) ? Math.round(v) : v.toFixed(1);
   const sign = p.unit === 'dB' && v > 0 ? '+' : '';
   return `${sign}${Number(n).toLocaleString(LOCALE, { maximumFractionDigits: 2 })} ${p.unit}`;
+}
+
+/**
+ * Herkunft eines Plugins aus seiner Quelle: `paket-id/datei` (Plugin-Paket) oder nur `datei`
+ * (einzelne Datei im Plugin-Ordner). Liefert Anzeigetext, Tooltip und Gruppenschlüssel.
+ */
+function pluginOrigin(source, packages = []) {
+  if (!source) return null;
+  const slash = source.indexOf('/');
+  const pkg = slash > 0 ? packages.find((p) => p.id === source.slice(0, slash)) : null;
+  if (pkg) {
+    const label = pkg.author ? `${tx(pkg.name)} · ${pkg.author}` : tx(pkg.name);
+    const title = [
+      tx('Plugin-Paket „{name}“', { name: tx(pkg.name) }),
+      pkg.version && tx('Version {v}', { v: pkg.version }),
+      pkg.author && tx('von {name}', { name: pkg.author }),
+      pkg.license && tx('Lizenz: {name}', { name: pkg.license }),
+    ].filter(Boolean).join(' · ');
+    return { key: `p:${pkg.id}`, label, title };
+  }
+  return { key: 'file', label: tx('Eigene Datei'), title: source };
+}
+
+/** Etiketten „PC“ und „Handy“: wo ein Plugin läuft. */
+function platformTags(platforms = ['pc', 'phone']) {
+  const names = { pc: ['PC', 'monitor'], phone: ['Handy', 'phone'] };
+  return `<span class="plat">${platforms
+    .filter((p) => names[p])
+    .map((p) => `<span title="${esc(tx('Läuft auf: {name}', { name: tx(names[p][0]) }))}">${icon(names[p][1])}${esc(tx(names[p][0]))}</span>`)
+    .join('')}</span>`;
 }
 
 // ---------- Plugins: am PC Ordner öffnen, am Handy Datei importieren ----------
@@ -1235,13 +1310,36 @@ async function unzipText(buffer) {
 }
 
 /** Plugin-Paket (ZIP) installieren. */
-async function installPackage(file) {
+/**
+ * Paket installieren. Mit `update` (installiertes Paket: id, name, version) muss die Datei
+ * dasselbe Paket sein – es wird samt allen Teilen ersetzt.
+ */
+async function installPackage(file, update = null, ask = false) {
   const files = await unzipText(await file.arrayBuffer());
   // Online-Quellen dürfen ins Internet – vorher zeigen, wohin, und bestätigen lassen.
   let manifest = {};
   try {
     manifest = JSON.parse(files['plugin.json'] || '{}');
   } catch {}
+  if (!manifest.id) throw new Error(tx('Das ist kein Plugin-Paket für Amber Player'));
+  if (ask) {
+    const parts = packageParts({
+      effects: (manifest.contents || []).filter((c) => c.type === 'effect').length || (manifest.type === 'effect' ? 1 : 0),
+      visualizers: (manifest.contents || []).filter((c) => c.type === 'visualizer').length || (manifest.type === 'visualizer' ? 1 : 0),
+      sources: (manifest.contents || []).filter((c) => c.type === 'source').length || (manifest.type === 'source' ? 1 : 0),
+    });
+    addPluginTexts([manifest]);
+    const ok = await dialog({
+      title: tx('Plugin „{name}“ installieren?', { name: tx(manifest.name || manifest.id) }),
+      text: [parts, manifest.version && tx('Version {v}', { v: manifest.version }), manifest.author && tx('von {name}', { name: manifest.author }), manifest.license && tx('Lizenz: {name}', { name: manifest.license })].filter(Boolean).join(' · '),
+      ok: tx('Installieren'),
+    });
+    if (!ok) return;
+  }
+  if (update && manifest.id !== update.id) {
+    toast(tx('Diese Datei ist nicht „{name}“, sondern „{other}“', { name: tx(update.name), other: manifest.name || manifest.id || '?' }), 'err');
+    return;
+  }
   const sources = (manifest.contents || []).filter((c) => c.type === 'source').length || (manifest.type === 'source' ? 1 : 0);
   if (sources) {
     const hosts = (manifest.permissions?.network || []).join(', ') || '–';
@@ -1254,6 +1352,13 @@ async function installPackage(file) {
   }
   const m = await call('install_plugin_package', { files });
   if (m.visualizers && (await vizEnsure())) await vizLoad();
+  if (update) {
+    toast(update.version && m.version && update.version !== m.version
+      ? tx('„{name}“ aktualisiert: {from} → {to}', { name: tx(m.name), from: update.version, to: m.version })
+      : tx('„{name}“ neu installiert', { name: tx(m.name) }), 'ok');
+    setTimeout(render, 300);
+    return;
+  }
   toast(
     m.effects || m.sources
       ? tx('„{name}“ installiert ({parts}) – Klangeffekte und Online-Quellen wirken nach dem nächsten Start der App', { name: m.name, parts: packageParts(m) })
@@ -1280,6 +1385,77 @@ function plugAction(kind) {
 }
 
 /** Plugin-Datei auswählen und übernehmen (Android: kein Dateimanager-Zugriff auf den App-Ordner). */
+/** Knopf „Plugin installieren“: nimmt nur Plugin-Pakete (.amberplugin/.zip) – egal, was drin ist. */
+function pkgInstallBtn(cls = 'btn primary') {
+  return `<button class="${cls}" data-pkginstall title="${esc(tx('Plugin-Paket (.amberplugin) mit Klangeffekten, Visualisierungen oder Online-Quellen'))}">${icon('puzzle')} ${esc(tx('Plugin installieren'))}</button>`;
+}
+
+function pickPackage() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.amberplugin,.zip,application/zip,*/*';
+  input.addEventListener('change', async () => {
+    const file = input.files?.[0];
+    if (!file) return;
+    if (!/\.(amberplugin|zip)$/i.test(file.name)) {
+      toast(tx('Bitte ein Plugin-Paket wählen (Datei endet auf .amberplugin oder .zip)'), 'err');
+      return;
+    }
+    try {
+      await installPackage(file);
+    } catch (e) {
+      if (e instanceof Error) toast(e.message, 'err');
+    }
+  });
+  input.click();
+}
+
+/** Paket teilen: am Handy über das Android-Teilen-Menü, am PC als Datei speichern. */
+async function sharePackage(pkg) {
+  // Teilen ist immer möglich; wer es bekommt, sieht vor dem Installieren Autor und Lizenz.
+  try {
+    const path = await call('export_plugin_package', { id: pkg.id });
+    if (!path) return;
+    if (IS_ANDROID) {
+      await invoke('plugin:amber-mobile|share_file', { path, title: tx('Plugin „{name}“', { name: tx(pkg.name) }) });
+    } else {
+      toast(tx('Gespeichert: {path}', { path }), 'ok');
+    }
+  } catch (e) {
+    if (e instanceof Error) toast(e.message, 'err');
+  }
+}
+
+/** Geteilte Datei (Base64) empfangen: nachfragen und installieren. */
+async function receivePackage(file) {
+  if (!file?.data) return;
+  try {
+    const bin = atob(file.data);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    await installPackage(new File([bytes], file.name || 'plugin.amberplugin'), null, true);
+  } catch (e) {
+    toast(tx('Das ist kein Plugin-Paket für Amber Player'), 'err');
+  }
+}
+
+/** Neue Version eines installierten Pakets auswählen und einspielen. */
+function updatePackage(pkg) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.amberplugin,.zip,application/zip,*/*';
+  input.addEventListener('change', async () => {
+    const file = input.files?.[0];
+    if (!file) return;
+    try {
+      await installPackage(file, pkg);
+    } catch (e) {
+      if (e instanceof Error) toast(e.message, 'err');
+    }
+  });
+  input.click();
+}
+
 function importPlugin(kind) {
   const input = document.createElement('input');
   input.type = 'file';
@@ -1311,9 +1487,15 @@ function importPlugin(kind) {
 }
 
 async function renderEffects(el, v, fresh) {
-  const [effects, info] = await Promise.all([invoke('effects_list'), invoke('effects_info')]);
+  const [effects, info, pk] = await Promise.all([
+    invoke('effects_list'),
+    invoke('effects_info'),
+    invoke('plugin_packages').catch(() => ({ packages: [] })),
+  ]);
   if (!fresh()) return;
-  const actions = `${plugBtn('effects', 'Plugin-Ordner öffnen', 'btn')}
+  fxPackages = pk.packages || [];
+  addPluginTexts(fxPackages);
+  const actions = `${pkgInstallBtn()}${plugBtn('effects', 'Plugin-Ordner öffnen', 'btn')}
     <span class="hint" style="margin:0">${esc(IS_ANDROID ? tx('Eigenes Klang-Plugin (.json) auswählen; es wirkt nach dem nächsten Start der App.') : tx('Eigene Klang-Plugins als .json hineinlegen, dann Amber Player neu starten.'))} ${wikiLink('effects', tx('Anleitung im Wiki'))}</span>`;
   const errors = info.errors.length
     ? `<div class="plugin-errors"><b>Nicht geladen:</b>${info.errors.map((e) => `<div>${esc(e)}</div>`).join('')}</div>`
@@ -1337,6 +1519,7 @@ async function renderEffects(el, v, fresh) {
     $(`[data-val="${p}"]`, card).textContent = fmtVal(fx.values[p], fx.params[p]);
     const preset = $('select', card);
     if (preset) preset.value = '';
+    $('[data-fx="delete"]', card)?.setAttribute('hidden', '');
     pushValues(fx.id);
   });
   el.addEventListener('dblclick', (e) => {
@@ -1356,21 +1539,59 @@ async function renderEffects(el, v, fresh) {
       byId[id].enabled = info.enabled;
       card.classList.toggle('off', !info.enabled);
     } else if (e.target.matches('select') && e.target.value) {
-      const info = await call('effect_preset', { id, preset: e.target.value });
-      Object.assign(byId[id], info);
-      const preset = e.target.value;
-      card.outerHTML = fxCard(byId[id]);
-      $(`.fx[data-id="${id}"] select`, el).value = preset;
-      for (const inp of $$(`.fx[data-id="${id}"] input[type=range]`, el)) setRange(inp, inp.value);
+      const info = await call('effect_preset', { id, preset: e.target.value.slice(2) });
+      redrawFx(id, info, e.target.value);
+    }
+  });
+  // Neu zeichnen und die gewählte Voreinstellung stehen lassen
+  const redrawFx = (id, info, selected = '') => {
+    Object.assign(byId[id], info);
+    $(`.fx[data-id="${id}"]`, el).outerHTML = fxCard(byId[id]);
+    const card = $(`.fx[data-id="${id}"]`, el);
+    const sel = $('select', card);
+    if (sel && [...sel.options].some((o) => o.value === selected)) sel.value = selected;
+    $('[data-fx="delete"]', card)?.toggleAttribute('hidden', !selected.startsWith('u:'));
+    for (const inp of $$('input[type=range]', card)) setRange(inp, inp.value);
+  };
+  el.addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-fx]');
+    if (!b) return;
+    const card = b.closest('.fx');
+    const id = card.dataset.id;
+    const selected = $('select', card)?.value || '';
+    if (b.dataset.fx === 'save') {
+      const name = await dialog({
+        title: tx('Voreinstellung speichern'),
+        text: tx('Die aktuellen Werte von „{name}“ werden unter diesem Namen gespeichert.', { name: tx(byId[id].name) }),
+        input: selected.startsWith('u:') ? selected.slice(2) : '',
+        ok: tx('Speichern'),
+      });
+      if (!name) return;
+      const info = await call('effect_save_preset', { id, name });
+      redrawFx(id, info, `u:${name.trim()}`);
+      toast(tx('Voreinstellung „{name}“ gespeichert', { name: name.trim() }), 'ok');
+    } else if (b.dataset.fx === 'reset') {
+      redrawFx(id, await call('effect_reset', { id }));
+    } else if (b.dataset.fx === 'delete' && selected.startsWith('u:')) {
+      const name = selected.slice(2);
+      if (!(await dialog({ title: tx('Voreinstellung löschen?'), text: `„${name}“`, ok: tx('Löschen'), danger: true }))) return;
+      redrawFx(id, await call('effect_delete_preset', { id, name }));
     }
   });
   for (const inp of $$('input[type=range]', el)) setRange(inp, inp.value);
 }
 
+let fxPackages = [];
+
 function fxCard(fx) {
+  const origin = pluginOrigin(fx.source, fxPackages);
   const isEq = fx.id === 'equalizer';
-  const presets = fx.presets.length
-    ? `<select class="select"><option value="">Preset wählen …</option>${fx.presets.map((p) => `<option>${esc(p.name)}</option>`).join('')}</select>`
+  const own = fx.user_presets || [];
+  const opts = (list, prefix) => list.map((p) => `<option value="${prefix}${esc(p.name)}">${esc(p.name)}</option>`).join('');
+  const presets = fx.presets.length || own.length
+    ? `<select class="select"><option value="">${esc(tx('Preset wählen …'))}</option>${
+        own.length ? `<optgroup label="${esc(tx('Eigene'))}">${opts(own, 'u:')}</optgroup>` : ''}${
+        fx.presets.length ? `<optgroup label="${esc(tx('Mitgeliefert'))}">${opts(fx.presets, 'b:')}</optgroup>` : ''}</select>`
     : '';
   const body = isEq
     ? `<div class="eq">${fx.params.map((p, i) => `
@@ -1388,10 +1609,15 @@ function fxCard(fx) {
   return `<div class="fx${fx.enabled ? '' : ' off'}" data-id="${fx.id}">
     <div class="fx-head">
       <label class="switch" title="An/Aus"><input type="checkbox" data-enable ${fx.enabled ? 'checked' : ''}><span></span></label>
-      <div class="grow"><h3>${esc(fx.name)}${fx.source ? `<span class="src-badge" title="${esc(fx.source)}">Eigenes Plugin</span>` : ''}</h3><p>${esc(fx.description)}</p></div>
+      <div class="grow"><h3>${esc(fx.name)}${origin ? `<span class="src-badge" data-raw title="${esc(origin.title)}">${esc(origin.label)}</span>` : ''}</h3><p>${esc(fx.description)}</p></div>
       ${presets}
     </div>
     <div class="fx-body">${body}</div>
+    ${fx.params.length ? `<div class="fx-foot">
+      <button class="btn small" data-fx="save">${icon('save')} ${esc(tx('Speichern'))}</button>
+      <button class="btn small" data-fx="reset">${icon('refresh')} ${esc(tx('Zurücksetzen'))}</button>
+      <button class="btn small" data-fx="delete" hidden>${icon('trash')} ${esc(tx('Preset löschen'))}</button>
+    </div>` : ''}
   </div>`;
 }
 
@@ -1412,6 +1638,7 @@ async function renderSettings(el, v, fresh) {
     IS_ANDROID ? { active: false } : invoke('firewall_status'),
   ]);
   if (!fresh()) return;
+  addPluginTexts(packages.packages);
   const theme = localStorage.getItem('theme') || 'dark';
   const accent = localStorage.getItem('accent') || ACCENTS[0][0];
   const ex = (path) => `${api.url}${path}${api.lan ? (path.includes('?') ? '&' : '?') + `token=${api.token}` : ''}`;
@@ -1511,6 +1738,7 @@ async function renderSettings(el, v, fresh) {
     <div class="box">
       <h3>Plugins</h3>
       <p>${tx('Klangeffekte und Visualisierungen lassen sich erweitern – eine Anleitung steht in {file}.', { file: wikiLink('plugins', tx('Wiki')) })}</p>
+      <div class="pkg-install">${pkgInstallBtn()}<span class="hint">${esc(tx('Für alle Plugin-Pakete (.amberplugin) – Klangeffekte, Visualisierungen und Online-Quellen in einem.'))}</span></div>
       <div class="kv">
         <span class="k">Klangeffekte</span>
         <span style="display:flex;gap:10px;align-items:center">${plugBtn('effects')}<span class="hint" style="margin:0">${esc(tx('.amberplugin-Paket oder .json, gelten nach Neustart'))}</span></span>
@@ -1529,17 +1757,38 @@ async function renderSettings(el, v, fresh) {
       <h3 style="margin-top:18px">Installierte Plugins</h3>
       ${packages.packages.length
         ? `<div class="pkg-list">${packages.packages.map((p) => `<div class="pkg">
-            <div class="pkg-meta" data-raw><b>${esc(p.name)}</b>${p.version ? ` <small>${esc(p.version)}</small>` : ''}
+            <div class="pkg-meta" data-raw><b>${esc(tx(p.name))}</b>${p.version ? ` <small>${esc(p.version)}</small>` : ''}${platformTags(p.platforms)}
               <span>${esc([packageParts(p), p.author, p.license || (p.license_file ? tx('eigene Lizenz') : tx('keine Lizenz angegeben')), p.license_file ? '' : tx('ohne Lizenzdatei')].filter(Boolean).join(' · '))}</span></div>
+            <button class="btn small" data-share="${esc(p.id)}" title="${esc(IS_ANDROID ? tx('Mit anderen teilen – Quick Share, Bluetooth, Messenger …') : tx('Als .amberplugin-Datei speichern, z. B. zum Weitergeben'))}">${icon('export')} ${esc(IS_ANDROID ? tx('Teilen') : tx('Exportieren'))}</button>
+            <button class="btn small" data-update="${esc(p.id)}" title="${esc(tx('Neue Version dieses Pakets auswählen – ersetzt die alte samt allen Teilen'))}">${icon('refresh')} ${esc(tx('Aktualisieren'))}</button>
             <button class="btn small danger" data-unplug="${esc(`${p.id}|${p.name}|${p.visualizers ? 1 : 0}`)}">${esc(tx('Entfernen'))}</button>
           </div>`).join('')}</div>`
         : `<p class="hint">${esc(tx('Noch keine Plugin-Pakete installiert. Ein Paket (.amberplugin) enthält einen oder mehrere Klangeffekte und Visualisierungen mit eigener Lizenz.'))}</p>`}
       ${packages.errors.length ? `<div class="plugin-errors"><b>${esc(tx('Nicht geladen:'))}</b>${packages.errors.map((e) => `<div>${esc(e)}</div>`).join('')}</div>` : ''}
-      ${viz.list.length ? `<div class="plug-list">${viz.list.map((v) => `<div><b>${esc(v.name)}</b><span>${esc(v.source ? `eigenes Plugin · ${v.source}` : 'mitgeliefert')}${v.author && v.source ? ` · ${esc(v.author)}` : ''}</span></div>`).join('')}</div>` : ''}
+      ${viz.list.length ? `<div class="plug-list">${viz.list.map((v) => {
+        const o = pluginOrigin(v.source, packages.packages);
+        return `<div><b data-raw>${esc(tx(v.name))}</b><span data-raw>${esc(o ? o.label : tx('Mitgeliefert'))}${v.author ? ` · ${esc(v.author)}` : ''}</span></div>`;
+      }).join('')}</div>` : ''}
     </div>
 
     <div class="box">
       <h3>Darstellung</h3>
+      <div class="kv">
+        <span class="k">${esc(tx('Visualisierung'))}</span>
+        <span><select class="select" id="vizHideSel">
+          ${[3, 6, 10, 20].map((n) => `<option value="${n}">${esc(tx('Bedienelemente nach {n} s ausblenden', { n }))}</option>`).join('')}
+          <option value="0">${esc(tx('Bedienelemente nie ausblenden'))}</option>
+        </select>
+        <span class="hint">${esc(tx('Antippen blendet sie ein, nochmal antippen sofort wieder aus.'))}</span></span>
+      </div>
+      ${IS_ANDROID || isMobile() ? `<div class="kv" id="navBox">
+        <span class="k">${esc(tx('Leiste unten'))}</span>
+        <span><span class="nav-pick">${navChoice().map((id, i) => `<select class="select" data-slot="${i}">${Object.keys(NAV_ITEMS)
+          .filter(navAvailable)
+          .map((k) => `<option value="${k}"${k === id ? ' selected' : ''}>${esc(tx(NAV_ITEMS[k][0]))}</option>`)
+          .join('')}</select>`).join('')}</span>
+          <span class="hint">${esc(tx('Welche vier Bereiche unten stehen. Alles andere findest du unter „Mehr“.'))}</span></span>
+      </div>` : ''}
       <div class="kv">
         <span class="k">Sprache</span>
         <span><select class="select" id="langSel">
@@ -1689,6 +1938,29 @@ async function renderSettings(el, v, fresh) {
     // Neu laden, damit alle Texte in der neuen Sprache erscheinen.
     location.reload();
   });
+  for (const sel of $$('#navBox select', el)) {
+    sel.addEventListener('change', () => {
+      const list = navChoice();
+      const slot = Number(sel.dataset.slot);
+      const other = list.indexOf(sel.value);
+      // schon in einem anderen Platz? dann tauschen
+      if (other >= 0 && other !== slot) list[other] = list[slot];
+      list[slot] = sel.value;
+      setNavChoice(list);
+      $$('#navBox select', el).forEach((x, i) => (x.value = list[i]));
+      toast(tx('Leiste gespeichert'), 'ok');
+    });
+  }
+  if (v.focus === 'nav') $('#navBox', el)?.scrollIntoView({ block: 'center' });
+  const hideSel = $('#vizHideSel', el);
+  if (hideSel) {
+    hideSel.value = String(vizHideMs() / 1000);
+    hideSel.addEventListener('change', () => {
+      try {
+        localStorage.setItem('vizHide', hideSel.value);
+      } catch {}
+    });
+  }
   const fsBox = $('#fullscreenOn', el);
   if (fsBox) {
     invoke('plugin:amber-mobile|get_fullscreen').then((r) => (fsBox.checked = r?.on !== false)).catch(() => {});
@@ -1703,6 +1975,12 @@ async function renderSettings(el, v, fresh) {
   $('#coverAgain', el).addEventListener('click', () => call('refetch_covers').then(() => toast('Cover-Suche gestartet', 'ok')).catch(() => {}));
   for (const b of $$('[data-plugdir]', el)) b.addEventListener('click', () => plugAction(b.dataset.plugdir));
   for (const b of $$('[data-plugimport]', el)) b.addEventListener('click', () => importPlugin(b.dataset.plugimport));
+  for (const b of $$('[data-share]', el)) {
+    b.addEventListener('click', () => sharePackage(packages.packages.find((p) => p.id === b.dataset.share)));
+  }
+  for (const b of $$('[data-update]', el)) {
+    b.addEventListener('click', () => updatePackage(packages.packages.find((p) => p.id === b.dataset.update)));
+  }
   for (const b of $$('[data-unplug]', el)) {
     b.addEventListener('click', async () => {
       const [id, name, hasViz] = b.dataset.unplug.split('|');
@@ -1859,6 +2137,7 @@ async function loadSources() {
   online.errors = info.errors;
   if (!online.sources.some((s) => s.id === online.source)) online.source = online.sources[0]?.id || '';
   $('#onlineTab').hidden = !online.sources.length;
+  if ($('#bottomNav').childElementCount) renderBottomNav();
 }
 
 async function renderOnline(el, v, fresh) {
@@ -2219,27 +2498,140 @@ async function vizLoad() {
   const builtin = await Promise.all(
     BUILTIN_VIZ.map(async (n) => ({ source: '', code: await (await fetch(`visualizers/${n}.js`)).text() })),
   );
-  const own = await invoke('visualizer_plugins');
+  const [own, pk] = await Promise.all([
+    invoke('visualizer_plugins'),
+    invoke('plugin_packages').catch(() => ({ packages: [] })),
+  ]);
   viz.dir = own.dir;
+  viz.packages = pk.packages || [];
+  addPluginTexts(viz.packages);
   viz.worker.postMessage({ type: 'load', plugins: [...builtin, ...own.plugins.map((p) => ({ source: p.file, code: p.code }))] });
 }
 
+function vizStars() {
+  try {
+    const v = JSON.parse(localStorage.getItem('vizStars') || '[]');
+    return Array.isArray(v) ? v : [];
+  } catch {
+    return [];
+  }
+}
+
+function vizToggleStar(id) {
+  const stars = vizStars();
+  const i = stars.indexOf(id);
+  if (i >= 0) stars.splice(i, 1);
+  else stars.push(id);
+  try {
+    localStorage.setItem('vizStars', JSON.stringify(stars));
+  } catch {}
+  vizModes();
+  vizFilter();
+}
+
 function vizModes() {
-  $('#vizModes').innerHTML = viz.list
-    .map((v, i) => `<button class="viz-mode${v.id === viz.current ? ' on' : ''}" data-viz="${esc(v.id)}"
-        title="${esc(v.description)}${v.author ? ` – ${esc(v.author)}` : ''} (${tx('Taste {n}', { n: i + 1 })})">${esc(v.name)}${v.source ? '<span class="own">★</span>' : ''}</button>`)
+  const stars = vizStars();
+  // Gruppen: Favoriten (mit Stern), mitgeliefert, je Plugin-Paket, einzelne Dateien
+  const groups = new Map([
+    ['stars', { label: tx('Favoriten'), title: '', items: [] }],
+    ['builtin', { label: tx('Mitgeliefert'), title: '', items: [] }],
+  ]);
+  viz.list.forEach((v, i) => {
+    const o = pluginOrigin(v.source, viz.packages);
+    const key = stars.includes(v.id) ? 'stars' : o ? o.key : 'builtin';
+    if (!groups.has(key)) groups.set(key, { label: o.label, title: o.title, items: [] });
+    groups.get(key).items.push({ v, i, o });
+  });
+  const cur = viz.list.find((v) => v.id === viz.current) || viz.list[0];
+  const curOrigin = cur && pluginOrigin(cur.source, viz.packages);
+  const item = ({ v, i, o }, starred) => {
+    const sub = [starred ? (o ? o.label : tx('Mitgeliefert')) : '', v.author].filter(Boolean).join(' · ');
+    const find = [v.name, tx(v.name), v.author, o?.label, v.description].filter(Boolean).join(' ').toLowerCase();
+    return `
+    <div class="viz-item${v.id === cur?.id ? ' on' : ''}" data-viz="${esc(v.id)}" data-find="${esc(find)}" role="menuitemradio" aria-checked="${v.id === cur?.id}" title="${esc(tx(v.description || ''))}">
+      <span class="k">${i < 9 ? i + 1 : ''}</span>
+      <span class="n" data-raw>${esc(tx(v.name))}${sub ? `<small>${esc(sub)}</small>` : ''}</span>
+      ${v.id === cur?.id ? icon('check') : ''}
+      <button class="viz-star${starred ? ' on' : ''}" data-star="${esc(v.id)}" title="${esc(starred ? tx('Stern entfernen') : tx('Mit Stern nach oben'))}">${icon('star')}</button>
+    </div>`;
+  };
+  const menu = [...groups.entries()]
+    .filter(([, g]) => g.items.length)
+    .map(([key, g]) => `<div class="viz-group"><div class="h" data-raw title="${esc(g.title)}">${key === 'stars' ? icon('star') : ''}${esc(g.label)}</div>${g.items.map((x) => item(x, key === 'stars')).join('')}</div>`)
     .join('');
+  const box = $('#vizModes');
+  const query = viz.query || '';
+  const auto = vizAutoCfg();
+  box.innerHTML = `
+    <button class="viz-pick" aria-haspopup="menu" aria-expanded="${box.classList.contains('open')}" title="${esc(tx('Visualisierung wählen'))}">
+      <span class="dot">${icon('activity')}</span>
+      <span class="txt"><b data-raw>${esc(tx(cur?.name || ''))}</b><small data-raw title="${esc(curOrigin?.title || '')}">${esc(curOrigin ? curOrigin.label : tx('Mitgeliefert'))}</small></span>
+      ${icon('chevron-down')}
+    </button>
+    <div class="viz-menu" role="menu">
+      <label class="viz-search">${icon('search')}<input type="search" placeholder="${esc(tx('Suchen …'))}" value="${esc(query)}" spellcheck="false" autocomplete="off"></label>
+      <div class="viz-groups">${menu}</div>
+      <p class="viz-none" hidden>${esc(tx('Nichts gefunden.'))}</p>
+      <div class="viz-auto">
+        <span class="lbl">${icon('shuffle')} ${esc(tx('Automatisch wechseln'))}</span>
+        <select data-auto="mode">
+          ${[['off', 'Aus'], ['order', 'Der Reihe nach'], ['shuffle', 'Zufällig'], ['stars', 'Zufällig aus Favoriten']]
+            .map(([k, l]) => `<option value="${k}"${auto.mode === k ? ' selected' : ''}>${esc(tx(l))}</option>`).join('')}
+        </select>
+        <select data-auto="every"${auto.mode === 'off' ? ' disabled' : ''}>
+          ${[[15, '15 s'], [30, '30 s'], [60, '1 min'], [120, '2 min'], [300, '5 min'], [0, tx('bei jedem neuen Titel')]]
+            .map(([k, l]) => `<option value="${k}"${auto.every === k ? ' selected' : ''}>${esc(l)}</option>`).join('')}
+        </select>
+      </div>
+    </div>`;
+  vizFilter();
+}
+
+/** Einträge nach dem Suchtext ein-/ausblenden (ohne neu zu zeichnen – das Feld behält den Fokus). */
+function vizFilter() {
+  const box = $('#vizModes');
+  const q = (viz.query || '').trim().toLowerCase();
+  let shown = 0;
+  for (const g of $$('.viz-group', box)) {
+    let n = 0;
+    for (const it of $$('.viz-item', g)) {
+      const ok = !q || it.dataset.find.includes(q);
+      it.hidden = !ok;
+      n += ok;
+    }
+    g.hidden = !n;
+    shown += n;
+  }
+  const none = $('.viz-none', box);
+  if (none) none.hidden = shown > 0;
+}
+
+function vizMenu(open) {
+  const box = $('#vizModes');
+  const on = open ?? !box.classList.contains('open');
+  box.classList.toggle('open', on);
+  $('.viz-pick', box)?.setAttribute('aria-expanded', String(on));
+  if (on) {
+    $('.viz-item.on', box)?.scrollIntoView({ block: 'nearest' });
+    if (!isTouch) $('.viz-search input', box)?.focus();
+    vizWake();
+  } else if (viz.query) {
+    viz.query = '';
+    $('.viz-search input', box) && ($('.viz-search input', box).value = '');
+    vizFilter();
+  }
 }
 
 function vizUse(id) {
   viz.current = id;
-  localStorage.setItem('viz', id);
+  try { localStorage.setItem('viz', id); } catch {}
+  vizModes();
   viz.worker?.postMessage({ type: 'use', id });
 }
 
 function vizResize() {
   if (!viz.worker) return;
-  const r = $('#visual').getBoundingClientRect();
+  const r = $('#vizCanvas').getBoundingClientRect();
   viz.worker.postMessage({ type: 'resize', width: r.width, height: r.height, dpr: devicePixelRatio || 1 });
 }
 
@@ -2250,7 +2642,12 @@ async function vizInfo(force = false) {
   const rad = !t ? state.status?.radio : null;
   const key = t ? t.id : rad ? `${rad.station.url}|${rad.title}` : null;
   if (!force && key === viz.trackId) return;
+  const changed = viz.trackId != null && key !== viz.trackId;
   viz.trackId = key;
+  if (changed && !force) {
+    const auto = vizAutoCfg();
+    if (auto.mode !== 'off' && auto.every === 0) vizAutoNext();
+  }
   setMarquee($('#vizTitle'), t?.title || (rad ? rad.title || rad.station.name : ''));
   $('#vizArtist').textContent = t ? [t.artist, t.album].filter(Boolean).join(' · ') : rad ? `${rad.station.name} · ${tx('Internetradio')}` : '';
   let cover = null;
@@ -2315,40 +2712,190 @@ function vizLoop(now) {
     .finally(() => (viz.pending = false));
 }
 
+/** Nach wie vielen Millisekunden die Bedienelemente über der Visualisierung ausblenden (0 = nie). */
+function vizHideMs() {
+  let sec = 6;
+  try {
+    const v = localStorage.getItem('vizHide');
+    if (v !== null && !Number.isNaN(Number(v))) sec = Number(v);
+  } catch {}
+  return sec * 1000;
+}
+
+/** Ausblenden verschieben, solange das Auswahlmenü offen ist. */
+function vizLater(fn) {
+  const ms = vizHideMs();
+  if (!ms) return null;
+  const run = () => ($('#vizModes').classList.contains('open') ? (viz.idleTimer = setTimeout(run, ms)) : fn());
+  return setTimeout(run, ms);
+}
+
 function vizWake() {
   $('#visual').classList.remove('idle');
   clearTimeout(viz.idleTimer);
-  viz.idleTimer = setTimeout(() => $('#visual').classList.add('idle'), 2500);
+  viz.idleTimer = vizLater(() => $('#visual').classList.add('idle'));
 }
 
-async function toggleViz(open = !viz.open) {
+async function toggleViz(open = !viz.open, layer = 'full') {
   if (open && !(await vizEnsure())) {
     $('#visual').classList.add('open');
     viz.open = true;
+    vizLayer(layer);
     return;
   }
   viz.open = open;
   $('#visual').classList.toggle('open', open);
   $('#vizBtn').classList.toggle('on', open);
+  vizLayer(layer);
+  vizAutoStart();
   if (open) {
     vizResize();
     vizInfo(true);
     vizWake();
     viz.last = 0;
     requestAnimationFrame(vizLoop);
+  } else if (IS_ANDROID) {
+    // Systemleisten wieder so, wie es in den Einstellungen steht
+    if (viz.bars !== undefined) {
+      viz.bars = undefined;
+      const r = await invoke('plugin:amber-mobile|get_fullscreen').catch(() => null);
+      invoke('plugin:amber-mobile|set_fullscreen', { on: r?.on !== false, remember: false }).catch(() => {});
+    }
   } else {
     const win = window.__TAURI__.window?.getCurrentWindow?.();
     if (win && (await win.isFullscreen().catch(() => false))) win.setFullscreen(false);
   }
 }
 
+/** Handy in „Läuft gerade“: aus → hinter den Bedienelementen → Vollbild → aus (wie bei Poweramp). */
+function vizCycle() {
+  if (!(isMobile() && document.body.classList.contains('deck-open'))) return toggleViz();
+  if (!viz.open) return toggleViz(true, 'behind');
+  if (viz.layer === 'behind') return vizLayer('full');
+  return toggleViz(false);
+}
+
+/** `behind`: Visualisierung liegt hinter „Läuft gerade“, `full`: eigene Ansicht darüber. */
+function vizLayer(layer) {
+  viz.layer = layer;
+  document.body.classList.toggle('viz-behind', viz.open && layer === 'behind');
+  document.body.classList.toggle('viz-full', viz.open && layer === 'full');
+  vizPlaceCanvas();
+  vizDimSoon();
+  if (viz.open) {
+    vizWake();
+    vizResize();
+  }
+}
+
+/**
+ * Hinter „Läuft gerade“ zeichnet die Visualisierung dort, wo sonst das Cover ist:
+ * hochkant oben über die ganze Breite, quer in der linken Spalte.
+ */
+function vizPlaceCanvas() {
+  const c = $('#vizCanvas').style;
+  c.top = c.left = c.width = c.height = '';
+  if (viz.open && viz.layer === 'behind') {
+    const r = $('#deck .disc-wrap').getBoundingClientRect();
+    if (r.height) {
+      if (r.right < innerWidth * 0.6) {
+        c.width = `${Math.round(r.right + 24)}px`;
+      } else {
+        c.height = `${Math.round(r.bottom + 16)}px`;
+      }
+    }
+  }
+  vizResize();
+}
+
+/** Bedienelemente über der Visualisierung nach ein paar Sekunden ausblenden. */
+function vizDimSoon() {
+  clearTimeout(viz.dimTimer);
+  document.body.classList.remove('viz-dim');
+  if (viz.open && viz.layer === 'behind') {
+    viz.dimTimer = vizLater(() => document.body.classList.add('viz-dim'));
+  }
+}
+
+/** Nächste oder vorige Visualisierung, mit kurzer Namensanzeige. */
+function vizStep(dir) {
+  if (!viz.list?.length) return;
+  const i = viz.list.findIndex((v) => v.id === viz.current);
+  vizShow(viz.list[(i + dir + viz.list.length) % viz.list.length]);
+}
+
+/** Visualisierung wechseln und ihren Namen kurz einblenden. */
+function vizShow(next) {
+  vizUse(next.id);
+  const label = $('#vizName');
+  label.textContent = tx(next.name);
+  label.classList.add('show');
+  clearTimeout(viz.nameTimer);
+  viz.nameTimer = setTimeout(() => label.classList.remove('show'), 1400);
+}
+
+// ---------- Automatischer Wechsel (wie „Nach Dauer“/„Zufällig“ bei anderen Playern)
+
+/** { mode: 'off' | 'order' | 'shuffle' | 'stars', every: Sekunden (0 = bei jedem neuen Titel) } */
+function vizAutoCfg() {
+  try {
+    const c = JSON.parse(localStorage.getItem('vizAuto') || 'null');
+    if (c && typeof c.mode === 'string') return { mode: c.mode, every: Number(c.every) || 0 };
+  } catch {}
+  return { mode: 'off', every: 60 };
+}
+
+function setVizAuto(cfg) {
+  try {
+    localStorage.setItem('vizAuto', JSON.stringify(cfg));
+  } catch {}
+  vizAutoStart();
+}
+
+/** Nächste Visualisierung nach der gewählten Art. */
+function vizAutoNext() {
+  const cfg = vizAutoCfg();
+  if (cfg.mode === 'off' || !viz.list?.length) return;
+  const stars = vizStars();
+  let pool = cfg.mode === 'stars' ? viz.list.filter((v) => stars.includes(v.id)) : viz.list;
+  if (pool.length < 2) pool = viz.list;
+  if (pool.length < 2) return;
+  const i = pool.findIndex((v) => v.id === viz.current);
+  let next;
+  if (cfg.mode === 'order') {
+    next = pool[(i + 1) % pool.length];
+  } else {
+    // zufällig, aber nie dieselbe noch einmal
+    do next = pool[Math.floor(Math.random() * pool.length)];
+    while (next.id === viz.current);
+  }
+  vizShow(next);
+}
+
+function vizAutoStart() {
+  clearInterval(viz.autoTimer);
+  const cfg = vizAutoCfg();
+  if (viz.open && cfg.mode !== 'off' && cfg.every > 0) viz.autoTimer = setInterval(vizAutoNext, cfg.every * 1000);
+}
+
 async function toggleFullscreen() {
+  if (IS_ANDROID) {
+    // Am Handy gibt es kein Fenster: Status- und Navigationsleiste ein-/ausblenden, nur vorübergehend
+    try {
+      if (viz.bars === undefined) viz.bars = (await invoke('plugin:amber-mobile|get_fullscreen'))?.on !== false;
+      viz.bars = !viz.bars;
+      await invoke('plugin:amber-mobile|set_fullscreen', { on: viz.bars, remember: false });
+    } catch (e) {
+      toast(tx('Vollbild nicht möglich: {e}', { e: e?.message || String(e) }), 'err');
+    }
+    return;
+  }
   const win = window.__TAURI__.window?.getCurrentWindow?.();
   if (!win) return;
   try {
     await win.setFullscreen(!(await win.isFullscreen()));
   } catch (e) {
-    toast(tx('Vollbild nicht möglich: {e}', { e }), 'err');
+    toast(tx('Vollbild nicht möglich: {e}', { e: e?.message || String(e) }), 'err');
   }
 }
 
@@ -2368,6 +2915,77 @@ async function pcPair(link) {
   }
 }
 
+/**
+ * Am Touchscreen springt ein Regler schon beim Aufsetzen des Fingers an die Stelle. Wer nur über
+ * ihn hinweg scrollen wollte (Finger bewegt sich senkrecht), bekommt den alten Wert zurück.
+ */
+function guardRangesOnTouch() {
+  if (!isTouch) return;
+  let g = null;
+  document.addEventListener('pointerdown', (e) => {
+    const r = e.target.closest?.('input[type=range]');
+    g = r ? { r, x: e.clientX, y: e.clientY, v: r.value, scroll: false } : null;
+  }, true);
+  document.addEventListener('pointermove', (e) => {
+    if (!g || g.scroll) return;
+    const dx = Math.abs(e.clientX - g.x);
+    const dy = Math.abs(e.clientY - g.y);
+    if (dy > 10 && dy > dx * 1.2) g.scroll = true;
+  }, true);
+  document.addEventListener('pointercancel', () => g && (g.scroll = true), true);
+  const restore = (e) => {
+    if (!g || !g.scroll || e.target !== g.r) return;
+    e.stopImmediatePropagation();
+    if (e.type === 'change' || e.type === 'pointerup') {
+      const { r, v } = g;
+      g = null;
+      if (r.value !== v) {
+        r.value = v;
+        // alten Wert wieder an alle melden (z. B. Lautstärke zurück)
+        r.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+  };
+  document.addEventListener('input', restore, true);
+  document.addEventListener('change', restore, true);
+  document.addEventListener('pointercancel', (e) => {
+    if (g?.r && g.r.value !== g.v) {
+      const { r, v } = g;
+      g = null;
+      r.value = v;
+      r.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  }, true);
+}
+
+/** Titel aus Online-Quellen des PCs (z. B. eigene Quellen-Plugins) kann das Handy nicht abspielen. */
+const pcPlayable = (t) => !String(t?.path || '').startsWith('plugin://');
+
+/** QR-Code vom PC mit der Kamera scannen und koppeln (Android). */
+async function scanPairCode() {
+  const P = 'plugin:barcode-scanner|';
+  try {
+    let perm = await invoke(`${P}check_permissions`).catch(() => null);
+    if (perm?.camera !== 'granted') perm = await invoke(`${P}request_permissions`);
+    if (perm?.camera !== 'granted') {
+      toast(tx('Ohne Kamera-Erlaubnis kann Amber Player nicht scannen'), 'err');
+      return;
+    }
+    document.body.classList.add('scanning');
+    const r = await invoke(`${P}scan`, { windowed: true, formats: ['QR_CODE'] });
+    document.body.classList.remove('scanning');
+    const text = String(r?.content || '').trim();
+    if (!text.startsWith('amberplayer://') && !/^https?:\/\//.test(text)) {
+      toast(tx('Das ist kein Kopplungs-Code von Amber Player'), 'err');
+      return;
+    }
+    pcPair(text);
+  } catch (e) {
+    document.body.classList.remove('scanning');
+    if (!/cancel/i.test(String(e?.message || e))) toast(tx('Scannen nicht möglich: {e}', { e: e?.message || String(e) }), 'err');
+  }
+}
+
 async function renderPc(el, v, fresh) {
   clearInterval(pc.timer);
   const info = await invoke('pc_info');
@@ -2377,11 +2995,13 @@ async function renderPc(el, v, fresh) {
       <div class="scroll pad"><div class="settings"><div class="box">
         <h3>Mit dem PC koppeln</h3>
         <p>${tx('Am PC in Amber Player unter <b>Einstellungen → Fernsteuerung</b> „Handy koppeln“ wählen und den QR-Code mit der Handykamera abscannen – dann öffnet sich diese App und verbindet sich.')}</p>
+        ${IS_ANDROID ? `<button class="btn primary pc-scan" id="pcScanBtn">${icon('camera')} ${esc(tx('QR-Code scannen'))}</button>` : ''}
         <p class="hint">Oder den Kopplungs-Link bzw. die Adresse hier einfügen:</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap"><input class="field" id="pcLink" placeholder="amberplayer://pair?… oder 192.168.178.35:7878" spellcheck="false" style="flex:1;min-width:200px">
         <button class="btn primary" id="pcPairBtn">${icon('link')} Verbinden</button></div>
         <p class="hint">${esc(tx('PC und Handy müssen im selben WLAN sein, und am PC muss „Im Heimnetz“ eingeschaltet sein.'))} ${wikiLink('pc', tx('Anleitung im Wiki'))}</p>
       </div></div></div>`;
+    $('#pcScanBtn', el)?.addEventListener('click', scanPairCode);
     $('#pcPairBtn', el).addEventListener('click', () => {
       const link = $('#pcLink', el).value.trim();
       if (link) pcPair(link);
@@ -2389,31 +3009,100 @@ async function renderPc(el, v, fresh) {
     return;
   }
 
-  el.innerHTML = `${head({ kind: 'Verbunden mit', title: 'PC', sub: esc(info.url) })}
-    <div class="scroll pad">
-      <div class="pc-now" id="pcNow"><p class="hint">Verbinde …</p></div>
-      <div class="sec-title">Musik vom PC</div>
-      <div class="radio-tools" style="margin-bottom:12px"><input class="field" id="pcQ" placeholder="Titel, Interpret, Album auf dem PC suchen …" spellcheck="false"></div>
-      <div id="pcResults"></div>
-      <div class="sec-title">Playlisten am PC</div>
-      <div id="pcPlaylists"><p class="hint">lädt …</p></div>
-      <div class="actions" style="margin-top:22px"><button class="btn small danger" id="pcUnpair">Verbindung trennen</button></div>
+  // „In die Leiste“ nur, wo es die Leiste unten gibt (Handy, Tablet hochkant)
+  const inBar = !isMobile() || navChoice().includes('pc');
+  const actions = inBar ? '' : `<button class="btn small" id="pcToBar">${icon('plus')} ${esc(tx('In die Leiste'))}</button>`;
+  pc.tab = pc.tab || 'now';
+  el.innerHTML = `${head({ kind: 'Verbunden mit', title: 'PC', sub: esc(info.url), actions })}
+    <div class="scroll pad pc-view">
+      <div class="pc-hero" id="pcHero"><p class="hint">${esc(tx('Verbinde …'))}</p></div>
+      <div class="pc-tabs" id="pcTabs">
+        ${[['now', 'Läuft', 'queue-add'], ['music', 'Musik', 'music'], ['fx', 'Effekte', 'sliders'], ['plugins', 'Plugins', 'puzzle']]
+          .map(([k, label, ic]) => `<button data-tab="${k}"${pc.tab === k ? ' class="on"' : ''}>${icon(ic)}<span>${esc(tx(label))}</span></button>`)
+          .join('')}
+      </div>
+      <div id="pcPane"></div>
+      <div class="actions" style="margin-top:26px"><button class="btn small danger" id="pcUnpair">Verbindung trennen</button></div>
     </div>`;
 
-  const nowEl = $('#pcNow', el);
+  $('#pcToBar', el)?.addEventListener('click', () => {
+    const list = navChoice();
+    list[NAV_SLOTS - 1] = 'pc';
+    setNavChoice(list);
+    $('#pcToBar', el).remove();
+    toast(tx('PC steht jetzt unten in der Leiste – ändern unter Einstellungen → Darstellung'), 'ok');
+  });
+
+  // ---------- Läuft gerade am PC (oben, bleibt stehen)
+  const hero = $('#pcHero', el);
+  let last = null;
+  let dragging = false;
   const send = async (path) => {
     try {
-      drawNow(await invoke('pc_post', { path }));
+      const s = await invoke('pc_post', { path });
+      if (s && s.state) drawHero(s);
+      return s;
     } catch (e) {
       toast(String(e), 'err');
     }
   };
-  const drawNow = async (s) => {
+  const buildHero = () => {
+    hero.innerHTML = `
+      <div class="pc-bg"></div>
+      <div class="pc-top">
+        <div class="pc-cover"></div>
+        <div class="pc-meta"><div class="t"></div><div class="a"></div></div>
+        <button class="icon-btn pc-fav" data-pc="/api/favorite" title="${esc(tx('Favorit'))}">${icon('heart')}</button>
+      </div>
+      <div class="pc-seek"><input type="range" min="0" max="1000" value="0" step="1"><div class="times"><span class="p">0:00</span><span class="d">0:00</span></div></div>
+      <div class="pc-ctl">
+        <button class="ctl" data-pc="/api/shuffle" data-k="shuffle" title="${esc(tx('Zufallswiedergabe'))}">${icon('shuffle')}</button>
+        <button class="ctl" data-pc="/api/prev" title="${esc(tx('Zurück'))}">${icon('prev', true)}</button>
+        <button class="ctl play" data-pc="/api/toggle" title="Play/Pause">${icon('play', true)}</button>
+        <button class="ctl" data-pc="/api/next" title="${esc(tx('Weiter'))}">${icon('next', true)}</button>
+        <button class="ctl" data-pc="/api/repeat" data-k="repeat" title="${esc(tx('Wiederholen'))}">${icon('repeat')}</button>
+      </div>
+      <div class="pc-vols">
+        <label class="pc-vol"><span class="lbl">Amber</span>${icon('volume')}<input type="range" min="0" max="100" id="pcVol"><span class="n" id="pcVolN"></span></label>
+        <label class="pc-vol" id="pcSysRow" hidden><span class="lbl">${esc(tx('PC gesamt'))}</span>${icon('monitor')}<input type="range" min="0" max="100" id="pcSys"><span class="n" id="pcSysN"></span></label>
+      </div>`;
+    for (const b of $$('[data-pc]', hero)) b.addEventListener('click', () => send(b.dataset.pc));
+    const seek = $('.pc-seek input', hero);
+    seek.addEventListener('pointerdown', () => (dragging = true));
+    seek.addEventListener('input', () => {
+      setRange(seek, seek.value);
+      if (last?.duration_ms) $('.pc-seek .p', hero).textContent = fmtTime((seek.value / 1000) * last.duration_ms);
+    });
+    seek.addEventListener('change', async () => {
+      if (last?.duration_ms) await send(`/api/seek?seconds=${((seek.value / 1000) * last.duration_ms / 1000).toFixed(1)}`);
+      dragging = false;
+    });
+    const vol = $('#pcVol', hero);
+    vol.addEventListener('pointerdown', () => (dragging = true));
+    vol.addEventListener('input', () => {
+      setRange(vol, vol.value);
+      $('#pcVolN', hero).textContent = vol.value;
+    });
+    vol.addEventListener('change', async () => {
+      await send(`/api/volume?value=${vol.value}`);
+      dragging = false;
+    });
+    const sys = $('#pcSys', hero);
+    sys.addEventListener('input', () => {
+      setRange(sys, sys.value);
+      $('#pcSysN', hero).textContent = sys.value;
+    });
+    sys.addEventListener('change', () => invoke('pc_post', { path: `/api/system/volume?value=${sys.value}` }).catch((e) => toast(String(e), 'err')));
+  };
+  const drawHero = async (s) => {
     if (!fresh() || !s) return;
+    if (!$('.pc-top', hero)) buildHero();
+    const trackChanged = (last?.track?.id ?? last?.radio?.title) !== (s.track?.id ?? s.radio?.title);
+    last = s;
     const t = s.track;
     const r = !t ? s.radio : null;
-    const title = t ? t.title : r ? r.title || r.station.name : tx('Nichts läuft');
-    const artist = t ? t.artist || tx('Unbekannter Interpret') : r ? r.station.name : '';
+    $('.pc-meta .t', hero).textContent = t ? t.title : r ? r.title || r.station.name : tx('Nichts läuft');
+    $('.pc-meta .a', hero).textContent = t ? t.artist || tx('Unbekannter Interpret') : r ? `${r.station.name} · ${tx('Internetradio')}` : '';
     if (t?.has_cover && pc.coverId !== t.id) {
       pc.coverId = t.id;
       try {
@@ -2427,36 +3116,69 @@ async function renderPc(el, v, fresh) {
       pc.coverId = null;
       pc.coverUrl = '';
     }
-    const playing = s.state === 'playing';
-    nowEl.innerHTML = `
-      <div class="pc-cover">${pc.coverUrl ? `<img src="${pc.coverUrl}" alt="">` : icon('monitor')}</div>
-      <div class="pc-meta"><div class="t">${esc(title)}</div><div class="a">${esc(artist)}</div>
-        <div class="pc-ctl">
-          <button class="ctl" data-pc="/api/prev" title="Zurück">${icon('prev', true)}</button>
-          <button class="ctl play" data-pc="/api/toggle" title="Play/Pause">${icon(playing ? 'pause' : 'play', true)}</button>
-          <button class="ctl" data-pc="/api/next" title="Weiter">${icon('next', true)}</button>
-        </div>
-        <div class="pc-vol">${icon('volume')}<input type="range" min="0" max="100" value="${s.volume}" id="pcVol"></div>
-      </div>`;
-    for (const b of $$('[data-pc]', nowEl)) b.addEventListener('click', () => send(b.dataset.pc));
-    const vol = $('#pcVol', nowEl);
-    setRange(vol, s.volume);
-    vol.addEventListener('input', () => setRange(vol, vol.value));
-    vol.addEventListener('change', () => send(`/api/volume?value=${vol.value}`));
+    $('.pc-cover', hero).innerHTML = pc.coverUrl ? `<img src="${pc.coverUrl}" alt="">` : icon(r ? 'radio' : 'monitor');
+    $('.pc-bg', hero).style.backgroundImage = pc.coverUrl ? `url("${pc.coverUrl}")` : '';
+    $('.pc-ctl .play', hero).innerHTML = icon(s.state === 'playing' ? 'pause' : 'play', true);
+    $('[data-k="shuffle"]', hero).classList.toggle('on', !!s.shuffle);
+    $('[data-k="repeat"]', hero).classList.toggle('on', s.repeat && s.repeat !== 'off');
+    $('[data-k="repeat"]', hero).innerHTML = icon(s.repeat === 'one' ? 'repeat' : 'repeat') + (s.repeat === 'one' ? '<b class="one">1</b>' : '');
+    $('.pc-fav', hero).classList.toggle('on', !!t?.favorite);
+    $('.pc-fav', hero).hidden = !t;
+    if (!dragging) {
+      const seek = $('.pc-seek input', hero);
+      seek.disabled = !s.duration_ms;
+      const v = s.duration_ms ? Math.round((s.position_ms / s.duration_ms) * 1000) : 0;
+      seek.value = v;
+      setRange(seek, v);
+      $('.pc-seek .p', hero).textContent = s.duration_ms ? fmtTime(s.position_ms) : r ? 'LIVE' : '0:00';
+      $('.pc-seek .d', hero).textContent = s.duration_ms ? fmtTime(s.duration_ms) : '';
+      const vol = $('#pcVol', hero);
+      vol.value = s.volume;
+      setRange(vol, s.volume);
+      $('#pcVolN', hero).textContent = s.volume;
+    }
+    if (trackChanged && pc.tab === 'now') drawPane();
   };
+  const pollSys = async () => {
+    try {
+      const sv = await invoke('pc_get', { path: '/api/system/volume' });
+      const row = $('#pcSysRow', hero);
+      if (!row) return;
+      row.hidden = !sv.available;
+      if (sv.available && document.activeElement !== $('#pcSys', hero)) {
+        $('#pcSys', hero).value = sv.volume;
+        setRange($('#pcSys', hero), sv.volume);
+        $('#pcSysN', hero).textContent = sv.volume;
+      }
+    } catch {
+      // ältere PC-Version ohne Systemlautstärke
+    }
+  };
+  let tick = 0;
   const poll = async () => {
     if (!fresh() || document.hidden) return;
     try {
-      drawNow(await invoke('pc_get', { path: '/api/status' }));
+      await drawHero(await invoke('pc_get', { path: '/api/status' }));
+      if (tick++ % 3 === 0) pollSys();
     } catch (e) {
-      if (fresh()) nowEl.innerHTML = `<p class="hint">${esc(String(e))}</p>`;
+      if (fresh()) hero.innerHTML = `<p class="hint">${esc(String(e))}</p>`;
     }
   };
   poll();
   pc.timer = setInterval(() => (fresh() ? poll() : clearInterval(pc.timer)), 2000);
 
+  // ---------- Bereiche
+  const pane = $('#pcPane', el);
+  $('#pcTabs', el).addEventListener('click', (e) => {
+    const b = e.target.closest('[data-tab]');
+    if (!b) return;
+    pc.tab = b.dataset.tab;
+    for (const x of $$('#pcTabs button', el)) x.classList.toggle('on', x === b);
+    drawPane();
+  });
+
   // Titelliste: Tippen = auf dem Handy abspielen, Monitor-Knopf = am PC abspielen.
-  const trackRows = (tracks, album) =>
+  const trackRows = (tracks) =>
     tracks.length
       ? `<div class="pc-list">${tracks
           .map((t, i) => `<div class="pc-row" data-i="${i}">
@@ -2465,7 +3187,7 @@ async function renderPc(el, v, fresh) {
             <button class="icon-btn" data-onpc="${t.id}" title="Am PC abspielen">${icon('monitor')}</button>
           </div>`)
           .join('')}</div>`
-      : '<p class="hint">Nichts gefunden.</p>';
+      : `<p class="hint">${esc(tx('Nichts gefunden.'))}</p>`;
   const bindRows = (box, tracks, album) => {
     for (const row of $$('.pc-row', box)) {
       row.addEventListener('click', (e) => {
@@ -2480,59 +3202,172 @@ async function renderPc(el, v, fresh) {
     }
   };
 
-  const results = $('#pcResults', el);
-  const search = debounce(async () => {
-    const q = $('#pcQ', el).value.trim();
-    if (!q) {
-      results.innerHTML = '';
-      return;
-    }
+  const paneNow = async () => {
+    pane.innerHTML = `<div class="sec-title">${esc(tx('Als Nächstes am PC'))}</div><div id="pcQueue"><p class="hint">${esc(tx('lädt …'))}</p></div>`;
     try {
-      const tracks = await invoke('pc_get', { path: `/api/search?q=${encodeURIComponent(q)}&limit=100` });
-      if (fresh()) {
-        results.innerHTML = trackRows(tracks, 'Vom PC');
-        bindRows(results, tracks, 'Vom PC');
+      const q = (await invoke('pc_get', { path: '/api/queue' })).filter(pcPlayable);
+      if (!fresh() || pc.tab !== 'now') return;
+      $('#pcQueue', pane).innerHTML = q.length ? trackRows(q) : `<p class="hint">${esc(tx('Danach ist Schluss.'))}</p>`;
+      bindRows($('#pcQueue', pane), q, 'Vom PC');
+    } catch (e) {
+      $('#pcQueue', pane).innerHTML = `<p class="hint">${esc(String(e))}</p>`;
+    }
+  };
+
+  const paneMusic = async () => {
+    pane.innerHTML = `
+      <div class="radio-tools" style="margin-bottom:12px"><input class="field" id="pcQ" placeholder="${esc(tx('Titel, Interpret, Album auf dem PC suchen …'))}" spellcheck="false"></div>
+      <div id="pcResults"></div>
+      <div class="sec-title">${esc(tx('Playlisten am PC'))}</div>
+      <div id="pcPlaylists"><p class="hint">${esc(tx('lädt …'))}</p></div>`;
+    const results = $('#pcResults', pane);
+    const search = debounce(async () => {
+      const q = $('#pcQ', pane)?.value.trim();
+      if (!q) return (results.innerHTML = '');
+      try {
+        const tracks = (await invoke('pc_get', { path: `/api/search?q=${encodeURIComponent(q)}&limit=100` })).filter(pcPlayable);
+        if (fresh() && pc.tab === 'music') {
+          results.innerHTML = trackRows(tracks);
+          bindRows(results, tracks, 'Vom PC');
+        }
+      } catch (e) {
+        results.innerHTML = `<p class="hint">${esc(String(e))}</p>`;
+      }
+    }, 300);
+    $('#pcQ', pane).addEventListener('input', search);
+    const plBox = $('#pcPlaylists', pane);
+    try {
+      // Playlisten nur aus Online-Titeln (von Quellen-Plugins am PC) weglassen – die spielt das Handy nicht
+      pc.playlists = (await invoke('pc_get', { path: '/api/playlists' })).filter((p) => !(p.track_count > 0 && p.online_count >= p.track_count));
+      if (!fresh() || pc.tab !== 'music') return;
+      plBox.innerHTML = pc.playlists.length
+        ? `<div class="pc-list">${pc.playlists
+            .map((p) => `<div class="pc-row pc-pl" data-id="${p.id}">
+              <div class="pc-row-meta"><b>${esc(p.name)}</b><span>${plural(p.track_count, 'Titel', 'Titel')}</span></div>
+              <button class="btn small" data-here="${p.id}">${icon('phone')} Hier</button>
+              <button class="btn small" data-there="${p.id}">${icon('monitor')} Am PC</button>
+            </div>`)
+            .join('')}</div>`
+        : '<p class="hint">Am PC gibt es noch keine Playlisten.</p>';
+      for (const b of $$('[data-there]', plBox)) {
+        b.addEventListener('click', () => {
+          send(`/api/playlists/${b.dataset.there}/play`);
+          toast('Playlist läuft am PC', 'ok');
+        });
+      }
+      for (const b of $$('[data-here]', plBox)) {
+        b.addEventListener('click', async () => {
+          try {
+            const data = await invoke('pc_get', { path: `/api/playlists/${b.dataset.here}` });
+            data.tracks = data.tracks.filter(pcPlayable);
+            if (!data.tracks.length) return toast('Die Playlist ist leer');
+            await call('pc_play_here', { tracks: data.tracks, start: 0, album: data.playlist.name }).then(applyStatus);
+            toast(tx('„{name}“ läuft auf dem Handy', { name: data.playlist.name }), 'ok');
+          } catch (e) {
+            toast(String(e), 'err');
+          }
+        });
       }
     } catch (e) {
-      results.innerHTML = `<p class="hint">${esc(String(e))}</p>`;
+      plBox.innerHTML = `<p class="hint">${esc(String(e))}</p>`;
     }
-  }, 300);
-  $('#pcQ', el).addEventListener('input', search);
+  };
 
-  const plBox = $('#pcPlaylists', el);
-  try {
-    pc.playlists = await invoke('pc_get', { path: '/api/playlists' });
-    if (!fresh()) return;
-    plBox.innerHTML = pc.playlists.length
-      ? `<div class="pc-list">${pc.playlists
-          .map((p) => `<div class="pc-row pc-pl" data-id="${p.id}">
-            <div class="pc-row-meta"><b>${esc(p.name)}</b><span>${plural(p.track_count, 'Titel', 'Titel')}</span></div>
-            <button class="btn small" data-here="${p.id}">${icon('phone')} Hier</button>
-            <button class="btn small" data-there="${p.id}">${icon('monitor')} Am PC</button>
-          </div>`)
-          .join('')}</div>`
-      : '<p class="hint">Am PC gibt es noch keine Playlisten.</p>';
-    for (const b of $$('[data-there]', plBox)) {
-      b.addEventListener('click', () => {
-        send(`/api/playlists/${b.dataset.there}/play`);
-        toast('Playlist läuft am PC', 'ok');
-      });
-    }
-    for (const b of $$('[data-here]', plBox)) {
-      b.addEventListener('click', async () => {
+  const paneFx = async () => {
+    pane.innerHTML = `<p class="hint">${esc(tx('Klangeffekte am PC – wirken sofort auf die Musik dort.'))}</p><div class="pc-fx" id="pcFx"><p class="hint">${esc(tx('lädt …'))}</p></div>`;
+    try {
+      const [list, pk] = await Promise.all([
+        invoke('pc_get', { path: '/api/effects' }),
+        invoke('pc_get', { path: '/api/plugins' }).catch(() => ({ packages: [] })),
+      ]);
+      if (!fresh() || pc.tab !== 'fx') return;
+      const box = $('#pcFx', pane);
+      const card = (f) => {
+        const o = pluginOrigin(f.source, pk.packages);
+        const presets = [...(f.user_presets || []), ...f.presets];
+        return `<div class="pc-fx-row${f.enabled ? '' : ' off'}" data-id="${esc(f.id)}">
+          <label class="switch"><input type="checkbox" ${f.enabled ? 'checked' : ''}><span></span></label>
+          <div class="pc-row-meta"><b>${esc(f.name)}</b><span data-raw>${esc(o ? o.label : tx('Mitgeliefert'))}</span></div>
+          ${presets.length ? `<select class="select"><option value="">${esc(tx('Preset wählen …'))}</option>${presets.map((p) => `<option>${esc(p.name)}</option>`).join('')}</select>` : ''}
+        </div>`;
+      };
+      box.innerHTML = list.map(card).join('');
+      box.addEventListener('change', async (e) => {
+        const row = e.target.closest('.pc-fx-row');
+        if (!row) return;
+        const id = encodeURIComponent(row.dataset.id);
         try {
-          const data = await invoke('pc_get', { path: `/api/playlists/${b.dataset.here}` });
-          if (!data.tracks.length) return toast('Die Playlist ist leer');
-          await call('pc_play_here', { tracks: data.tracks, start: 0, album: data.playlist.name }).then(applyStatus);
-          toast(tx('„{name}“ läuft auf dem Handy', { name: data.playlist.name }), 'ok');
-        } catch (e) {
-          toast(String(e), 'err');
+          let info;
+          if (e.target.matches('input[type=checkbox]')) info = await invoke('pc_post', { path: `/api/effects/${id}?enabled=${e.target.checked}` });
+          else if (e.target.value) info = await invoke('pc_post', { path: `/api/effects/${id}?preset=${encodeURIComponent(e.target.value)}` });
+          if (info) {
+            row.classList.toggle('off', !info.enabled);
+            $('input[type=checkbox]', row).checked = info.enabled;
+          }
+        } catch (err) {
+          toast(String(err), 'err');
         }
       });
+    } catch (e) {
+      $('#pcFx', pane).innerHTML = `<p class="hint">${esc(String(e))}</p>`;
     }
-  } catch (e) {
-    plBox.innerHTML = `<p class="hint">${esc(String(e))}</p>`;
-  }
+  };
+
+  const panePlugins = async () => {
+    pane.innerHTML = `<p class="hint">${esc(tx('Plugin-Pakete vom PC aufs Handy holen – mit allen Teilen und der Lizenz.'))}</p><div id="pcPlugs"><p class="hint">${esc(tx('lädt …'))}</p></div>`;
+    try {
+      const [remote, local] = await Promise.all([invoke('pc_get', { path: '/api/plugins' }), invoke('plugin_packages')]);
+      if (!fresh() || pc.tab !== 'plugins') return;
+      const box = $('#pcPlugs', pane);
+      const mine = Object.fromEntries((local.packages || []).map((p) => [p.id, p]));
+      if (!remote.packages.length) {
+        box.innerHTML = `<p class="hint">${esc(tx('Am PC sind keine Plugin-Pakete installiert.'))}</p>`;
+        return;
+      }
+      box.innerHTML = `<div class="pkg-list">${remote.packages.map((p) => {
+        const have = mine[p.id];
+        const phone = (p.platforms || ['pc', 'phone']).includes('phone');
+        const state = !phone ? tx('nur PC') : !have ? '' : have.version === p.version ? tx('auf dem Handy') : tx('Handy hat {v}', { v: have.version || '?' });
+        const btn = !phone
+          ? ''
+          : `<button class="btn small${have && have.version === p.version ? '' : ' primary'}" data-get="${esc(p.id)}">${icon('phone')} ${esc(have ? (have.version === p.version ? tx('Neu holen') : tx('Aktualisieren')) : tx('Aufs Handy'))}</button>`;
+        return `<div class="pkg${phone ? '' : ' off'}">
+          <div class="pkg-meta" data-raw><b>${esc(p.name)}</b>${p.version ? ` <small>${esc(p.version)}</small>` : ''}${platformTags(p.platforms)}
+            <span>${esc([packageParts(p), p.author, p.license, state].filter(Boolean).join(' · '))}</span></div>
+          ${btn}
+        </div>`;
+      }).join('')}</div>`;
+      for (const b of $$('[data-get]', box)) {
+        b.addEventListener('click', async () => {
+          const p = remote.packages.find((x) => x.id === b.dataset.get);
+          if (p.sources) {
+            const ok = await dialog({
+              title: tx('„{name}“ möchte ins Internet', { name: p.name }),
+              text: tx('Das Paket enthält eine Online-Quelle. Sie darf nur diese Adressen erreichen: {hosts}. Installiere es nur, wenn du der Quelle vertraust. Aktiv wird sie erst, wenn „Erweiterte Plugins erlauben“ eingeschaltet ist.', { hosts: (p.permissions?.network || []).join(', ') }),
+              ok: tx('Installieren'),
+            });
+            if (!ok) return;
+          }
+          b.disabled = true;
+          try {
+            const m = await call('pc_install_plugin', { id: p.id });
+            if (m.visualizers) await vizLoad();
+            toast(m.effects || m.sources
+              ? tx('„{name}“ installiert – wirkt nach dem nächsten Start der App', { name: m.name })
+              : tx('„{name}“ installiert', { name: m.name }), 'ok');
+            panePlugins();
+          } catch {
+            b.disabled = false;
+          }
+        });
+      }
+    } catch (e) {
+      $('#pcPlugs', pane).innerHTML = `<p class="hint">${esc(String(e))}</p>`;
+    }
+  };
+
+  const drawPane = () => ({ now: paneNow, music: paneMusic, fx: paneFx, plugins: panePlugins })[pc.tab]();
+  drawPane();
 
   $('#pcUnpair', el).addEventListener('click', async () => {
     const ok = await dialog({ title: 'Verbindung trennen?', text: 'Titel vom PC lassen sich danach erst nach neuem Koppeln abspielen.', ok: 'Trennen', danger: true });
@@ -2705,6 +3540,13 @@ const androidMedia = {
       console.warn('Berechtigungen:', e);
     }
     try {
+      await window.__TAURI__.core.addPluginListener('amber-mobile', 'file', (e) => receivePackage(e));
+      const shared = await invoke('plugin:amber-mobile|take_shared_file');
+      if (shared?.file) receivePackage(shared.file);
+    } catch (e) {
+      console.warn('Geteilte Datei:', e);
+    }
+    try {
       await window.__TAURI__.core.addPluginListener('amber-mobile', 'pair', (e) => e.link && pcPair(e.link));
       const pending = await invoke('plugin:amber-mobile|take_pair_link');
       if (pending?.link) pcPair(pending.link);
@@ -2730,48 +3572,251 @@ const androidMedia = {
   },
 };
 
+// ---------- Handy: Navigationsleiste selbst zusammenstellen ----------
+
+/** Alle Bereiche, die in die Leiste unten dürfen: [Name, Symbol, verfügbar?] */
+const NAV_ITEMS = {
+  tracks: ['Titel', 'music'],
+  albums: ['Alben', 'disc'],
+  artists: ['Interpreten', 'user'],
+  genres: ['Genres', 'tag'],
+  playlists: ['Playlisten', 'playlist'],
+  radio: ['Radio', 'radio'],
+  favorites: ['Favoriten', 'heart'],
+  recent: ['Verlauf', 'clock'],
+  online: ['Online', 'search', () => online.sources.length > 0],
+  pc: ['PC', 'monitor', () => IS_ANDROID],
+  effects: ['Effekte', 'sliders'],
+  settings: ['Einstellungen', 'settings'],
+};
+const NAV_DEFAULT = ['tracks', 'albums', 'playlists', 'radio'];
+const NAV_SLOTS = 4;
+
+const navAvailable = (id) => NAV_ITEMS[id] && (!NAV_ITEMS[id][2] || NAV_ITEMS[id][2]());
+
+/** Die vier Bereiche in der Leiste (gespeichert pro Gerät). */
+function navChoice() {
+  let list = NAV_DEFAULT;
+  try {
+    const saved = JSON.parse(localStorage.getItem('nav') || 'null');
+    if (Array.isArray(saved) && saved.length === NAV_SLOTS) list = saved;
+  } catch {}
+  return list.map((id, i) => (navAvailable(id) ? id : NAV_DEFAULT[i]));
+}
+
+function setNavChoice(list) {
+  try {
+    localStorage.setItem('nav', JSON.stringify(list));
+  } catch {}
+  renderBottomNav();
+}
+
+function renderBottomNav() {
+  const nav = $('#bottomNav');
+  nav.innerHTML = `${navChoice()
+    .map((id) => `<button data-nav="${id}"><span data-icon="${NAV_ITEMS[id][1]}"></span><small>${esc(tx(NAV_ITEMS[id][0]))}</small></button>`)
+    .join('')}<button id="moreBtn"><span data-icon="list"></span><small>${esc(tx('Mehr'))}</small></button>`;
+  hydrateIcons(nav);
+  updateNav();
+}
+
+/** „Mehr“: alles, was nicht in der Leiste steht. */
+function showMoreMenu() {
+  const r = $('#moreBtn').getBoundingClientRect();
+  const inBar = navChoice();
+  const rest = Object.keys(NAV_ITEMS).filter((id) => navAvailable(id) && !inBar.includes(id) && id !== 'effects' && id !== 'settings');
+  const items = [
+    // PC zuerst, sobald gekoppelt – dann findet man ihn schnell
+    ...rest.sort((a, b) => (b === 'pc') - (a === 'pc')).map((id) => ({ label: NAV_ITEMS[id][0], icon: NAV_ITEMS[id][1], action: () => navigate({ name: id }) })),
+    'sep',
+    { label: 'Visualisierung', icon: 'activity', action: () => toggleViz(true) },
+    ...['effects', 'settings'].filter((id) => !inBar.includes(id)).map((id) => ({ label: NAV_ITEMS[id][0], icon: NAV_ITEMS[id][1], action: () => navigate({ name: id }) })),
+    { label: 'Leiste anpassen …', icon: 'edit', action: () => navigate({ name: 'settings', focus: 'nav' }) },
+  ];
+  showMenu(r.right - 230, r.top - 12 - items.length * 38, items);
+}
+
+// ---------- Zurück-Taste (Android) ----------
+
+/**
+ * Zurück schließt zuerst, was oben liegt (Dialog, Menü, Visualisierung, „Läuft gerade“), dann geht
+ * es eine Seite zurück. Gibt `false` zurück, wenn es nichts mehr zurückzugehen gibt.
+ */
+function handleBack() {
+  if ($('#modal').classList.contains('open')) {
+    $('#modal [data-r="cancel"]')?.click();
+    return true;
+  }
+  if (document.body.classList.contains('scanning')) {
+    invoke('plugin:barcode-scanner|cancel').catch(() => {});
+    return true;
+  }
+  if (openMenu) {
+    closeMenu();
+    return true;
+  }
+  if ($('#vizModes').classList.contains('open')) {
+    vizMenu(false);
+    return true;
+  }
+  if (viz.open) {
+    // Vollbild über „Läuft gerade“: zurück zur Visualisierung hinter den Tasten
+    if (viz.layer === 'full' && isMobile() && document.body.classList.contains('deck-open')) vizLayer('behind');
+    else toggleViz(false);
+    return true;
+  }
+  if (document.body.classList.contains('deck-open')) {
+    closeDeck();
+    return true;
+  }
+  if (state.back.length) {
+    goBack();
+    return true;
+  }
+  return false;
+}
+
+function bindBackButton() {
+  const core = window.__TAURI__.core;
+  if (!IS_ANDROID || !core?.addPluginListener) return;
+  core
+    .addPluginListener('app', 'back-button', () => {
+      // Auf der Startseite: in den Hintergrund (Musik läuft weiter) statt die App zu beenden
+      if (!handleBack()) invoke('plugin:amber-mobile|move_to_back').catch(() => {});
+    })
+    .catch(() => {});
+}
+
+/** „Läuft gerade“ schließen; eine Visualisierung dahinter geht mit aus. */
+function closeDeck() {
+  document.body.classList.remove('deck-open');
+  if (viz.open && viz.layer === 'behind') toggleViz(false);
+}
+
 /** Handy: Mini-Player öffnet „Läuft gerade“, „Mehr“ öffnet die übrigen Bereiche. */
 function bindMobile() {
   $('#deck').addEventListener('click', (e) => {
     if (!isMobile() || document.body.classList.contains('deck-open')) return;
     if (e.target.closest('button, input')) return;
     document.body.classList.add('deck-open');
+    $('#deck').scrollTop = 0;
   });
   $('#deckClose').addEventListener('click', (e) => {
     e.stopPropagation();
-    document.body.classList.remove('deck-open');
+    closeDeck();
   });
-  $('#moreBtn').addEventListener('click', (e) => {
+  $('#bottomNav').addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
     e.stopPropagation();
-    const r = $('#moreBtn').getBoundingClientRect();
-    const items = [
-      ...(IS_ANDROID ? [{ label: 'PC', icon: 'monitor', action: () => navigate({ name: 'pc' }) }] : []),
-      { label: 'Interpreten', icon: 'user', action: () => navigate({ name: 'artists' }) },
-      { label: 'Genres', icon: 'tag', action: () => navigate({ name: 'genres' }) },
-      { label: 'Favoriten', icon: 'heart', action: () => navigate({ name: 'favorites' }) },
-      { label: 'Verlauf', icon: 'clock', action: () => navigate({ name: 'recent' }) },
-      ...(online.sources.length ? [{ label: 'Online', icon: 'search', action: () => navigate({ name: 'online' }) }] : []),
-      'sep',
-      { label: 'Visualisierung', icon: 'activity', action: () => toggleViz(true) },
-      { label: 'Effekte', icon: 'sliders', action: () => navigate({ name: 'effects' }) },
-      { label: 'Einstellungen', icon: 'settings', action: () => navigate({ name: 'settings' }) },
-    ];
-    showMenu(r.right - 230, r.top - 12 - items.length * 38, items);
+    if (b.id === 'moreBtn') showMoreMenu();
+    else navigate({ name: b.dataset.nav });
   });
+  renderBottomNav();
 }
 
 function bindViz() {
-  $('#vizBtn').addEventListener('click', () => toggleViz());
+  $('#vizBtn').addEventListener('click', () => vizCycle());
+  // Drehen: Zeichenfläche neu anordnen
+  addEventListener('resize', () => {
+    if (viz.open) vizPlaceCanvas();
+  });
+  // Hinter „Läuft gerade“: erstes Antippen holt die ausgeblendeten Bedienelemente zurück,
+  // Wischen nach links/rechts wechselt die Visualisierung.
+  const deck = $('#deck');
+  let swallow = false;
+  deck.addEventListener('pointerdown', (e) => {
+    if (!document.body.classList.contains('viz-behind')) return;
+    if (document.body.classList.contains('viz-dim')) {
+      e.preventDefault();
+      e.stopPropagation();
+      swallow = true;
+    }
+    if (!swallow && (e.target === deck || e.target.closest('.disc-wrap'))) {
+      // zweites Antippen der freien Fläche: gleich ausblenden
+      clearTimeout(viz.dimTimer);
+      document.body.classList.add('viz-dim');
+      return;
+    }
+    vizDimSoon();
+  }, true);
+  deck.addEventListener('click', (e) => {
+    if (!swallow) return;
+    swallow = false;
+    e.preventDefault();
+    e.stopPropagation();
+  }, true);
+  let touch = null;
+  deck.addEventListener('touchstart', (e) => {
+    const t = e.touches[0];
+    touch = document.body.classList.contains('viz-behind') && !e.target.closest('input, .progress, .deck-row') ? { x: t.clientX, y: t.clientY } : null;
+  }, { passive: true });
+  deck.addEventListener('touchend', (e) => {
+    if (!touch) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touch.x;
+    const dy = t.clientY - touch.y;
+    touch = null;
+    if (Math.abs(dx) > 60 && Math.abs(dy) < Math.abs(dx) * 0.6) vizStep(dx < 0 ? 1 : -1);
+  }, { passive: true });
   $('#vizClose').addEventListener('click', () => toggleViz(false));
   $('#vizFull').addEventListener('click', toggleFullscreen);
   $('#vizPrev').addEventListener('click', () => send('prev'));
   $('#vizNext').addEventListener('click', () => send('next'));
   $('#vizPlay').addEventListener('click', () => send('toggle'));
-  $('#vizModes').addEventListener('click', (e) => {
-    const id = e.target.closest('[data-viz]')?.dataset.viz;
-    if (id) vizUse(id);
+  $('#vizModes').addEventListener('change', (e) => {
+    const sel = e.target.closest('[data-auto]');
+    if (!sel) return;
+    const cfg = vizAutoCfg();
+    cfg[sel.dataset.auto] = sel.dataset.auto === 'every' ? Number(sel.value) : sel.value;
+    setVizAuto(cfg);
+    $('[data-auto="every"]', $('#vizModes')).disabled = cfg.mode === 'off';
   });
-  $('#visual').addEventListener('mousemove', vizWake);
+  $('#vizModes').addEventListener('input', (e) => {
+    if (!e.target.matches('.viz-search input')) return;
+    viz.query = e.target.value;
+    vizFilter();
+  });
+  $('#vizModes').addEventListener('keydown', (e) => {
+    // Enter in der Suche: ersten Treffer nehmen
+    if (e.key !== 'Enter' || !e.target.matches('.viz-search input')) return;
+    const first = $$('#vizModes .viz-item').find((x) => !x.hidden && !x.closest('.viz-group').hidden);
+    if (first) {
+      vizUse(first.dataset.viz);
+      vizMenu(false);
+    }
+  });
+  $('#vizModes').addEventListener('click', (e) => {
+    if (e.target.closest('.viz-pick')) return vizMenu();
+    const star = e.target.closest('[data-star]');
+    if (star) {
+      e.stopPropagation();
+      return vizToggleStar(star.dataset.star);
+    }
+    if (e.target.closest('.viz-search, .viz-auto')) return;
+    const id = e.target.closest('[data-viz]')?.dataset.viz;
+    if (id) {
+      vizUse(id);
+      vizMenu(false);
+    }
+  });
+  // Klick daneben schließt das Menü
+  document.addEventListener('pointerdown', (e) => {
+    if (!e.target.closest('#vizModes')) vizMenu(false);
+  }, true);
+  // Maus: Bewegen blendet ein. Finger: Tippen auf die Fläche blendet ein – nochmal tippen sofort aus.
+  $('#visual').addEventListener('pointermove', (e) => {
+    if (e.pointerType === 'mouse') vizWake();
+  });
+  $('#visual').addEventListener('pointerup', (e) => {
+    if (e.pointerType === 'mouse' || !e.target.closest('#vizCanvas, .viz-name')) return;
+    if ($('#vizModes').classList.contains('open')) return vizMenu(false);
+    if ($('#visual').classList.contains('idle')) vizWake();
+    else {
+      clearTimeout(viz.idleTimer);
+      $('#visual').classList.add('idle');
+    }
+  });
   $('#visual').addEventListener('dblclick', (e) => {
     if (e.target.id === 'vizCanvas') toggleFullscreen();
   });
@@ -2784,7 +3829,8 @@ function bindKeys() {
     const typing = e.target.matches('input:not([type=range]), textarea, select');
     if (e.key === 'Escape') {
       closeMenu();
-      if (viz.open) toggleViz(false);
+      if ($('#vizModes').classList.contains('open')) vizMenu(false);
+      else if (viz.open) toggleViz(false);
       else if (typing) e.target.blur();
       return;
     }
@@ -2859,6 +3905,16 @@ async function init() {
   applyTheme();
   applyAccent();
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+  guardRangesOnTouch();
+  bindBackButton();
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-pkginstall]')) pickPackage();
+  });
+  $('#scanCancel').addEventListener('click', () => invoke('plugin:barcode-scanner|cancel').catch(() => {}));
+  // Tablet quer (Ansicht mit Reitern oben): PC als eigener Reiter
+  $('#pcTab').hidden = !IS_ANDROID;
+  // Übersetzungen aus Plugin-Paketen früh laden (Effektnamen, Visualisierungen …)
+  invoke('plugin_packages').then((r) => addPluginTexts(r.packages)).catch(() => {});
   hydrateIcons();
 
   for (const b of $$('[data-view]')) {

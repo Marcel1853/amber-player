@@ -114,6 +114,9 @@ pub fn run() {
         }
         builder = builder.on_window_event(background::on_window_event);
     }
+    // QR-Code der PC-Kopplung mit der Kamera scannen (gibt es nur auf Android/iOS)
+    #[cfg(mobile)]
+    let builder = builder.plugin(tauri_plugin_barcode_scanner::init());
     builder
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_amber_mobile::init())
@@ -147,6 +150,11 @@ pub fn run() {
             commands::effects_list,
             commands::effect_set,
             commands::effect_preset,
+            commands::effect_save_preset,
+            commands::effect_delete_preset,
+            commands::effect_reset,
+            commands::pc_install_plugin,
+            commands::export_plugin_package,
             commands::api_info,
             commands::api_configure,
             commands::visual_frame,

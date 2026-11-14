@@ -9,6 +9,7 @@
     "core:default",
     "dialog:default",
     "amber-mobile:default",
+    "barcode-scanner:default",
     "core:window:allow-set-fullscreen",
     "core:window:allow-is-fullscreen"
   ]

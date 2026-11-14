@@ -23,6 +23,8 @@ tauri = { version = "2", features = ["tray-icon"] }
 tauri-plugin-dialog = "2"
 # Android-Teil (Benachrichtigung, Medientasten); am PC leer
 tauri-plugin-amber-mobile = { path = "../mobile-plugin" }
+# QR-Code der PC-Kopplung mit der Kamera scannen (nur Android/iOS, am PC ohne Wirkung)
+tauri-plugin-barcode-scanner = "2"
 env_logger = "0.11"
 rand = "0.8"
 dirs = "5"

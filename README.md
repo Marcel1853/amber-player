@@ -23,18 +23,22 @@ Written in Rust (Tauri 2, rodio), with its own interface in a warm dark design.
   song titles and station logos are shown.
 
 **Sound and visuals**
-- **Sound effects as plugins:** 10-band equalizer with presets, bass booster, clearer voices,
-  headphone crossfeed, stereo width, echo, old radio, 8D flight, preamp & limiter. A safety
-  limiter prevents clipping and crackling.
-- **Visualizers** in full screen: Bars, Wave, Ring (with a spinning cover) and Fog.
+- **Sound effects as plugins:** 10-band equalizer with presets, tone (bass/treble), reverb
+  (size, damping, filter, decay, pre-delay, mix), stereo & balance, bass booster, clearer voices,
+  headphone crossfeed, echo, old radio, 8D flight, preamp & limiter. Save your own presets. A
+  safety limiter prevents clipping and crackling.
+- **Visualizers:** Bars, Wave, Ring (with a spinning cover) and Fog – in full screen or, on the
+  phone, right behind the controls. Search, favourites and automatic switching.
 - **Your own plugins** without rebuilding the player: sound effects as a JSON file (no
-  programming), visualizers as a JavaScript file.
+  programming), visualizers and online sources in JavaScript – packed as `.amberplugin` with
+  their own license and translations, and **shared** via Quick Share, Bluetooth or messengers.
 
 **Phone and PC together**
 - **Android app** with everything for listening: library, playlists, effects, visualizers,
   radio. Background playback with notification, lock screen and headphone/Bluetooth buttons.
-- **Pair with your PC** (scan a QR code): control the PC from your phone or stream music and
-  playlists from the PC to the phone – without copying files.
+- **Pair with your PC** (scan the QR code right in the app): control the PC from your phone –
+  playback, seeking, the PC's main volume, sound effects – stream music and playlists to the
+  phone without copying files, and get plugins from the PC onto the phone.
 - **Remote control** via an HTTP API (Stream Deck, TouchDeck, Home Assistant, curl) and a
   built-in **MCP server** for AI assistants like Claude.
 

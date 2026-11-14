@@ -55,6 +55,7 @@ Dateien als `plugin.json`, die Teile, `LICENSE` und `README` sind nicht erlaubt.
 | `description` | | kurze Beschreibung |
 | `license` | | Kurzname der Lizenz, z. B. `MIT`, `GPL-3.0`, `CC-BY-4.0` oder „Alle Rechte vorbehalten“ |
 | `homepage` | | Adresse, unter der es das Paket gibt |
+| `translations` | | Übersetzungen der Texte im Paket, siehe [unten](#übersetzungen) |
 
 \* **Kurzform für ein einzelnes Teil:** statt `contents` einfach `"type": "effect"` (oder
 `"visualizer"`) und optional `"main": "effect.json"` angeben.
@@ -62,6 +63,25 @@ Dateien als `plugin.json`, die Teile, `LICENSE` und `README` sind nicht erlaubt.
 Jedes Teil ist genau so aufgebaut wie beschrieben in [Klang-Plugin erstellen](Klang-Plugin-erstellen.md)
 und [Visualisierung erstellen](Visualisierung-erstellen.md). Die `id` der einzelnen Klangeffekte
 und Visualisierungen muss über alle installierten Plugins eindeutig sein.
+
+## Übersetzungen
+
+Amber Player gibt es in acht Sprachen – dein Paket kann mitziehen. Unter `translations` steht pro
+Sprache, wie die Texte deines Pakets dort heißen: **Originaltext → Übersetzung**.
+
+```json
+"translations": {
+  "en": { "Nachtfahrt": "Night drive", "Kassette": "Cassette", "Alter": "Age", "Neu gekauft": "Brand new" },
+  "fr": { "Nachtfahrt": "Route de nuit", "Kassette": "Cassette", "Alter": "Âge", "Neu gekauft": "Tout neuf" }
+}
+```
+
+- Übersetzt werden **Paketname und -beschreibung** sowie **Namen, Beschreibungen, Regler und
+  Presets** der Klangeffekte und Visualisierungen.
+- Sprachcodes: `de`, `en`, `es`, `fr`, `it`, `nl`, `pl`, `tr`. Fehlt eine Sprache, nimmt Amber
+  Player Englisch, sonst den Originaltext.
+- Du schreibst dein Paket auf Englisch? Dann übersetze unter `"de"` ins Deutsche.
+- Höchstens 64 KB. Ein vollständiges Beispiel ist `examples/plugins/nachtfahrt/plugin.json`.
 
 ## Lizenz
 
@@ -90,13 +110,41 @@ python3 scripts/plugin-pack.py mein-paket/        # → mein-paket.amberplugin
 Von Hand geht es mit jedem ZIP-Programm: die Dateien des Ordners als ZIP speichern und die Endung
 in `.amberplugin` ändern (oder `.zip` lassen).
 
+## PC und Handy
+
+Alle Teile eines Pakets – Klangeffekte, Visualisierungen und Online-Quellen in JavaScript –
+laufen auf dem **PC und dem Handy**. In den Einstellungen steht das bei jedem Paket dabei. Nur
+die älteren Programm-Plugins für Online-Quellen (siehe [Quellen-Plugin erstellen](Quellen-Plugin-erstellen.md))
+laufen ausschließlich am PC.
+
+Ist das Handy mit dem PC verbunden, holst du Pakete unter **PC → Plugins** direkt aufs Handy,
+siehe [Mit dem PC verbinden](Mit-dem-PC-verbinden.md).
+
+## Teilen
+
+Installierte Pakete gibst du direkt aus Amber Player weiter – ohne Server, auch unterwegs ohne
+gemeinsames WLAN:
+
+- **Am Handy:** Einstellungen → Plugins → **Installierte Plugins** → **Teilen**. Es öffnet sich das
+  Android-Teilen-Menü: **Quick Share** oder **Bluetooth** (direkt von Handy zu Handy, ohne
+  Datenvolumen), Messenger oder Mail.
+- **Am PC:** **Exportieren** speichert die `.amberplugin`-Datei, z. B. für einen USB-Stick.
+- **Empfangen:** die Datei antippen (oder „Teilen → Amber Player“) – Amber Player zeigt Name,
+  Teile, Autor und Lizenz und fragt, ob es installiert werden soll.
+
+Jedes Paket hat **seine eigene Lizenz** – unabhängig von Amber Player. Sie regelt, was andere
+damit tun dürfen, z. B. ob sie es verändern oder unter eigenem Namen veröffentlichen dürfen. Vor
+dem Installieren zeigt Amber Player sie an.
+
 ## Installieren, aktualisieren, entfernen
 
 - **Installieren:** Effekte → **Installieren** oder Einstellungen → Plugins → **Installieren**,
   Datei auswählen. Visualisierungen sind sofort da, Klangeffekte nach dem nächsten Start der
   App.
-- **Aktualisieren:** die neue Version genauso installieren – ein Paket mit derselben `id` wird
-  samt allen Teilen ersetzt.
+- **Aktualisieren:** Einstellungen → Plugins → **Installierte Plugins** → **Aktualisieren** und die
+  neue Datei wählen – das alte Paket wird samt allen Teilen ersetzt, löschen musst du nichts.
+  (Jede Installation eines Pakets mit derselben `id` ersetzt es ebenso.) Am Handy mit PC-Verbindung
+  geht es noch einfacher: **PC → Plugins → Aktualisieren**.
 - **Entfernen:** Einstellungen → Plugins → **Installierte Plugins** → **Entfernen**. Alle Teile
   des Pakets verschwinden zusammen.
 

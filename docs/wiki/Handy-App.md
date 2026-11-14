@@ -13,8 +13,10 @@ Installation: [Installation → Android](Installation.md#android-handy-und-table
 - **Ein Tipp auf den Mini-Player** öffnet **Läuft gerade**: großes Cover, Fortschritt,
   Steuerung, Lautstärke, Favorit, Sleep-Timer, Visualisierung und Als Nächstes. Mit dem Pfeil
   oben links geht es zurück.
-- **Mehr** öffnet: PC, Interpreten, Genres, Favoriten, Verlauf, Visualisierung, Effekte,
+- **Mehr** öffnet alles, was nicht in der Leiste steht, außerdem Visualisierung, Effekte und
   Einstellungen.
+- **Leiste anpassen:** Einstellungen → Darstellung → **Leiste unten** – welche vier Bereiche
+  unten stehen, z. B. **PC** statt Radio. Auch über **Mehr → Leiste anpassen**.
 
 **Tippen** spielt einen Titel ab, **lange drücken** öffnet das Menü (Als Nächstes,
 Warteschlange, Zu Playlist, Favorit …).

@@ -9,7 +9,9 @@ mod crossfeed;
 pub mod custom;
 mod equalizer;
 mod limiter;
+mod reverb;
 mod stereo;
+mod tone;
 
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, RwLock};
@@ -26,7 +28,9 @@ use crate::library::Library;
 pub use crossfeed::Crossfeed;
 pub use equalizer::Equalizer;
 pub use limiter::Limiter;
+pub use reverb::Reverb;
 pub use stereo::StereoWidth;
+pub use tone::Tone;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct ParamInfo {
@@ -75,8 +79,10 @@ pub trait Processor: Send {
 pub fn builtin_plugins() -> Vec<Arc<dyn EffectPlugin>> {
     let native: Vec<Arc<dyn EffectPlugin>> = vec![
         Arc::new(Equalizer),
+        Arc::new(Tone),
         Arc::new(Crossfeed),
         Arc::new(StereoWidth),
+        Arc::new(Reverb),
     ];
     native
         .into_iter()
@@ -95,9 +101,20 @@ pub struct EffectInfo {
     pub values: Vec<f32>,
     pub params: Vec<ParamInfo>,
     pub presets: Vec<Preset>,
+    /// Selbst gespeicherte Voreinstellungen
+    pub user_presets: Vec<UserPreset>,
     /// Dateiname, wenn das Plugin aus dem Plugin-Ordner stammt
     pub source: Option<String>,
 }
+
+/// Eine selbst gespeicherte Voreinstellung.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UserPreset {
+    pub name: String,
+    pub values: Vec<f32>,
+}
+
+const MAX_USER_PRESETS: usize = 50;
 
 #[derive(Serialize, Deserialize)]
 struct SavedEffect {
@@ -110,6 +127,7 @@ struct Slot {
     params: Vec<ParamInfo>,
     enabled: AtomicBool,
     values: RwLock<Vec<f32>>,
+    user_presets: RwLock<Vec<UserPreset>>,
 }
 
 pub struct PluginHost {
@@ -173,11 +191,16 @@ impl PluginHost {
                         *v = s.clamp(p.min, p.max);
                     }
                 }
+                let user_presets = library
+                    .as_ref()
+                    .and_then(|l| l.setting_as::<Vec<UserPreset>>(&presets_key(plugin.id())))
+                    .unwrap_or_default();
                 Slot {
                     plugin,
                     params,
                     enabled: AtomicBool::new(enabled),
                     values: RwLock::new(values),
+                    user_presets: RwLock::new(user_presets),
                 }
             })
             .collect();
@@ -205,6 +228,7 @@ impl PluginHost {
             values: slot.values.read().unwrap().clone(),
             params: slot.params.clone(),
             presets: slot.plugin.presets(),
+            user_presets: slot.user_presets.read().unwrap().clone(),
             source: slot.plugin.source(),
         }
     }
@@ -259,6 +283,10 @@ impl PluginHost {
 
     pub fn apply_preset(&self, id: &str, preset: &str) -> Result<EffectInfo> {
         let slot = self.slot(id)?;
+        let own = slot.user_presets.read().unwrap().iter().find(|p| p.name == preset).map(|p| p.values.clone());
+        if let Some(values) = own {
+            return self.set(id, Some(true), Some(&values));
+        }
         let Some(p) = slot
             .plugin
             .presets()
@@ -268,6 +296,48 @@ impl PluginHost {
             bail!("Plugin {id} hat kein Preset „{preset}“");
         };
         self.set(id, Some(true), Some(&p.values))
+    }
+
+    /// Speichert die aktuellen Werte als eigene Voreinstellung (gleicher Name wird ersetzt).
+    pub fn save_preset(&self, id: &str, name: &str) -> Result<EffectInfo> {
+        let slot = self.slot(id)?;
+        let name = name.trim();
+        if name.is_empty() || name.chars().count() > 40 {
+            bail!("Der Name muss 1 bis 40 Zeichen lang sein");
+        }
+        let values = slot.values.read().unwrap().clone();
+        {
+            let mut list = slot.user_presets.write().unwrap();
+            if let Some(p) = list.iter_mut().find(|p| p.name == name) {
+                p.values = values;
+            } else {
+                if list.len() >= MAX_USER_PRESETS {
+                    bail!("Höchstens {MAX_USER_PRESETS} eigene Voreinstellungen je Effekt");
+                }
+                list.push(UserPreset { name: name.to_string(), values });
+            }
+        }
+        self.store_presets(id, slot);
+        Ok(Self::info(slot))
+    }
+
+    pub fn delete_preset(&self, id: &str, name: &str) -> Result<EffectInfo> {
+        let slot = self.slot(id)?;
+        slot.user_presets.write().unwrap().retain(|p| p.name != name);
+        self.store_presets(id, slot);
+        Ok(Self::info(slot))
+    }
+
+    /// Setzt alle Werte auf die Standardwerte zurück (an/aus bleibt).
+    pub fn reset(&self, id: &str) -> Result<EffectInfo> {
+        let defaults: Vec<f32> = self.slot(id)?.params.iter().map(|p| p.default).collect();
+        self.set(id, None, Some(&defaults))
+    }
+
+    fn store_presets(&self, id: &str, slot: &Slot) {
+        if let Some(lib) = &self.library {
+            let _ = lib.set_setting_json(&presets_key(id), &*slot.user_presets.read().unwrap());
+        }
     }
 
     fn version(&self) -> u64 {
@@ -287,6 +357,10 @@ impl PluginHost {
 
 fn setting_key(id: &str) -> String {
     format!("effect:{id}")
+}
+
+fn presets_key(id: &str) -> String {
+    format!("effect-presets:{id}")
 }
 
 /// rodio-`Source`, die alle aktiven Plugins des Hosts anwendet.
@@ -609,6 +683,58 @@ mod tests {
         assert_eq!(clipped, 0, "kein hartes Abschneiden");
         assert!(peak(&out) <= SafetyLimiter::CEILING + 1e-3);
         assert!(peak(&out) > 0.3, "aber trotzdem kräftig");
+    }
+
+    #[test]
+    fn reverb_adds_tail_and_mix_controls_it() {
+        // Ein kurzer Klick: ohne Hall ist danach Stille, mit Hall klingt er nach.
+        let click = || {
+            let mut v = vec![0.0f32; 2 * 44100];
+            v[0] = 0.8;
+            v[1] = 0.8;
+            SamplesBuffer::new(2, 44100, v)
+        };
+        let tail = |mix: f32| {
+            let host = PluginHost::with_builtin(None);
+            host.set("reverb", Some(true), Some(&[45.0, 60.0, 180.0, 1.6, 20.0, mix])).unwrap();
+            let out: Vec<f32> = EffectChain::new(click(), host).collect();
+            out[2 * 4410..2 * 22050].iter().map(|s| s * s).sum::<f32>()
+        };
+        assert_eq!(tail(0.0), 0.0);
+        let low = tail(20.0);
+        let high = tail(100.0);
+        assert!(low > 0.0, "Hall klingt nach");
+        assert!(high > low * 10.0, "Mix macht den Hall stärker: {low} / {high}");
+    }
+
+    #[test]
+    fn tone_and_balance() {
+        let host = PluginHost::with_builtin(None);
+        host.set("tone", Some(true), Some(&[10.0, 0.0])).unwrap();
+        let bass = peak(&EffectChain::new(sine(50.0, 44100, 1, 0.1), host.clone()).collect::<Vec<_>>());
+        let high = peak(&EffectChain::new(sine(5000.0, 44100, 1, 0.1), host).collect::<Vec<_>>());
+        assert!(bass / high > 2.5, "Bass {bass}, Höhen {high}");
+
+        let host = PluginHost::with_builtin(None);
+        host.set("stereo_width", Some(true), Some(&[100.0, 100.0])).unwrap();
+        let out: Vec<f32> = EffectChain::new(SamplesBuffer::new(2, 44100, vec![0.5, 0.5]), host).collect();
+        assert_eq!(out, vec![0.0, 0.5], "Balance ganz rechts");
+    }
+
+    #[test]
+    fn user_presets_save_apply_delete_reset() {
+        let host = PluginHost::with_builtin(None);
+        host.set("reverb", None, Some(&[80.0, 90.0, 300.0, 3.0, 50.0, 40.0])).unwrap();
+        let info = host.save_preset("reverb", " Mein Raum ").unwrap();
+        assert_eq!(info.user_presets[0].name, "Mein Raum");
+        let info = host.reset("reverb").unwrap();
+        assert_eq!(info.values[1], 60.0);
+        let info = host.apply_preset("reverb", "Mein Raum").unwrap();
+        assert_eq!(info.values[1], 90.0);
+        assert!(info.enabled);
+        let info = host.delete_preset("reverb", "Mein Raum").unwrap();
+        assert!(info.user_presets.is_empty());
+        assert!(host.save_preset("reverb", "  ").is_err());
     }
 
     #[test]

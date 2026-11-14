@@ -80,7 +80,8 @@ Einzelne Titel- oder Radio-Adressen gehen auch über „Streams › URL hinzufü
 
 ## Effekt-Plugins
 
-IDs der mitgelieferten Effekte: `equalizer`, `crossfeed`, `stereo_width`, `limiter` sowie die
+IDs der mitgelieferten Effekte: `equalizer`, `tone` (Bass/Höhen), `crossfeed`, `stereo_width`
+(Breite und Balance), `reverb` (Hall), `limiter` sowie die
 JSON-Effekte `bass-booster`, `stimmen-klarer`, `altes-radio`, `echo`, `rundflug`. Eigene
 Klang-Plugins sind unter ihrer `id` erreichbar. `GET /api/effects` listet alle.
 
@@ -94,6 +95,20 @@ Klang-Plugins sind unter ihrer `id` erreichbar. `GET /api/effects` listet alle.
 | `/api/effects/{id}/param/{param}?value=4` | einen Parameter setzen, z. B. `equalizer/param/62` |
 
 Equalizer-Presets: Neutral, Bass, Höhen, Pop, Rock, Elektronisch, Klassik, Stimme.
+Hall-Presets: Leichter Hall, Zimmer, Studio, Saal, Kirche, Stadion. Eigene, in der App gespeicherte
+Voreinstellungen stehen in `user_presets` und lassen sich ebenso mit `?preset=` laden.
+
+## System und Plugin-Pakete
+
+| Endpunkt | Wirkung |
+|---|---|
+| `GET /api/system/volume` | Hauptlautstärke des PCs: `{ "available", "volume", "muted" }` |
+| `/api/system/volume?value=40` · `?muted=true` | Hauptlautstärke setzen bzw. stumm schalten (PipeWire über `wpctl`, sonst PulseAudio über `pactl`) |
+| `GET /api/plugins` | installierte Plugin-Pakete mit Version, Autor, Lizenz, Teilen, `platforms` und `translations` |
+| `GET /api/plugins/{id}/files` | alle Dateien eines Pakets (`{ "files": { "plugin.json": "…", … } }`) – damit holt die Handy-App Pakete vom PC |
+
+`GET /api/playlists` liefert je Playlist zusätzlich `online_count`: so viele Titel stammen aus
+Online-Quellen (`plugin://…`) und lassen sich nur am PC abspielen.
 
 ## Status
 

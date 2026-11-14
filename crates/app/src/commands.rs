@@ -380,6 +380,21 @@ pub fn effect_preset(ctx: State<'_, Ctx>, id: String, preset: String) -> R<Effec
         .map_err(|e| format!("{e:#}"))
 }
 
+#[tauri::command]
+pub fn effect_save_preset(ctx: State<'_, Ctx>, id: String, name: String) -> R<EffectInfo> {
+    ctx.player.effects().save_preset(&id, &name).map_err(|e| format!("{e:#}"))
+}
+
+#[tauri::command]
+pub fn effect_delete_preset(ctx: State<'_, Ctx>, id: String, name: String) -> R<EffectInfo> {
+    ctx.player.effects().delete_preset(&id, &name).map_err(|e| format!("{e:#}"))
+}
+
+#[tauri::command]
+pub fn effect_reset(ctx: State<'_, Ctx>, id: String) -> R<EffectInfo> {
+    ctx.player.effects().reset(&id).map_err(|e| format!("{e:#}"))
+}
+
 // ---------- API / MCP ----------
 
 fn api_json(api: &ApiStatus) -> Value {
@@ -784,6 +799,54 @@ pub async fn pc_get(ctx: State<'_, Ctx>, path: String) -> R<Value> {
 pub async fn pc_post(ctx: State<'_, Ctx>, path: String) -> R<Value> {
     let l = lib(&ctx);
     bg(move || pc_link_of(&l)?.post(api_path(&path)?)).await
+}
+
+/// Plugin-Paket zum Teilen als `.amberplugin` speichern. Am PC mit „Speichern unter“ (gibt `null`
+/// zurück, wenn abgebrochen), am Handy im Cache-Ordner – den Pfad reicht die Oberfläche an
+/// das Android-Teilen-Menü weiter.
+#[tauri::command]
+pub async fn export_plugin_package(app: tauri::AppHandle, id: String) -> R<Option<String>> {
+    let data = {
+        let id = id.clone();
+        bg(move || amber_core::packages::export(&id)).await?
+    };
+    #[cfg(mobile)]
+    let path: PathBuf = {
+        use tauri::Manager;
+        let dir = app.path().app_cache_dir().map_err(err)?.join("share");
+        std::fs::create_dir_all(&dir).map_err(err)?;
+        dir.join(format!("{id}.amberplugin"))
+    };
+    #[cfg(not(mobile))]
+    let path: PathBuf = {
+        let Some(file) = app
+            .dialog()
+            .file()
+            .set_title("Plugin-Paket exportieren")
+            .set_file_name(format!("{id}.amberplugin"))
+            .add_filter("Amber-Player-Plugin", &["amberplugin"])
+            .blocking_save_file()
+        else {
+            return Ok(None);
+        };
+        file.into_path().map_err(err)?
+    };
+    std::fs::write(&path, data).map_err(err)?;
+    Ok(Some(path.to_string_lossy().into_owned()))
+}
+
+/// Plugin-Paket vom PC holen und auf dem Handy installieren (mit allen Teilen und der Lizenz).
+#[tauri::command]
+pub async fn pc_install_plugin(ctx: State<'_, Ctx>, id: String) -> R<Value> {
+    let l = lib(&ctx);
+    let v = bg(move || {
+        anyhow::ensure!(id.chars().all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_'), "Ungültige Plugin-ID");
+        pc_link_of(&l)?.get(&format!("/api/plugins/{id}/files"))
+    })
+    .await?;
+    let files: std::collections::HashMap<String, String> =
+        serde_json::from_value(v["files"].clone()).map_err(|_| "Der PC hat kein gültiges Paket geschickt".to_string())?;
+    install_plugin_package(files)
 }
 
 /// Cover eines PC-Titels als Bilddaten.

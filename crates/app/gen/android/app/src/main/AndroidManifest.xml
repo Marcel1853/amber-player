@@ -32,6 +32,24 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="amberplayer" android:host="pair" />
             </intent-filter>
+            <!-- Plugin-Pakete (.amberplugin) öffnen, z. B. nach Quick Share oder aus „Downloads“ -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+                <data android:mimeType="application/octet-stream" />
+                <data android:mimeType="application/zip" />
+                <data android:mimeType="application/x-zip-compressed" />
+            </intent-filter>
+            <!-- „Teilen → Amber Player“ -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/octet-stream" />
+                <data android:mimeType="application/zip" />
+            </intent-filter>
         </activity>
 
         <provider

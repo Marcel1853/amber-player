@@ -1,7 +1,17 @@
 # Visualisierungen
 
-Öffnen mit **V** oder dem Symbol in der Player-Leiste. Oben wählst du das Motiv, unten siehst
-du den Titel (lange Namen laufen durch) und die Steuerung.
+Öffnen mit **V** oder dem Symbol in der Player-Leiste. Oben links wählst du das Motiv, unten
+siehst du den Titel (lange Namen laufen durch) und die Steuerung.
+
+## Auswahl
+
+Der Knopf oben links öffnet die Liste aller Visualisierungen – geordnet nach **Favoriten**,
+**Mitgeliefert** und je **Plugin-Paket** (mit Name und Autor), dazu eigene Einzeldateien.
+
+- **Suchen:** oben in der Liste tippen; **Enter** nimmt den ersten Treffer.
+- **Stern** rechts neben einem Eintrag: Er steht dann ganz oben unter **Favoriten**.
+- **Automatisch wechseln** (unten in der Liste): **Der Reihe nach**, **Zufällig** oder **Zufällig
+  aus Favoriten** – alle 15 Sekunden bis 5 Minuten oder **bei jedem neuen Titel**.
 
 | Motiv | Beschreibung |
 |---|---|
@@ -18,7 +28,19 @@ du den Titel (lange Namen laufen durch) und die Steuerung.
 | F | Vollbild |
 | Esc oder V | schließen |
 
-Nach ein paar Sekunden ohne Maus blenden sich Leisten und Mauszeiger aus.
+Nach ein paar Sekunden ohne Maus blenden sich Leisten und Mauszeiger aus – wie lange, stellst du
+unter **Einstellungen → Darstellung → Visualisierung** ein (3, 6, 10, 20 Sekunden oder nie).
+Am Handy blendet **Antippen** sie ein, **nochmal antippen** sofort wieder aus.
+
+### Am Handy
+
+In **„Läuft gerade“** das Visualisierungs-Symbol antippen:
+
+1. **einmal** – die Visualisierung läuft direkt hinter Titel und Tasten. Nach ein paar Sekunden
+   blenden sich die Bedienelemente aus; einmal antippen holt sie zurück.
+   **Nach links/rechts wischen** wechselt das Motiv.
+2. **zweimal** – Vollbild mit eigener Steuerung
+3. **dreimal** – aus
 
 Die Farben folgen deiner **Akzentfarbe** (Einstellungen → Darstellung).
 

@@ -652,7 +652,8 @@ impl Library {
     pub fn playlists(&self) -> Result<Vec<Playlist>> {
         let db = self.db();
         let mut st = db.prepare(
-            "SELECT p.id, p.name, COUNT(t.id), COALESCE(SUM(t.duration_ms), 0)
+            "SELECT p.id, p.name, COUNT(t.id), COALESCE(SUM(t.duration_ms), 0),
+                    COALESCE(SUM(CASE WHEN substr(t.path, 1, 9) = 'plugin://' THEN 1 ELSE 0 END), 0)
              FROM playlists p
              LEFT JOIN playlist_tracks pt ON pt.playlist_id = p.id
              LEFT JOIN tracks t ON t.id = pt.track_id
@@ -664,6 +665,7 @@ impl Library {
                 name: r.get(1)?,
                 track_count: r.get(2)?,
                 duration_ms: r.get::<_, i64>(3)? as u64,
+                online_count: r.get(4)?,
             })
         })?;
         Ok(rows.collect::<rusqlite::Result<_>>()?)

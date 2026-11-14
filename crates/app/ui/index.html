@@ -73,6 +73,7 @@
           <button data-view="playlists">Playlisten</button>
           <button data-view="radio">Radio</button>
           <button data-view="online" id="onlineTab" hidden>Online</button>
+          <button data-view="pc" id="pcTab" hidden>PC</button>
           <button data-view="favorites">Favoriten</button>
           <button data-view="recent">Verlauf</button>
         </nav>
@@ -90,17 +91,12 @@
   </div>
 
   <!-- Handy: Navigationsleiste unten -->
-  <nav id="bottomNav">
-    <button data-view="tracks"><span data-icon="music"></span><small>Titel</small></button>
-    <button data-view="albums"><span data-icon="disc"></span><small>Alben</small></button>
-    <button data-view="playlists"><span data-icon="playlist"></span><small>Playlisten</small></button>
-    <button data-view="radio"><span data-icon="radio"></span><small>Radio</small></button>
-    <button id="moreBtn"><span data-icon="list"></span><small>Mehr</small></button>
-  </nav>
+  <nav id="bottomNav"></nav>
 
   <!-- Visualisierung: zeichnet ein Web Worker mit Plugins auf die Leinwand -->
   <div id="visual">
     <canvas id="vizCanvas"></canvas>
+    <div class="viz-name" id="vizName"></div>
     <div class="viz-top">
       <div class="viz-modes" id="vizModes"></div>
       <div class="viz-tools">
@@ -118,6 +114,12 @@
     </div>
   </div>
 
+  <!-- QR-Code scannen: die Kamera liegt hinter der (dann durchsichtigen) Oberfläche -->
+  <div id="scanUi">
+    <div class="scan-frame"></div>
+    <p>QR-Code vom PC in den Rahmen halten</p>
+    <button class="btn" id="scanCancel">Abbrechen</button>
+  </div>
   <div id="modal"></div>
   <div id="toasts"></div>
 

@@ -12,6 +12,8 @@ pub mod library;
 pub mod m3u;
 #[cfg(feature = "server")]
 pub mod mcp;
+#[cfg(feature = "server")]
+pub mod sysvol;
 pub mod model;
 pub mod netstream;
 pub mod packages;

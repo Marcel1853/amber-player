@@ -9,14 +9,35 @@ und werden gespeichert.
 | Effekt | Wofür |
 |---|---|
 | **Equalizer** | 10 Bänder von 31 Hz bis 16 kHz. Presets: Neutral, Bass, Höhen, Pop, Rock, Elektronisch, Klassik, Stimme |
+| **Ton** | Bass und Höhen getrennt anheben oder absenken, wie an einer Stereoanlage |
 | **Bass-Booster** | mehr Druck im Tiefbass, ohne dass es dröhnt. Presets: Dezent, Club, Kopfhörer |
 | **Stimmen klarer** | hebt Stimmen hervor – für Hörbücher, Podcasts, leise Gesangsstellen |
 | **Kopfhörer-Crossfeed** | mischt tiefe Frequenzen leicht auf die andere Seite – entspannter mit Kopfhörern |
-| **Stereobreite** | 0 % = Mono, 100 % = normal, bis 200 % = breit |
+| **Stereo & Balance** | Breite: 0 % = Mono, 100 % = normal, bis 200 % = breit. Balance: lauter links oder rechts |
+| **Hall** | Raumklang vom Zimmer bis zum Stadion – siehe unten |
 | **Echo** | Wiederholungen wie in einer Halle oder am Berg |
 | **Altes Radio** | schmal, warm, leicht verzerrt wie ein Röhrenradio |
 | **8D-Rundflug** | die Musik wandert langsam um den Kopf – am besten mit Kopfhörern |
 | **Vorverstärker & Limiter** | lauter/leiser und Spitzen abfangen |
+
+## Hall
+
+| Regler | Wirkung |
+|---|---|
+| **Größe** | wie groß der Raum ist |
+| **Dämpfung** | wie schnell die hohen Töne im Hall verklingen – mehr Dämpfung klingt weicher und wärmer, wie ein Raum mit Teppich und Vorhängen |
+| **Filter** | nimmt die Tiefen unterhalb dieser Frequenz aus dem Hall, damit der Bass klar bleibt und nicht dröhnt |
+| **Nachhallzeit** | wie lange der Hall nachklingt (Sekunden) |
+| **Vor-Verzögerung** | Pause zwischen dem Original und dem Einsetzen des Halls – größere Werte lassen große Räume natürlicher wirken |
+| **Mix** | wie stark der Hall insgesamt zu hören ist. So kann ein großer, langer Hall trotzdem dezent bleiben |
+
+Presets: Leichter Hall (Standard), Zimmer, Studio, Saal, Kirche, Stadion.
+
+## Eigene Voreinstellungen
+
+Unter jedem Effekt: **Speichern** legt die aktuellen Werte unter einem Namen ab, sie stehen dann
+in der Auswahl unter **Eigene**. **Zurücksetzen** stellt alle Regler auf den Standard zurück.
+Eine eigene Voreinstellung auswählen und **Preset löschen** entfernt sie wieder.
 
 ## Tipps
 

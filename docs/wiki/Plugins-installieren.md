@@ -1,8 +1,11 @@
 # Plugins installieren
 
-Klangeffekte und Visualisierungen kommen als **Plugin-Paket** – eine `.amberplugin`-Datei mit einem
-oder mehreren Teilen und eigener Lizenz, siehe [Plugin-Pakete](Plugin-Pakete.md). Am schnellsten installierst du sie mit
-**Installieren** (Effekte bzw. Einstellungen → Plugins) – am PC und am Handy gleich.
+Klangeffekte, Visualisierungen und Online-Quellen kommen als **Plugin-Paket** – eine
+`.amberplugin`-Datei mit einem oder mehreren Teilen und eigener Lizenz, siehe
+[Plugin-Pakete](Plugin-Pakete.md). Am schnellsten geht es mit dem Knopf **Plugin installieren**
+(in den Effekten oben und unter Einstellungen → Plugins): Er nimmt jedes Paket an, egal was drin
+ist – am PC und am Handy gleich. Ist das Handy mit dem PC verbunden, holst du Pakete auch unter
+**PC → Plugins** direkt vom PC.
 
 Amber Player kennt drei Arten von Plugins:
 
@@ -10,7 +13,8 @@ Amber Player kennt drei Arten von Plugins:
 |---|---|---|---|
 | **Klangeffekt** | Paket (`.amberplugin`) oder eine `.json`-Datei | PC und Handy | nach Neustart der App |
 | **Visualisierung** | Paket (`.amberplugin`) oder eine `.js`-Datei | PC und Handy | sofort (PC: nach „Neu laden“) |
-| **Quelle** (Musik aus dem Netz) | ein Ordner mit `plugin.json` und Programm | nur PC | nach Neustart |
+| **Online-Quelle** (Musik aus dem Netz) | Paket (`.amberplugin`) mit JavaScript | PC und Handy | nach Neustart, wenn „Erweiterte Plugins“ an ist |
+| **Programm-Quelle** (ältere Art) | ein Ordner mit `plugin.json` und Programm | nur PC | nach Neustart |
 
 > **Sicherheit:** Klangeffekte sind reine Beschreibungen ohne Programmcode. Visualisierungen
 > laufen abgeschottet ohne Zugriff auf Netz und Dateien. **Quellen-Plugins dagegen sind

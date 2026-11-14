@@ -57,6 +57,10 @@ pub struct Playlist {
     pub name: String,
     pub track_count: u32,
     pub duration_ms: u64,
+    /// Davon Titel aus Online-Quellen (`plugin://…`) – die spielt nur dieses Gerät, nicht ein
+    /// gekoppeltes Handy.
+    #[serde(default)]
+    pub online_count: u32,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Default)]

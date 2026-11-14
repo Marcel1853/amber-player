@@ -103,6 +103,9 @@ pub fn router(player: Arc<Player>, token: Option<String>) -> Router {
         .route("/api/playlists", get(playlists))
         .route("/api/playlists/:id", get(playlist))
         .route("/api/playlists/:id/play", get(playlist_play).post(playlist_play))
+        .route("/api/system/volume", get(system_volume).post(system_volume))
+        .route("/api/plugins", get(plugins))
+        .route("/api/plugins/:id/files", get(plugin_files))
         .route("/api/effects", get(effects))
         .route("/api/effects/:id", get(effect).post(effect))
         .route("/api/effects/:id/toggle", get(effect_toggle).post(effect_toggle))
@@ -435,6 +438,42 @@ async fn playlist_play(
 #[derive(Deserialize)]
 struct OnShuffleQ {
     shuffle: Option<bool>,
+}
+
+#[derive(Deserialize)]
+struct SysVolQ {
+    value: Option<u8>,
+    muted: Option<bool>,
+}
+
+/// Lautstärke des ganzen PCs (nicht nur von Amber Player).
+async fn system_volume(Query(q): Query<SysVolQ>) -> ApiResult<Json<Value>> {
+    let v = blocking(move || -> anyhow::Result<Option<crate::sysvol::SystemVolume>> {
+        if let Some(m) = q.muted {
+            crate::sysvol::set_muted(m)?;
+        }
+        Ok(match q.value {
+            Some(v) => Some(crate::sysvol::set(v)?),
+            None => crate::sysvol::get(),
+        })
+    })
+    .await?;
+    Ok(Json(match v {
+        Some(v) => json!({ "available": true, "volume": v.volume, "muted": v.muted }),
+        None => json!({ "available": false }),
+    }))
+}
+
+/// Installierte Plugin-Pakete (mit Plattformen), z. B. für die Handy-App.
+async fn plugins() -> Json<Value> {
+    let (all, errors) = blocking(crate::packages::list).await;
+    Json(json!({ "packages": all, "errors": errors }))
+}
+
+/// Alle Dateien eines Pakets, damit die Handy-App es übernehmen kann.
+async fn plugin_files(Path(id): Path<String>) -> ApiResult<Json<Value>> {
+    let files = blocking(move || crate::packages::files(&id)).await?;
+    Ok(Json(json!({ "files": files })))
 }
 
 async fn effects(State(st): State<ApiState>) -> Json<Value> {

@@ -7,8 +7,110 @@
   "license": "MIT",
   "homepage": "https://github.com/Marcel1853/amber-player/tree/main/examples/plugins/nachtfahrt",
   "contents": [
-    { "type": "effect", "file": "effects/kassette.json" },
-    { "type": "effect", "file": "effects/stadion.json" },
-    { "type": "visualizer", "file": "visualizers/polarlicht.js" }
-  ]
+    {
+      "type": "effect",
+      "file": "effects/kassette.json"
+    },
+    {
+      "type": "effect",
+      "file": "effects/stadion.json"
+    },
+    {
+      "type": "visualizer",
+      "file": "visualizers/polarlicht.js"
+    }
+  ],
+  "translations": {
+    "en": {
+      "Nachtfahrt": "Night drive",
+      "Beispiel-Paket mit mehreren Teilen: zwei Klangeffekte und eine Visualisierung": "Example package with several parts: two sound effects and a visualizer",
+      "Kassette": "Cassette",
+      "Warmer Klang wie von einer alten Musikkassette: weiche Höhen, etwas Sättigung": "Warm sound like an old music cassette: soft treble, a little saturation",
+      "Alter": "Age",
+      "Neu gekauft": "Brand new",
+      "Oft gehört": "Played a lot",
+      "Stadion": "Stadium",
+      "Klingt wie aus den Lautsprechern eines großen Stadions: breit, mit Nachhall": "Sounds like the speakers of a big stadium: wide, with reverb",
+      "Polarlicht": "Aurora",
+      "Wehende Lichtbänder, die mit der Musik leuchten": "Waving ribbons of light that glow with the music"
+    },
+    "es": {
+      "Nachtfahrt": "Viaje nocturno",
+      "Beispiel-Paket mit mehreren Teilen: zwei Klangeffekte und eine Visualisierung": "Paquete de ejemplo con varias partes: dos efectos de sonido y un visualizador",
+      "Kassette": "Casete",
+      "Warmer Klang wie von einer alten Musikkassette: weiche Höhen, etwas Sättigung": "Sonido cálido como el de un casete antiguo: agudos suaves, algo de saturación",
+      "Alter": "Edad",
+      "Neu gekauft": "Recién comprado",
+      "Oft gehört": "Muy escuchado",
+      "Stadion": "Estadio",
+      "Klingt wie aus den Lautsprechern eines großen Stadions: breit, mit Nachhall": "Suena como los altavoces de un gran estadio: amplio, con reverberación",
+      "Polarlicht": "Aurora boreal",
+      "Wehende Lichtbänder, die mit der Musik leuchten": "Cintas de luz ondulantes que brillan con la música"
+    },
+    "fr": {
+      "Nachtfahrt": "Route de nuit",
+      "Beispiel-Paket mit mehreren Teilen: zwei Klangeffekte und eine Visualisierung": "Paquet d’exemple en plusieurs parties : deux effets sonores et une visualisation",
+      "Kassette": "Cassette",
+      "Warmer Klang wie von einer alten Musikkassette: weiche Höhen, etwas Sättigung": "Son chaud comme une vieille cassette : aigus doux, un peu de saturation",
+      "Alter": "Âge",
+      "Neu gekauft": "Tout neuf",
+      "Oft gehört": "Souvent écoutée",
+      "Stadion": "Stade",
+      "Klingt wie aus den Lautsprechern eines großen Stadions: breit, mit Nachhall": "Comme les haut-parleurs d’un grand stade : large, avec réverbération",
+      "Polarlicht": "Aurore boréale",
+      "Wehende Lichtbänder, die mit der Musik leuchten": "Des rubans de lumière qui ondulent et brillent avec la musique"
+    },
+    "it": {
+      "Nachtfahrt": "Viaggio notturno",
+      "Beispiel-Paket mit mehreren Teilen: zwei Klangeffekte und eine Visualisierung": "Pacchetto di esempio con più parti: due effetti audio e una visualizzazione",
+      "Kassette": "Cassetta",
+      "Warmer Klang wie von einer alten Musikkassette: weiche Höhen, etwas Sättigung": "Suono caldo come una vecchia musicassetta: alti morbidi, un po’ di saturazione",
+      "Alter": "Età",
+      "Neu gekauft": "Appena comprata",
+      "Oft gehört": "Ascoltata spesso",
+      "Stadion": "Stadio",
+      "Klingt wie aus den Lautsprechern eines großen Stadions: breit, mit Nachhall": "Come gli altoparlanti di un grande stadio: ampio, con riverbero",
+      "Polarlicht": "Aurora boreale",
+      "Wehende Lichtbänder, die mit der Musik leuchten": "Nastri di luce ondeggianti che brillano con la musica"
+    },
+    "nl": {
+      "Nachtfahrt": "Nachtrit",
+      "Beispiel-Paket mit mehreren Teilen: zwei Klangeffekte und eine Visualisierung": "Voorbeeldpakket met meerdere onderdelen: twee geluidseffecten en een visualisatie",
+      "Kassette": "Cassette",
+      "Warmer Klang wie von einer alten Musikkassette: weiche Höhen, etwas Sättigung": "Warme klank als van een oude muziekcassette: zachte hoge tonen, wat verzadiging",
+      "Alter": "Leeftijd",
+      "Neu gekauft": "Net gekocht",
+      "Oft gehört": "Vaak gedraaid",
+      "Stadion": "Stadion",
+      "Klingt wie aus den Lautsprechern eines großen Stadions: breit, mit Nachhall": "Klinkt als de luidsprekers van een groot stadion: breed, met galm",
+      "Polarlicht": "Noorderlicht",
+      "Wehende Lichtbänder, die mit der Musik leuchten": "Wapperende lichtlinten die meegloeien met de muziek"
+    },
+    "pl": {
+      "Nachtfahrt": "Nocna jazda",
+      "Beispiel-Paket mit mehreren Teilen: zwei Klangeffekte und eine Visualisierung": "Przykładowy pakiet z kilkoma częściami: dwa efekty dźwiękowe i wizualizacja",
+      "Kassette": "Kaseta",
+      "Warmer Klang wie von einer alten Musikkassette: weiche Höhen, etwas Sättigung": "Ciepłe brzmienie jak ze starej kasety: miękkie soprany, trochę nasycenia",
+      "Alter": "Wiek",
+      "Neu gekauft": "Nowo kupiona",
+      "Oft gehört": "Często słuchana",
+      "Stadion": "Stadion",
+      "Klingt wie aus den Lautsprechern eines großen Stadions: breit, mit Nachhall": "Brzmi jak głośniki dużego stadionu: szeroko, z pogłosem",
+      "Polarlicht": "Zorza polarna",
+      "Wehende Lichtbänder, die mit der Musik leuchten": "Falujące wstęgi światła, które świecą z muzyką"
+    },
+    "tr": {
+      "Nachtfahrt": "Gece yolculuğu",
+      "Beispiel-Paket mit mehreren Teilen: zwei Klangeffekte und eine Visualisierung": "Birden çok parçalı örnek paket: iki ses efekti ve bir görselleştirme",
+      "Kassette": "Kaset",
+      "Warmer Klang wie von einer alten Musikkassette: weiche Höhen, etwas Sättigung": "Eski bir müzik kaseti gibi sıcak ses: yumuşak tizler, biraz doygunluk",
+      "Alter": "Yaş",
+      "Neu gekauft": "Yeni alınmış",
+      "Oft gehört": "Çok dinlenmiş",
+      "Stadion": "Stadyum",
+      "Klingt wie aus den Lautsprechern eines großen Stadions: breit, mit Nachhall": "Büyük bir stadyumun hoparlörleri gibi: geniş, yankılı",
+      "Polarlicht": "Kutup ışıkları",
+      "Wehende Lichtbänder, die mit der Musik leuchten": "Müzikle parlayan dalgalı ışık şeritleri"
+    }
+  }
 }

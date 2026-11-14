@@ -56,6 +56,8 @@ password window.
 | `/api/playlists` · `/api/playlists/{id}/play` | playlists |
 | `/api/radio/play/{id}` | play a saved station |
 | `/api/effects/equalizer?preset=Rock` | load an effect preset |
+| `/api/system/volume?value=40` · `?muted=true` | the PC's main volume (PipeWire/PulseAudio); without a value: query |
+| `/api/plugins` · `/api/plugins/{id}/files` | installed plugin packages (with platforms) or all files of one package |
 | `/api/cover/current` | cover of the current track as an image |
 
 **All endpoints with parameters and response format:** [`docs/API.md`](https://github.com/Marcel1853/amber-player/blob/main/docs/API.md) (German)

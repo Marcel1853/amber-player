@@ -12,7 +12,9 @@ Installation: [Install → Android](Install.md#android-phone-and-tablet)
 - **Above it:** the mini player with cover, title, play/pause and next.
 - **Tapping the mini player** opens **Now playing**: large cover, progress, controls, volume,
   favourite, sleep timer, visualizer and Up next. The arrow at the top left takes you back.
-- **More** opens: PC, Artists, Genres, Favourites, History, Visualizer, Effects, Settings.
+- **More** opens everything that isn't in the bar, plus Visualizer, Effects and Settings.
+- **Customize the bar:** Settings → Appearance → **Bottom bar** – which four sections are shown
+  at the bottom, e.g. **PC** instead of Radio. Also via **More → Customize bar**.
 
 **Tap** plays a track, **long-press** opens its menu (Play next, Add to queue, Add to playlist,
 Favourite …).

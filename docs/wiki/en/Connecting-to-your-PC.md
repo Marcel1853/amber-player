@@ -19,8 +19,12 @@ Once the phone app is paired with Amber Player on your PC, you can
 ## Pairing with a QR code
 
 1. **On the PC:** Settings → Remote control & MCP → **Pair phone**. A QR code appears.
-2. **On the phone:** scan the QR code with the camera app and choose **Open**.
-3. Amber Player opens and reports “Connected to the PC”.
+2. **On the phone:** in Amber Player under **PC**, tap **Scan QR code** and hold the code inside
+   the frame (the first time, Android asks for the camera). Or scan the QR code with the normal
+   camera app and choose **Open**.
+3. Amber Player reports “Connected to the PC”.
+
+**Several devices:** pair every phone and tablet with the same QR code – as many as you like.
 
 **Without a camera:** copy the link below the QR code and paste it in the app under
 **More → PC**. The PC's API address works too, e.g. `http://192.168.178.35:7878/api?token=…`.
@@ -30,14 +34,21 @@ Once the phone app is paired with Amber Player on your PC, you can
 
 ## The “PC” view
 
-Under **More → PC**:
+Under **More → PC** – or right in the bottom bar: in the “PC” view, tap **Add to bar** (change it
+under Settings → Appearance → Bottom bar).
+
+At the top you always see **what's playing on the PC**: cover, title, favourite, a timeline for
+seeking, shuffle, previous, play/pause, next, repeat and two sliders – **Amber** (Amber Player's
+volume) and **PC overall** (the PC's main volume). Below are four sections:
 
 | Section | Usage |
 |---|---|
-| **What's playing on the PC** | cover, title, previous, play/pause, next, volume. Refreshes every two seconds. |
-| **Music from the PC** | search box: tapping a result plays it **on the phone**; the screen icon plays it **on the PC**. |
-| **Playlists on the PC** | **Here** plays the playlist on the phone, **On PC** on the PC. |
-| **Disconnect** | remove the pairing. |
+| **Playing** | Up next on the PC. Tapping plays the track **on the phone**, the screen icon **on the PC**. |
+| **Music** | search the PC's library and its playlists (**Here** = on the phone, **On PC** = on the PC). |
+| **Effects** | turn sound effects on the PC on and off, choose presets. |
+| **Plugins** | get plugin packages from the PC **onto the phone** – with all parts and the license. If the phone has a different version, the button says **Update**. |
+
+**Disconnect** removes the pairing.
 
 Tracks from the PC behave like your own on the phone: queue, favourites, effects and visualizer
 work. They are streamed, not stored – without a connection to the PC they won't play.

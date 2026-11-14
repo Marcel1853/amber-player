@@ -15,14 +15,16 @@ Amber Player lässt sich an drei Stellen erweitern – ohne den Player neu zu ba
 **Am PC** öffnen sich die Ordner direkt aus dem Programm: **Effekte › Plugin-Ordner öffnen** bzw.
 **Einstellungen › Plugins**.
 
-**Plugin-Pakete:** Klangeffekte und Visualisierungen werden als ZIP-Datei mit `plugin.json`,
-Plugin-Datei und eigener `LICENSE` weitergegeben und über **Installieren** eingespielt –
-Aufbau, Felder und Lizenzen: [Plugin-Pakete](wiki/Plugin-Pakete.md). Installiert wird nach
-`packages/<id>/`; einzelne Dateien direkt im Ordner gehen weiterhin.
+**Plugin-Pakete:** Klangeffekte, Visualisierungen und Online-Quellen werden als `.amberplugin`
+(ZIP) mit `plugin.json`, den Teilen und eigener `LICENSE` weitergegeben und über **Plugin
+installieren** eingespielt – Aufbau, Felder, Übersetzungen (`translations`), Teilen und Lizenzen:
+[Plugin-Pakete](wiki/Plugin-Pakete.md). Installiert wird nach `packages/<id>/`; einzelne Dateien
+direkt im Ordner gehen weiterhin.
 
-**Am Handy (Android)** gibt es keinen Zugriff auf den App-Ordner. Dort heißt der Knopf
-**Installieren**: Datei auswählen, Amber Player prüft sie (Klang-Plugins werden vorab geladen) und
-legt sie in den Plugin-Ordner der App. Quellen-Plugins gibt es am Handy nicht.
+**Am Handy (Android)** gibt es keinen Zugriff auf den App-Ordner. Dort installierst du über
+**Plugin installieren**, über **Teilen** von einem anderen Gerät (Quick Share, Bluetooth …) oder –
+mit PC-Verbindung – unter **PC → Plugins**. Amber Player prüft jedes Paket vorher. Online-Quellen in
+JavaScript laufen auch am Handy; die älteren Programm-Plugins nur am PC.
 
 Fertige Vorlagen liegen in [`examples/plugins/`](../examples/plugins).
 

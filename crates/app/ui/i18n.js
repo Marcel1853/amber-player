@@ -43,9 +43,23 @@ const LOCALE = { de: 'de-DE', en: 'en-GB', es: 'es-ES', fr: 'fr-FR', it: 'it-IT'
 
 document.documentElement.lang = LANG;
 
+/** Übersetzungen aus Plugin-Paketen (Sprache → Original → Text). Die eigenen Texte der App haben Vorrang. */
+const PLUGIN_I18N = {};
+
+/** Übersetzungen aus den `translations` der installierten Pakete übernehmen. */
+function addPluginTexts(packages = []) {
+  for (const p of packages) {
+    for (const [lang, table] of Object.entries(p.translations || {})) {
+      const code = lang.slice(0, 2).toLowerCase();
+      PLUGIN_I18N[code] = Object.assign(PLUGIN_I18N[code] || {}, table);
+    }
+  }
+}
+
 function lookup(key) {
-  if (LANG === 'de') return undefined;
-  return I18N[LANG]?.[key] ?? I18N.en?.[key];
+  // Plugins dürfen auch ins Deutsche übersetzen (ihre Originaltexte sind nicht immer deutsch).
+  if (LANG === 'de') return PLUGIN_I18N.de?.[key];
+  return I18N[LANG]?.[key] ?? PLUGIN_I18N[LANG]?.[key] ?? I18N.en?.[key] ?? PLUGIN_I18N.en?.[key];
 }
 
 /** Übersetzt einen Text; {name} wird durch vars.name ersetzt. */
