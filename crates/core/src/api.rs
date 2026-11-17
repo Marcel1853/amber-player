@@ -103,6 +103,7 @@ pub fn router(player: Arc<Player>, token: Option<String>) -> Router {
         .route("/api/playlists", get(playlists))
         .route("/api/playlists/:id", get(playlist))
         .route("/api/playlists/:id/play", get(playlist_play).post(playlist_play))
+        .route("/api/crossfade", get(crossfade).post(crossfade))
         .route("/api/system/volume", get(system_volume).post(system_volume))
         .route("/api/plugins", get(plugins))
         .route("/api/plugins/:id/files", get(plugin_files))
@@ -362,6 +363,7 @@ pub(crate) fn play_selection(player: &Player, q: MusicQ) -> anyhow::Result<Statu
             favorites: q.favorites,
             sort,
             limit: None,
+            added_days: None,
         })?
         .iter()
         .map(|t| t.id)
@@ -438,6 +440,19 @@ async fn playlist_play(
 #[derive(Deserialize)]
 struct OnShuffleQ {
     shuffle: Option<bool>,
+}
+
+#[derive(Deserialize)]
+struct CrossfadeQ {
+    seconds: Option<u8>,
+}
+
+/// Überblendung in Sekunden (0 = aus, lückenlos); ohne Wert: abfragen.
+async fn crossfade(State(st): State<ApiState>, Query(q): Query<CrossfadeQ>) -> Json<Status> {
+    match q.seconds {
+        Some(secs) => run(&st, Command::SetCrossfade { secs }).await,
+        None => Json(st.player.status()),
+    }
 }
 
 #[derive(Deserialize)]

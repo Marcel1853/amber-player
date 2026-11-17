@@ -56,6 +56,7 @@ Ports fürs Heimnetz.
 | `/api/playlists` · `/api/playlists/{id}/play` | Playlisten |
 | `/api/radio/play/{id}` | gespeicherten Sender spielen |
 | `/api/effects/equalizer?preset=Rock` | Effekt-Preset laden |
+| `/api/crossfade?seconds=6` | Überblendung (0 = aus, lückenlos) |
 | `/api/system/volume?value=40` · `?muted=true` | Hauptlautstärke des PCs (PipeWire/PulseAudio), ohne Wert: abfragen |
 | `/api/plugins` · `/api/plugins/{id}/files` | installierte Plugin-Pakete (mit Plattformen) bzw. alle Dateien eines Pakets |
 | `/api/cover/current` | Cover des laufenden Titels als Bild |

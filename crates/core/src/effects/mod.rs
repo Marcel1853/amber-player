@@ -133,6 +133,8 @@ struct Slot {
 pub struct PluginHost {
     slots: Vec<Slot>,
     version: AtomicU64,
+    /// Lautstärke-Anhebung in dB (0 = aus), als f32-Bits
+    boost_db: std::sync::atomic::AtomicU32,
     library: Option<Arc<Library>>,
     load_errors: Vec<String>,
 }
@@ -204,9 +206,15 @@ impl PluginHost {
                 }
             })
             .collect();
+        let boost = library
+            .as_ref()
+            .and_then(|l| l.setting_as::<f32>(BOOST_KEY))
+            .unwrap_or(0.0)
+            .clamp(0.0, MAX_BOOST_DB);
         Arc::new(Self {
             slots,
             version: AtomicU64::new(1),
+            boost_db: std::sync::atomic::AtomicU32::new(boost.to_bits()),
             library,
             load_errors: Vec::new(),
         })
@@ -340,6 +348,21 @@ impl PluginHost {
         }
     }
 
+    /// Lautstärke-Anhebung in dB (0 = aus).
+    pub fn boost_db(&self) -> f32 {
+        f32::from_bits(self.boost_db.load(Ordering::Relaxed))
+    }
+
+    /// Anhebung setzen (0 … 12 dB); der Schutz-Begrenzer verhindert Übersteuern.
+    pub fn set_boost_db(&self, db: f32) {
+        let db = if db.is_finite() { db.clamp(0.0, MAX_BOOST_DB) } else { 0.0 };
+        self.boost_db.store(db.to_bits(), Ordering::Relaxed);
+        self.version.fetch_add(1, Ordering::Release);
+        if let Some(lib) = &self.library {
+            let _ = lib.set_setting_json(BOOST_KEY, &db);
+        }
+    }
+
     fn version(&self) -> u64 {
         self.version.load(Ordering::Acquire)
     }
@@ -354,6 +377,10 @@ impl PluginHost {
             .collect()
     }
 }
+
+const BOOST_KEY: &str = "boost_db";
+/// Höchste Lautstärke-Anhebung in dB.
+pub const MAX_BOOST_DB: f32 = 12.0;
 
 fn setting_key(id: &str) -> String {
     format!("effect:{id}")
@@ -373,8 +400,10 @@ pub struct EffectChain<S> {
     pos: usize,
     /// Abgriff für die Visualisierung (Mono, gesammelt in kleinen Blöcken).
     analyzer: Option<Arc<Analyzer>>,
-    /// Schutz gegen Übersteuern, sobald ein Effekt aktiv ist.
+    /// Schutz gegen Übersteuern, sobald ein Effekt oder die Anhebung aktiv ist.
     safety: Option<SafetyLimiter>,
+    /// Lautstärke-Anhebung als Faktor (1 = aus)
+    boost: f32,
     tap: Vec<f32>,
 }
 
@@ -390,6 +419,7 @@ impl<S: Source<Item = f32>> EffectChain<S> {
             analyzer: None,
             tap: Vec::new(),
             safety: None,
+            boost: 1.0,
         }
     }
 
@@ -407,6 +437,7 @@ impl<S: Source<Item = f32>> EffectChain<S> {
             return;
         }
         self.seen_version = v;
+        self.boost = 10f32.powf(self.host.boost_db() / 20.0);
         let mut old = std::mem::take(&mut self.procs);
         for (idx, values) in self.host.active() {
             let mut proc = match old.iter().position(|(i, _)| *i == idx) {
@@ -429,25 +460,45 @@ impl<S: Source<Item = f32>> Iterator for EffectChain<S> {
             self.pos += 1;
             return Some(self.frame[self.pos - 1]);
         }
-        self.sync();
         let channels = self.inner.channels().max(1) as usize;
-        self.frame.clear();
-        while self.frame.len() < channels {
-            match self.inner.next() {
-                Some(s) => self.frame.push(s),
-                None => break,
+        loop {
+            self.sync();
+            self.frame.clear();
+            while self.frame.len() < channels {
+                match self.inner.next() {
+                    Some(s) => self.frame.push(s),
+                    None => break,
+                }
             }
-        }
-        if self.frame.is_empty() {
-            return None;
-        }
-        if self.frame.len() == channels && !self.procs.is_empty() {
+            if self.frame.is_empty() {
+                // Ende: die im Begrenzer vorgehaltenen letzten Millisekunden noch ausgeben
+                let drained = self.safety.as_mut().is_some_and(|l| l.drain(&mut self.frame));
+                if drained {
+                    break;
+                }
+                return None;
+            }
+            if self.frame.len() != channels {
+                break; // unvollständiges letztes Frame unverändert durchreichen
+            }
             for (_, p) in &mut self.procs {
                 p.process(&mut self.frame);
             }
-            // Weich begrenzen statt hart abschneiden – Abschneiden knackt hörbar.
-            let rate = self.inner.sample_rate();
-            self.safety.get_or_insert_with(|| SafetyLimiter::new(rate)).process(&mut self.frame);
+            if self.boost != 1.0 {
+                for s in &mut self.frame {
+                    *s *= self.boost;
+                }
+            }
+            // Begrenzen statt abschneiden – Abschneiden knackt hörbar. Einmal angelegt, bleibt der
+            // Begrenzer für den Titel aktiv, damit keine vorgehaltenen Samples verloren gehen.
+            if self.safety.is_none() && (!self.procs.is_empty() || self.boost != 1.0) {
+                self.safety = Some(SafetyLimiter::new(self.inner.sample_rate(), channels));
+            }
+            // Er braucht ein paar Millisekunden Vorlauf – bis dahin gleich das nächste Frame lesen.
+            let waiting = self.safety.as_mut().is_some_and(|l| !l.push(&mut self.frame));
+            if !waiting {
+                break;
+            }
         }
         if let Some(a) = &self.analyzer {
             self.tap.push(self.frame.iter().sum::<f32>() / self.frame.len() as f32);
@@ -483,6 +534,9 @@ impl<S: Source<Item = f32>> Source for EffectChain<S> {
         self.inner.try_seek(pos)?;
         self.frame.clear();
         self.pos = 0;
+        if let Some(l) = &mut self.safety {
+            l.reset();
+        }
         for (_, p) in &mut self.procs {
             p.reset();
         }
@@ -490,9 +544,16 @@ impl<S: Source<Item = f32>> Source for EffectChain<S> {
     }
 }
 
-/// Fängt Spitzen über −0,3 dBFS ab: sofort herunterregeln, in ~80 ms wieder freigeben.
-/// So entsteht kein hartes Abschneiden (Knacken), nur bei echten Spitzen eine kurze Absenkung.
+/// Begrenzer mit Vorausschau: Er sieht ~3 ms in die Zukunft und senkt die Lautstärke schon,
+/// bevor eine Spitze über −0,3 dBFS ankommt – weich, ohne hartes Abschneiden (kein Knacken),
+/// und gibt sie in ~150 ms wieder frei. Die Verzögerung wird am Anfang durch Vorauslesen und am
+/// Ende durch Ausgeben des Rests ausgeglichen, es geht also kein Sample verloren.
 struct SafetyLimiter {
+    /// vorgehaltene Frames (verschränkt) und ihre Spitzenwerte
+    buf: std::collections::VecDeque<f32>,
+    peaks: std::collections::VecDeque<f32>,
+    channels: usize,
+    lookahead: usize,
     gain: f32,
     release: f32,
 }
@@ -500,27 +561,67 @@ struct SafetyLimiter {
 impl SafetyLimiter {
     const CEILING: f32 = 0.966; // −0,3 dBFS
 
-    fn new(rate: u32) -> Self {
+    fn new(rate: u32, channels: usize) -> Self {
+        let rate = rate.max(1) as f32;
+        let lookahead = ((rate * 0.003) as usize).max(1);
         Self {
+            buf: std::collections::VecDeque::with_capacity((lookahead + 2) * channels),
+            peaks: std::collections::VecDeque::with_capacity(lookahead + 2),
+            channels: channels.max(1),
+            lookahead,
             gain: 1.0,
-            release: 1.0 - (-1.0 / (0.08 * rate.max(1) as f32)).exp(),
+            release: 1.0 - (-1.0 / (0.15 * rate)).exp(),
         }
     }
 
-    fn process(&mut self, frame: &mut [f32]) {
-        let peak = frame.iter().fold(0f32, |m, s| m.max(s.abs()));
-        let target = if peak > Self::CEILING { Self::CEILING / peak } else { 1.0 };
-        if target < self.gain {
-            self.gain = target;
-        } else {
-            self.gain += (target - self.gain) * self.release;
+    fn reset(&mut self) {
+        self.buf.clear();
+        self.peaks.clear();
+        self.gain = 1.0;
+    }
+
+    /// Nimmt ein Frame auf. Gibt `true` zurück und schreibt das verzögerte, begrenzte Frame in
+    /// `frame`, sobald genug Vorlauf da ist.
+    fn push(&mut self, frame: &mut [f32]) -> bool {
+        let peak = frame.iter().fold(0f32, |m, s| m.max(if s.is_finite() { s.abs() } else { 0.0 }));
+        self.buf.extend(frame.iter().copied());
+        self.peaks.push_back(peak);
+        if self.peaks.len() <= self.lookahead {
+            return false;
         }
-        for s in frame {
-            // letzte Sicherung, falls ein Plugin NaN oder Unsinn liefert
-            *s = (*s * self.gain).clamp(-1.0, 1.0);
-            if !s.is_finite() {
-                *s = 0.0;
-            }
+        self.emit(frame);
+        true
+    }
+
+    /// Restliche Frames am Titelende ausgeben.
+    fn drain(&mut self, frame: &mut Vec<f32>) -> bool {
+        if self.peaks.is_empty() {
+            return false;
+        }
+        frame.clear();
+        frame.resize(self.channels, 0.0);
+        self.emit(frame);
+        true
+    }
+
+    fn emit(&mut self, frame: &mut [f32]) {
+        // Stärkste nötige Absenkung im Vorschaufenster (für die höchste Spitze) …
+        let window = self.peaks.iter().fold(0f32, |m, &p| m.max(p));
+        let need = if window > Self::CEILING { Self::CEILING / window } else { 1.0 };
+        if need < self.gain {
+            // … ist erreicht, bevor das erste zu laute Frame ankommt, und wird dann gehalten.
+            // So bleibt die Wellenform rund (kein abgeflachter Gipfel wie beim Abschneiden).
+            let first = self.peaks.iter().position(|&p| p * self.gain > Self::CEILING).unwrap_or(0);
+            self.gain -= (self.gain - need) / (first as f32 + 1.0);
+        } else {
+            // keine Spitze im Anflug: langsam wieder freigeben
+            self.gain += (need - self.gain) * self.release;
+        }
+        self.peaks.pop_front();
+        for s in frame.iter_mut() {
+            let x = self.buf.pop_front().unwrap_or(0.0);
+            // letzte Sicherung: nie über die Obergrenze, NaN wird Stille
+            *s = if x.is_finite() { (x * self.gain).clamp(-Self::CEILING, Self::CEILING) } else { 0.0 };
         }
     }
 }
@@ -735,6 +836,22 @@ mod tests {
         let info = host.delete_preset("reverb", "Mein Raum").unwrap();
         assert!(info.user_presets.is_empty());
         assert!(host.save_preset("reverb", "  ").is_err());
+    }
+
+    #[test]
+    fn boost_is_louder_but_never_clips_and_keeps_length() {
+        let quiet = || sine(200.0, 44100, 2, 0.2);
+        let host = PluginHost::with_builtin(None);
+        let plain: Vec<f32> = EffectChain::new(quiet(), host.clone()).collect();
+        host.set_boost_db(9.0);
+        let boosted: Vec<f32> = EffectChain::new(quiet(), host.clone()).collect();
+        assert_eq!(plain.len(), boosted.len(), "kein Sample verloren");
+        assert!(peak(&boosted) > peak(&plain) * 2.5, "deutlich lauter: {} / {}", peak(&plain), peak(&boosted));
+        // laute Musik: begrenzt, ohne Abschneiden
+        let loud: Vec<f32> = EffectChain::new(sine(60.0, 44100, 2, 0.9), host).collect();
+        assert!(loud.iter().all(|s| s.abs() <= SafetyLimiter::CEILING + 1e-6));
+        let flat = loud[loud.len() / 2..].windows(3).filter(|w| w[0] == w[1] && w[1] == w[2] && w[0].abs() > 0.9).count();
+        assert!(flat < 20, "kein hart abgeschnittenes Plateau ({flat})");
     }
 
     #[test]

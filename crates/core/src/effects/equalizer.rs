@@ -27,7 +27,7 @@ impl EffectPlugin for Equalizer {
     }
 
     fn description(&self) -> &'static str {
-        "10-Band-Equalizer von 31 Hz bis 16 kHz"
+        "10-Band-Equalizer von 31 Hz bis 16 kHz – damit nichts übersteuert, wird beim Anheben alles um die stärkste Anhebung leiser; ausgleichen mit „Lautstärke-Anhebung“ unter Einstellungen → Wiedergabe"
     }
 
     fn params(&self) -> Vec<ParamInfo> {

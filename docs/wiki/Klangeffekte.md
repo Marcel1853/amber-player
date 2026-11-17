@@ -43,6 +43,12 @@ Eine eigene Voreinstellung auswählen und **Preset löschen** entfernt sie wiede
 
 ## Tipps
 
+- Oben in den Effekten zeigt **Aktiv**, welche Effekte gerade eingeschaltet sind – antippen springt
+  zum Effekt.
+- Klingt die Musik zu leise, nachdem du den Equalizer angehoben hast? Der Equalizer senkt alles
+  um die stärkste Anhebung ab, damit nichts übersteuert. Ausgleichen mit **Einstellungen →
+  Wiedergabe → Lautstärke-Anhebung**.
+
 - **Doppelklick** auf einen Regler setzt ihn auf den Standardwert (beim Equalizer 0 dB).
 - Der Equalizer senkt die Lautstärke automatisch so weit ab, wie du anhebst. Alle Bänder auf
   +12 dB klingt deshalb fast wie alle auf 0 – heb gezielt einzelne Bereiche an.

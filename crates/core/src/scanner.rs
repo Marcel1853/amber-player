@@ -49,6 +49,18 @@ pub fn mtime(path: &Path) -> i64 {
         .unwrap_or(0)
 }
 
+/// Lässt sich die Datei wirklich als Ton abspielen? Nur bei Dateien ohne bekannte Länge wird
+/// probeweise dekodiert (das kostet etwas Zeit, betrifft aber nur wenige Dateien).
+pub fn is_playable(info: &TrackInfo) -> bool {
+    if info.duration_ms > 0 {
+        return true;
+    }
+    match crate::decoder::open_audio(Path::new(&info.path)) {
+        Ok(mut src) => src.next().is_some(),
+        Err(_) => false,
+    }
+}
+
 /// Liest Tags und Dauer. Fehlen Tags, wird der Dateiname als Titel genommen.
 pub fn read_track_info(path: &Path, mtime: i64) -> TrackInfo {
     let mut info = TrackInfo {
@@ -61,7 +73,9 @@ pub fn read_track_info(path: &Path, mtime: i64) -> TrackInfo {
         ..Default::default()
     };
 
-    let Ok(tagged) = lofty::read_from_path(path) else {
+    // Am Inhalt erkennen, nicht an der Endung: Downloads heißen oft „.mp3“, sind aber M4A o. Ä.
+    let probed = lofty::probe::Probe::open(path).and_then(|p| Ok(p.guess_file_type()?)).and_then(|p| p.read());
+    let Ok(tagged) = probed else {
         (info.title, info.artist) = clean_title(&info.title, &info.artist);
         return info;
     };

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 pub struct Track {
     pub id: i64,
     pub path: String,
@@ -124,4 +124,7 @@ pub struct Status {
     pub sleep_remaining_s: Option<u64>,
     pub queue_length: usize,
     pub error: Option<String>,
+    /// Überblendung in Sekunden (0 = aus, Titel laufen lückenlos ineinander).
+    #[serde(default)]
+    pub crossfade: u8,
 }

@@ -41,6 +41,16 @@ tap, with **Back** at the top.
 
 Long titles scroll when they don't fit.
 
+### Gapless and crossfade
+
+Tracks play **gaplessly**: Amber Player opens the next track a few seconds before the end, so
+there's no pause – important for live albums, DJ mixes and concept albums.
+
+If you prefer it smoother, set 2 to 12 seconds under **Settings → Playback → Crossfade**: the next
+track then fades in at the end while the old one fades out. Tracks that follow each other
+directly on an album (e.g. track 4 → 5) still play gaplessly so connected pieces aren't torn
+apart. Skipping with ⏭ always switches immediately.
+
 ## Keyboard shortcuts (PC)
 
 | Key | Effect |
@@ -63,11 +73,22 @@ Long titles scroll when they don't fit.
 **Media keys** on keyboards, headphones and Bluetooth devices work too – on the PC through the
 system's media controls (GNOME, KDE), on the phone through the notification.
 
+## Automatic playlists
+
+At the top of **Playlists** there are two lists that update themselves:
+
+- **All tracks** – your whole library.
+- **Recently added** – files that arrived in your music folders in the last 30 days (by file
+  date). Older ones drop out on their own, new ones are added.
+
+A track from the **search** plays immediately; afterwards your previous queue continues.
+
 ## Settings
 
 | Section | What you set there |
 |---|---|
-| **Music folders** | add, remove, rescan folders |
+| **Music folders** | add, remove, rescan folders; **hide short files** (under 10/30/60 s, e.g. voice messages, ringtones) and **exclude folders** (e.g. “WhatsApp Audio”) – the files themselves stay untouched |
+| **Playback** | **Crossfade** (off = gapless, 2–12 s) and **volume boost** (+3 to +12 dB for quiet headphones; a limiter prevents clipping) |
 | **Remote control & MCP** (PC) | API address, home network access, token, **Pair phone**, Stream Deck examples |
 | **Stream to your phone** (PC) | playlists as `.m3u` for other player apps (e.g. Poweramp) |
 | **Covers** | automatic cover search on/off, search missing covers again |

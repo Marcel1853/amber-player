@@ -45,12 +45,15 @@ Written in Rust (Tauri 2, rodio), with its own interface in a warm dark design.
 
 **Listening**
 - **Your own library:** choose your music folders – Amber Player scans them and keeps them up to
-  date automatically. MP3, FLAC, OGG/Opus, WAV, M4A/AAC, AIFF and more.
+  date automatically. MP3, FLAC, OGG/Opus, WAV, M4A/AAC, AIFF and more – recognised by content,
+  not by file extension. Exclude folders and hide short files such as voice messages.
 - **Views** for tracks, albums, artists, genres, favourites, recently played and most played,
   plus live search.
 - **Playlists:** create, reorder, import and export as M3U.
 - **Queue** with “Play next”, shuffle, repeat and a sleep timer. On the next start it continues
   where you left off.
+- **Gapless playback** and an optional **crossfade** (2–12 s) – consecutive tracks of an album
+  always flow into each other without a gap.
 - **Covers** from the file, from `cover.jpg`/`folder.jpg` or automatically from the internet
   (Deezer, MusicBrainz – only on a confident match, can be turned off).
 - **Internet radio:** search more than 50,000 stations (radio-browser.info), save your own,

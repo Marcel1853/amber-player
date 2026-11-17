@@ -45,12 +45,15 @@ Geschrieben in Rust (Tauri 2, rodio), mit eigener Oberfläche im warmen Dunkel-D
 
 **Musik hören**
 - **Eigene Bibliothek:** Musikordner wählen – Amber Player liest sie ein und hält sie automatisch
-  aktuell. MP3, FLAC, OGG/Opus, WAV, M4A/AAC, AIFF und mehr.
+  aktuell. MP3, FLAC, OGG/Opus, WAV, M4A/AAC, AIFF und mehr – erkannt am Inhalt, nicht an der
+  Dateiendung. Ordner ausschließen und kurze Dateien wie Sprachnachrichten ausblenden.
 - **Ansichten** für Titel, Alben, Interpreten, Genres, Favoriten, Zuletzt gespielt und
   Meistgespielt, dazu eine Live-Suche.
 - **Playlisten** anlegen, sortieren, als M3U importieren und exportieren.
 - **Warteschlange** mit „Als Nächstes spielen“, Zufall, Wiederholen, Sleep-Timer. Beim nächsten
   Start geht es an derselben Stelle weiter.
+- **Lückenlose Wiedergabe** und auf Wunsch **Überblendung** (2–12 s) – aufeinanderfolgende Titel
+  eines Albums laufen immer ohne Pause ineinander.
 - **Cover** aus der Datei, aus `cover.jpg`/`folder.jpg` oder automatisch aus dem Internet
   (Deezer, MusicBrainz – nur bei sicherem Treffer, abschaltbar).
 - **Internetradio:** über 50.000 Sender suchen (radio-browser.info), eigene Sender speichern,

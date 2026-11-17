@@ -102,6 +102,7 @@ Voreinstellungen stehen in `user_presets` und lassen sich ebenso mit `?preset=` 
 
 | Endpunkt | Wirkung |
 |---|---|
+| `/api/crossfade?seconds=6` | Überblendung in Sekunden setzen (0 = aus, lückenlos); ohne Wert: Status mit `crossfade` |
 | `GET /api/system/volume` | Hauptlautstärke des PCs: `{ "available", "volume", "muted" }` |
 | `/api/system/volume?value=40` · `?muted=true` | Hauptlautstärke setzen bzw. stumm schalten (PipeWire über `wpctl`, sonst PulseAudio über `pactl`) |
 | `GET /api/plugins` | installierte Plugin-Pakete mit Version, Autor, Lizenz, Teilen, `platforms` und `translations` |

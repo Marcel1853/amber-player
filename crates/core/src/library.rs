@@ -77,6 +77,8 @@ const TRACK_COLUMNS: &str = "id, path, title, artist, album, album_artist, genre
 const ARTIST_EXPR: &str = "COALESCE(NULLIF(album_artist, ''), artist)";
 
 /// Eigene Dateien (keine Online-Titel aus Quellen-Plugins).
+const EXCLUDED_KEY: &str = "excluded_folders";
+const MIN_DURATION_KEY: &str = "min_duration_s";
 const LOCAL_ONLY: &str = "substr(path, 1, 9) != 'plugin://'";
 
 /// Online-Titel erscheinen nur, wenn sie benutzt wurden (gespielt, Favorit oder in einer Playlist).
@@ -93,6 +95,8 @@ pub enum Sort {
     Added,
     Recent,
     MostPlayed,
+    /// Neueste Dateien zuerst (Änderungsdatum der Datei)
+    Newest,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -105,6 +109,8 @@ pub struct TrackQuery {
     pub favorites: bool,
     pub sort: Sort,
     pub limit: Option<u32>,
+    /// Nur eigene Dateien, die in den letzten so vielen Tagen dazukamen (Dateidatum)
+    pub added_days: Option<u32>,
 }
 
 /// Ein Titel, für den ein Cover gesucht werden soll.
@@ -261,24 +267,56 @@ impl Library {
         progress: &mut dyn FnMut(usize, usize),
     ) -> Result<ScanResult> {
         let prefix = folder_prefix(folder);
+        let mut durations: HashMap<String, u64> = HashMap::new();
         let known: HashMap<String, i64> = {
             let db = self.db();
             let mut st = db.prepare(
-                "SELECT path, mtime FROM tracks WHERE substr(path, 1, length(?1)) = ?1",
+                // Titel ohne Länge neu einlesen (früher nicht erkannte Formate, z. B. M4A als „.mp3“)
+                "SELECT path, CASE WHEN duration_ms = 0 THEN -1 ELSE mtime END, duration_ms FROM tracks WHERE substr(path, 1, length(?1)) = ?1",
             )?;
-            let rows = st.query_map([&prefix], |r| Ok((r.get(0)?, r.get(1)?)))?;
-            rows.collect::<rusqlite::Result<_>>()?
+            let rows = st.query_map([&prefix], |r| Ok((r.get::<_, String>(0)?, r.get::<_, i64>(1)?, r.get::<_, i64>(2)?)))?;
+            let mut m = HashMap::new();
+            for row in rows {
+                let (p, t, d) = row?;
+                durations.insert(p.clone(), d.max(0) as u64);
+                m.insert(p, t);
+            }
+            m
         };
 
-        let files = scanner::find_audio_files(Path::new(folder));
+        // Ausgeschlossene Unterordner und zu kurze Dateien (z. B. Sprachnachrichten, Klingeltöne)
+        let excluded = self.excluded_folders();
+        let min_ms = self.min_duration_s() as u64 * 1000;
+        let is_excluded = |p: &str| excluded.iter().any(|e| p.starts_with(&folder_prefix(e)));
+        let too_short = |ms: u64| min_ms > 0 && ms > 0 && ms < min_ms;
+
+        let files: Vec<(String, i64)> = scanner::find_audio_files(Path::new(folder))
+            .into_iter()
+            .filter(|(p, _)| !is_excluded(p))
+            .collect();
         let total = files.len();
         let present: HashSet<&str> = files.iter().map(|(p, _)| p.as_str()).collect();
 
         let mut batch = Vec::new();
         let mut changed = 0;
+        // Dateien, die sich nicht als Ton öffnen lassen (z. B. Videos ohne Tonspur, kaputte Dateien)
+        let mut unplayable: HashSet<&str> = HashSet::new();
         for (i, (path, mtime)) in files.iter().enumerate() {
-            if known.get(path) != Some(mtime) {
-                batch.push(scanner::read_track_info(Path::new(path), *mtime));
+            if known.get(path) == Some(mtime) {
+                // unverändert – aber vielleicht inzwischen zu kurz eingestellt
+                if durations.get(path).is_some_and(|&d| too_short(d)) {
+                    unplayable.insert(path.as_str());
+                }
+            } else {
+                let info = scanner::read_track_info(Path::new(path), *mtime);
+                if too_short(info.duration_ms) {
+                    unplayable.insert(path.as_str());
+                } else if scanner::is_playable(&info) {
+                    batch.push(info);
+                } else {
+                    log::info!("Keine abspielbare Audiodatei, übersprungen: {path}");
+                    unplayable.insert(path.as_str());
+                }
             }
             if batch.len() >= 200 {
                 changed += batch.len();
@@ -292,7 +330,10 @@ impl Library {
         changed += batch.len();
         self.upsert_tracks(&batch)?;
 
-        let gone: Vec<&String> = known.keys().filter(|p| !present.contains(p.as_str())).collect();
+        let gone: Vec<&String> = known
+            .keys()
+            .filter(|p| !present.contains(p.as_str()) || unplayable.contains(p.as_str()))
+            .collect();
         {
             let mut db = self.db();
             let tx = db.transaction()?;
@@ -307,6 +348,50 @@ impl Library {
             removed: gone.len(),
             total,
         })
+    }
+
+    /// Unterordner, deren Dateien nicht in die Bibliothek kommen.
+    pub fn excluded_folders(&self) -> Vec<String> {
+        self.setting_as(EXCLUDED_KEY).unwrap_or_default()
+    }
+
+    pub fn set_excluded_folders(&self, folders: &[String]) -> Result<()> {
+        let mut list: Vec<String> = folders.iter().map(|f| trim_folder(f).to_string()).filter(|f| !f.is_empty()).collect();
+        list.sort();
+        list.dedup();
+        self.set_setting_json(EXCLUDED_KEY, &list)
+    }
+
+    /// Dateien unter so vielen Sekunden auslassen (0 = alle aufnehmen).
+    pub fn min_duration_s(&self) -> u32 {
+        self.setting_as(MIN_DURATION_KEY).unwrap_or(0)
+    }
+
+    pub fn set_min_duration_s(&self, secs: u32) -> Result<()> {
+        self.set_setting_json(MIN_DURATION_KEY, &secs.min(600))
+    }
+
+    /// Ordner, in denen eigene Titel liegen, mit Anzahl – plus die ausgeschlossenen (Anzahl 0),
+    /// damit man sie wieder einschließen kann.
+    pub fn track_folders(&self) -> Result<Vec<(String, u32)>> {
+        let mut counts: HashMap<String, u32> = HashMap::new();
+        {
+            let db = self.db();
+            let mut st = db.prepare(&format!("SELECT path FROM tracks WHERE {LOCAL_ONLY}"))?;
+            let rows = st.query_map([], |r| r.get::<_, String>(0))?;
+            for p in rows {
+                let p = p?;
+                if let Some(dir) = Path::new(&p).parent() {
+                    *counts.entry(dir.to_string_lossy().into_owned()).or_default() += 1;
+                }
+            }
+        }
+        for e in self.excluded_folders() {
+            counts.entry(e).or_insert(0);
+        }
+        let mut out: Vec<(String, u32)> = counts.into_iter().collect();
+        out.sort_by(|a, b| a.0.to_lowercase().cmp(&b.0.to_lowercase()));
+        Ok(out)
     }
 
     pub fn is_scanning(&self) -> bool {
@@ -436,6 +521,10 @@ impl Library {
         if q.favorites {
             wheres.push("favorite = 1".into());
         }
+        if let Some(days) = q.added_days {
+            let since = now() - days as i64 * 86_400;
+            wheres.push(format!("mtime >= {since} AND {LOCAL_ONLY}"));
+        }
         wheres.push(VISIBLE.into());
         match q.sort {
             Sort::Recent => wheres.push("last_played IS NOT NULL".into()),
@@ -449,6 +538,7 @@ impl Library {
             Sort::Title => "title COLLATE NOCASE".into(),
             Sort::Album => album_order.into(),
             Sort::Added => "added_at DESC, id DESC".into(),
+            Sort::Newest => "mtime DESC, id DESC".into(),
             Sort::Recent => "last_played DESC".into(),
             Sort::MostPlayed => "play_count DESC, last_played DESC".into(),
         };
@@ -999,5 +1089,49 @@ mod tests {
         let lib = sample();
         lib.set_setting_json("volume", &42u8).unwrap();
         assert_eq!(lib.setting_as::<u8>("volume"), Some(42));
+    }
+
+    #[test]
+    fn excluded_folders_and_short_files_are_left_out() {
+        let dir = tempfile::tempdir().unwrap();
+        let root = dir.path();
+        std::fs::create_dir_all(root.join("Musik")).unwrap();
+        std::fs::create_dir_all(root.join("WhatsApp Audio")).unwrap();
+        // 2 s und 40 s lange WAVs (Stille)
+        let wav = |p: &std::path::Path, secs: u32| {
+            let rate = 8000u32;
+            let n = rate * secs;
+            let mut b = Vec::new();
+            b.extend_from_slice(b"RIFF");
+            b.extend_from_slice(&(36 + n * 2).to_le_bytes());
+            b.extend_from_slice(b"WAVEfmt ");
+            b.extend_from_slice(&16u32.to_le_bytes());
+            b.extend_from_slice(&1u16.to_le_bytes());
+            b.extend_from_slice(&1u16.to_le_bytes());
+            b.extend_from_slice(&rate.to_le_bytes());
+            b.extend_from_slice(&(rate * 2).to_le_bytes());
+            b.extend_from_slice(&2u16.to_le_bytes());
+            b.extend_from_slice(&16u16.to_le_bytes());
+            b.extend_from_slice(b"data");
+            b.extend_from_slice(&(n * 2).to_le_bytes());
+            b.resize(b.len() + (n * 2) as usize, 0);
+            std::fs::write(p, b).unwrap();
+        };
+        wav(&root.join("Musik/lang.wav"), 40);
+        wav(&root.join("Musik/kurz.wav"), 2);
+        wav(&root.join("WhatsApp Audio/nachricht.wav"), 40);
+        let lib = Library::open_in_memory().unwrap();
+        let folder = root.to_string_lossy().to_string();
+        lib.add_folder(&folder).unwrap();
+        lib.scan_folder(&folder, &mut |_, _| {}).unwrap();
+        assert_eq!(lib.tracks(&TrackQuery::default()).unwrap().len(), 3);
+        lib.set_min_duration_s(30).unwrap();
+        lib.set_excluded_folders(&[root.join("WhatsApp Audio").to_string_lossy().to_string()]).unwrap();
+        lib.scan_folder(&folder, &mut |_, _| {}).unwrap();
+        let left: Vec<String> = lib.tracks(&TrackQuery::default()).unwrap().into_iter().map(|t| t.path).collect();
+        assert_eq!(left.len(), 1, "{left:?}");
+        assert!(left[0].ends_with("lang.wav"));
+        let folders = lib.track_folders().unwrap();
+        assert!(folders.iter().any(|(p, n)| p.ends_with("WhatsApp Audio") && *n == 0), "ausgeschlossener Ordner bleibt wählbar");
     }
 }

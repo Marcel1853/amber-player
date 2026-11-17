@@ -495,8 +495,14 @@ const ROW = 52;
 
 class TrackList {
   /**
-   * opts: { playlistId, showAlbum = true, numbering: 'index' | 'track' }
+   * opts: { playlistId, showAlbum = true, numbering: 'index' | 'track', playOne }
+   * playOne: Antippen spielt nur diesen Titel und behält die Warteschlange (Suche).
    */
+  play(i) {
+    if (this.opts.playOne) send('play_now', { id: this.tracks[i].id });
+    else playList(this.tracks, i);
+  }
+
   constructor(container, tracks, opts = {}) {
     this.tracks = tracks;
     this.opts = { showAlbum: true, numbering: 'index', ...opts };
@@ -596,14 +602,14 @@ class TrackList {
         return;
       }
       if (e.target.closest('.play-ico') || isTouch) {
-        playList(this.tracks, i);
+        this.play(i);
         return;
       }
       this.select(i, e);
     });
     this.rows.addEventListener('dblclick', (e) => {
       const i = this.indexOf(e);
-      if (i >= 0 && !e.target.closest('[data-fav]')) playList(this.tracks, i);
+      if (i >= 0 && !e.target.closest('[data-fav]')) this.play(i);
     });
     this.rows.addEventListener('contextmenu', (e) => {
       const i = this.indexOf(e);
@@ -770,7 +776,7 @@ function goForward() {
 
 function updateNav() {
   const v = state.view;
-  const parent = { album: 'albums', artist: 'artists', genre: 'genres', playlist: 'playlists', most: 'recent' }[v.name] || v.name;
+  const parent = { album: 'albums', artist: 'artists', genre: 'genres', playlist: 'playlists', most: 'recent', auto_all: 'playlists', auto_new: 'playlists' }[v.name] || v.name;
   for (const b of $$('[data-view], [data-nav]')) b.classList.toggle('active', (b.dataset.view || b.dataset.nav) === parent);
   $('#back').disabled = !state.back.length;
   $('#forward').disabled = !state.forward.length;
@@ -812,6 +818,8 @@ async function render() {
   const renderers = {
     tracks: renderTracks,
     favorites: renderTracks,
+    auto_all: renderTracks,
+    auto_new: renderTracks,
     recent: renderTracks,
     most: renderTracks,
     search: renderTracks,
@@ -880,6 +888,8 @@ async function renderTracks(el, v, fresh) {
     recent: { kind: 'Verlauf', title: 'Zuletzt gespielt', query: { sort: 'recent', limit: 300 }, history: true },
     most: { kind: 'Verlauf', title: 'Meistgespielt', query: { sort: 'most_played', limit: 300 }, history: true },
     search: { kind: 'Suche', title: `„${v.q}“`, query: { search: v.q, sort: 'artist', limit: 1000 } },
+    auto_all: { kind: 'Automatische Playlist', title: 'Alle Titel', query: { sort: 'artist' } },
+    auto_new: { kind: 'Automatische Playlist', title: 'Kürzlich hinzugefügt', query: { sort: 'newest', added_days: NEW_DAYS, limit: 500 } },
     album: { kind: 'Album', title: v.album, query: { album: v.album, artist: v.artist || null, sort: 'album' }, numbering: 'track' },
     artist: { kind: 'Interpret', title: v.artist, query: { artist: v.artist, sort: 'artist' } },
     genre: { kind: 'Genre', title: v.genre, query: { genre: v.genre, sort: 'artist' } },
@@ -911,6 +921,7 @@ async function renderTracks(el, v, fresh) {
       recent: ['clock', 'Noch nichts gespielt', 'Hier erscheinen die zuletzt gehörten Titel.'],
       most: ['flame', 'Noch nichts gespielt', 'Hier erscheinen deine meistgehörten Titel.'],
       search: ['search', 'Nichts gefunden', 'Versuche einen anderen Suchbegriff.'],
+      auto_new: ['clock', 'Nichts Neues', tx('Hier erscheinen Titel, die in den letzten {n} Tagen in deine Musikordner kamen.', { n: NEW_DAYS })],
     }[v.name] || ['music', 'Keine Titel', ''];
     el.innerHTML = head({ kind: cfg.kind, title: cfg.title, actions: cfg.history ? historySeg(v.name) : '' }) + emptyState({ ico: texts[0], title: texts[1], text: texts[2] });
     bindHistorySeg(el);
@@ -942,7 +953,7 @@ async function renderTracks(el, v, fresh) {
   }
   el.innerHTML = head({ kind: cfg.kind, title: cfg.title, sub, art, round, actions });
   if (v.name === 'search') addJumps(el, v.q);
-  const list = new TrackList(el, tracks, { showAlbum: v.name !== 'album', numbering: cfg.numbering || 'index' });
+  const list = new TrackList(el, tracks, { showAlbum: v.name !== 'album', numbering: cfg.numbering || 'index', playOne: v.name === 'search' });
   state.list = list;
   bindActs(el, { tracks });
   bindHistorySeg(el);
@@ -1095,14 +1106,32 @@ async function loadPlaylists() {
   if (state.view.name === 'playlists') render();
 }
 
+/** „Kürzlich hinzugefügt“: Titel aus den letzten so vielen Tagen (nach Dateidatum). */
+const NEW_DAYS = 30;
+
 async function renderPlaylists(el, v, fresh) {
-  const lists = await invoke('playlists');
+  const [lists, stats, fresh30] = await Promise.all([
+    invoke('playlists'),
+    invoke('library_stats').catch(() => ({ tracks: 0 })),
+    invoke('tracks', { query: { sort: 'newest', added_days: NEW_DAYS, limit: 500 } }).catch(() => []),
+  ]);
   if (!fresh()) return;
+  const autos = [
+    { view: 'auto_all', name: tx('Alle Titel'), info: plural(stats.tracks || 0, 'Titel', 'Titel'), icon: 'music', hue: 'Alle Titel' },
+    { view: 'auto_new', name: tx('Kürzlich hinzugefügt'), info: `${plural(fresh30.length, 'Titel', 'Titel')} · ${tx('letzte {n} Tage', { n: NEW_DAYS })}`, icon: 'clock', hue: 'Neu' },
+  ];
+  const autoHtml = `<div class="sec-title">${esc(tx('Automatisch'))} <small>${esc(tx('aktualisieren sich von selbst'))}</small></div>
+    <div class="pl-list">${autos.map((a) => `
+      <div class="pl-item" data-auto="${a.view}">
+        <div class="tile" style="background:${hueGradient(a.hue)}">${icon(a.icon)}</div>
+        <div class="txt"><div class="name">${esc(a.name)}</div><div class="info">${esc(a.info)}</div></div>
+      </div>`).join('')}</div>
+    <div class="sec-title">${esc(tx('Eigene Playlisten'))}</div>`;
   state.playlists = lists;
   const actions = `<button class="btn primary" data-act="new-pl">${icon('plus')} Neue Playlist</button>
     <button class="btn" data-act="import-pl">${icon('import')} M3U importieren</button>`;
   el.innerHTML = head({ kind: 'Sammlung', title: 'Playlisten', sub: plural(lists.length, 'Playlist', 'Playlisten'), actions }) +
-    `<div class="scroll pad">${lists.length ? `<div class="pl-list">${lists.map((p) => `
+    `<div class="scroll pad">${autoHtml}${lists.length ? `<div class="pl-list">${lists.map((p) => `
       <div class="pl-item" data-id="${p.id}">
         <div class="tile" style="background:${hueGradient(p.name)}">${icon('playlist')}</div>
         <div class="txt"><div class="name">${esc(p.name)}</div><div class="info">${plural(p.track_count, 'Titel', 'Titel')} · ${fmtTotal(p.duration_ms)}</div></div>
@@ -1112,11 +1141,13 @@ async function renderPlaylists(el, v, fresh) {
     const act = e.target.closest('[data-act]')?.dataset.act;
     if (act === 'new-pl') return newPlaylist();
     if (act === 'import-pl') return importPlaylist();
+    const auto = e.target.closest('[data-auto]');
+    if (auto) return navigate({ name: auto.dataset.auto });
     const item = e.target.closest('.pl-item');
     if (item) navigate({ name: 'playlist', id: Number(item.dataset.id) });
   });
   el.addEventListener('contextmenu', (e) => {
-    const item = e.target.closest('.pl-item');
+    const item = e.target.closest('.pl-item:not([data-auto])');
     if (item) playlistMenu(e.clientX, e.clientY, lists.find((p) => p.id === Number(item.dataset.id)));
   });
 }
@@ -1506,7 +1537,13 @@ async function renderEffects(el, v, fresh) {
   el.innerHTML = `${head({ kind: 'Klang', title: 'Effekte', actions })}
     <div class="scroll pad">${errors}
       <p class="fx-note">${esc(tx('Regler wirken sofort und bleiben gespeichert. Neu installierte Klangeffekte erscheinen nach einem Neustart der App.'))}</p>
+      <div class="fx-active">${effects.some((f) => f.enabled)
+        ? `<span class="k">${esc(tx('Aktiv'))}</span>${effects.filter((f) => f.enabled).map((f) => `<button class="chip-btn" data-goto="${esc(f.id)}">${esc(tx(f.name))}</button>`).join('')}`
+        : `<span class="k">${esc(tx('Kein Effekt aktiv – der Klang bleibt unverändert'))}</span>`}</div>
       <div class="fx-list">${effects.map(fxCard).join('')}</div></div>`;
+  for (const b of $$('[data-goto]', el)) {
+    b.addEventListener('click', () => $(`.fx[data-id="${CSS.escape(b.dataset.goto)}"]`, el)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  }
   for (const b of $$('[data-plugdir]', el)) b.addEventListener('click', () => plugAction(b.dataset.plugdir));
   for (const b of $$('[data-plugimport]', el)) b.addEventListener('click', () => importPlugin(b.dataset.plugimport));
 
@@ -1670,6 +1707,16 @@ async function renderSettings(el, v, fresh) {
         <button class="btn primary" data-act="add-folder">${icon('plus')} Ordner hinzufügen</button>
         <button class="btn" data-act="rescan">${icon('refresh')} Neu einlesen</button>
       </div>
+      <div class="kv" style="margin-top:14px">
+        <span class="k">${esc(tx('Kurze Dateien'))}</span>
+        <span><select class="select" id="minDurSel">
+          <option value="0">${esc(tx('Alle aufnehmen'))}</option>
+          ${[10, 30, 60].map((n) => `<option value="${n}">${esc(tx('unter {n} Sekunden ausblenden', { n }))}</option>`).join('')}
+        </select>
+        <span class="hint">${esc(tx('Lässt z. B. Sprachnachrichten, Klingeltöne und kurze Clips weg.'))}</span></span>
+        <span class="k">${esc(tx('Ausgeschlossen'))}</span>
+        <span><span id="exclInfo" class="hint" style="margin:0 10px 0 0"></span><button class="btn small" data-act="exclude">${icon('folder')} ${esc(tx('Ordner ausschließen …'))}</button></span>
+      </div>
     </div>
 
     ${IS_ANDROID ? '' : `<div class="box">
@@ -1779,6 +1826,24 @@ async function renderSettings(el, v, fresh) {
     </div>
 
     <div class="box">
+      <h3>${esc(tx('Wiedergabe'))}</h3>
+      <div class="kv">
+        <span class="k">${esc(tx('Überblendung'))}</span>
+        <span><select class="select" id="xfadeSel">
+          <option value="0">${esc(tx('Aus – lückenlos'))}</option>
+          ${[2, 4, 6, 8, 10, 12].map((n) => `<option value="${n}">${esc(tx('{n} Sekunden', { n }))}</option>`).join('')}
+        </select>
+        <span class="hint">${esc(tx('Am Ende eines Titels blendet der nächste weich ein. Titel, die auf einem Album direkt aufeinander folgen, laufen immer lückenlos ineinander.'))}</span></span>
+        <span class="k">${esc(tx('Lautstärke-Anhebung'))}</span>
+        <span><select class="select" id="boostSel">
+          <option value="0">${esc(tx('Aus'))}</option>
+          ${[3, 6, 9, 12].map((n) => `<option value="${n}">+${n} dB</option>`).join('')}
+        </select>
+        <span class="hint">${esc(tx('Für leise Kopfhörer: macht alles lauter. Ein Begrenzer verhindert Übersteuern und Knacken – bei viel Anhebung klingen sehr laute Stellen etwas dichter.'))}${IS_ANDROID ? ' ' + esc(tx('Tipp: Android begrenzt die Kopfhörer-Lautstärke zum Gehörschutz. Erscheint beim Lauterstellen die Warnung, einmal bestätigen.')) : ''}</span></span>
+      </div>
+    </div>
+
+    <div class="box">
       <h3>Darstellung</h3>
       <div class="kv">
         <span class="k">${esc(tx('Visualisierung'))}</span>
@@ -1870,6 +1935,10 @@ async function renderSettings(el, v, fresh) {
       }
       return;
     }
+    if (e.target.closest('[data-act="exclude"]')) {
+      excludeFoldersDialog();
+      return;
+    }
     if (e.target.closest('[data-act="rescan"]')) {
       invoke('rescan');
       return;
@@ -1959,6 +2028,27 @@ async function renderSettings(el, v, fresh) {
     });
   }
   if (v.focus === 'nav') $('#navBox', el)?.scrollIntoView({ block: 'center' });
+  // Bibliothek: kurze Dateien und ausgeschlossene Ordner
+  const filt = await invoke('library_filter').catch(() => null);
+  const minSel = $('#minDurSel', el);
+  if (filt && minSel) {
+    minSel.value = String(filt.min_duration_s || 0);
+    if (minSel.value === '') minSel.value = '0';
+    $('#exclInfo', el).textContent = filt.excluded.length ? plural(filt.excluded.length, 'Ordner', 'Ordner') : tx('keine');
+    minSel.addEventListener('change', () => {
+      call('set_library_filter', { minDurationS: Number(minSel.value), excluded: null }).then(() => toast(tx('Wird neu eingelesen …'), 'ok')).catch(() => {});
+    });
+  }
+  const boostSel = $('#boostSel', el);
+  if (boostSel) {
+    invoke('audio_boost').then((db) => (boostSel.value = String(Math.round(db)))).catch(() => {});
+    boostSel.addEventListener('change', () => invoke('set_audio_boost', { db: Number(boostSel.value) }).catch((e) => toast(String(e), 'err')));
+  }
+  const xfade = $('#xfadeSel', el);
+  if (xfade) {
+    xfade.value = String(state.status?.crossfade ?? 0);
+    xfade.addEventListener('change', () => send('set_crossfade', { secs: Number(xfade.value) }));
+  }
   const hideSel = $('#vizHideSel', el);
   if (hideSel) {
     hideSel.value = String(vizHideMs() / 1000);
@@ -3519,16 +3609,27 @@ const androidMedia = {
     const key = `${t?.id ?? r?.station.url}|${playing}|${t?.favorite}|${r?.title}`;
     if (key === this.sent && !jumped) return;
     this.sent = key;
-    const cover = t ? await this.loadCover(t) : '';
-    invoke('plugin:amber-mobile|update_media', {
+    // Jede Meldung bekommt eine Nummer: Wird ein älteres Cover erst später fertig, darf es den
+    // neueren Titel nicht mehr überschreiben (sonst bleibt der alte Name stehen).
+    const seq = (this.seq = (this.seq || 0) + 1);
+    const payload = {
       title: t ? t.title : r.title || r.station.name,
       artist: t ? t.artist || tx('Unbekannter Interpret') : r.station.name,
       album: t ? t.album || '' : tx('Internetradio'),
       playing,
       positionMs: Math.round(s.position_ms || 0),
       durationMs: Math.round(s.duration_ms || 0),
-      cover,
-    }).catch((e) => console.warn('Benachrichtigung:', e));
+    };
+    const coverKey = t ? `${t.id}` : '';
+    const send = (cover) =>
+      invoke('plugin:amber-mobile|update_media', { ...payload, cover }).catch((e) => console.warn('Benachrichtigung:', e));
+    // Titel sofort zeigen (mit Cover, wenn es schon da ist) …
+    const ready = t && this.coverFor === coverKey;
+    send(ready ? this.cover : '');
+    if (!t || ready) return;
+    // … und das Cover nachreichen, sobald es geladen ist – nur, wenn der Titel noch aktuell ist.
+    const cover = await this.loadCover(t);
+    if (seq === this.seq && cover) send(cover);
   },
 
   /** Beim Start: Rechte abfragen, Medientasten verbinden. */
@@ -3692,6 +3793,47 @@ function bindBackButton() {
       if (!handleBack()) invoke('plugin:amber-mobile|move_to_back').catch(() => {});
     })
     .catch(() => {});
+}
+
+/** Unterordner wählen, die nicht in die Bibliothek kommen (z. B. WhatsApp-Audio). */
+async function excludeFoldersDialog() {
+  const f = await call('library_filter');
+  const excluded = new Set(f.excluded);
+  const roots = await invoke('folders').catch(() => []);
+  // Pfade kürzer anzeigen: ohne den Musikordner davor
+  const short = (p) => {
+    const r = roots.find((x) => p === x || p.startsWith(x.replace(/\/+$/, '') + '/'));
+    return r && p !== r ? p.slice(r.replace(/\/+$/, '').length + 1) : p.split('/').pop() || p;
+  };
+  const modal = $('#modal');
+  modal.innerHTML = `<div class="dialog excl" role="dialog">
+      <h3>${esc(tx('Ordner ausschließen'))}</h3>
+      <p>${esc(tx('Abgehakte Ordner kommen nicht in die Bibliothek. Die Dateien bleiben, wo sie sind.'))}</p>
+      <div class="excl-list">${f.folders.map((d) => `<label class="excl-row" title="${esc(d.path)}">
+          <input type="checkbox" value="${esc(d.path)}" ${excluded.has(d.path) ? 'checked' : ''}>
+          <span class="p" data-raw>${esc(short(d.path))}</span><span class="n">${d.tracks ? plural(d.tracks, 'Titel', 'Titel') : esc(tx('ausgeschlossen'))}</span>
+        </label>`).join('') || `<p class="hint">${esc(tx('Noch keine Titel eingelesen.'))}</p>`}</div>
+      <div class="actions">
+        <button class="btn" data-r="cancel">${esc(tx('Abbrechen'))}</button>
+        <button class="btn primary" data-r="ok">${esc(tx('Speichern'))}</button>
+      </div>
+    </div>`;
+  modal.classList.add('open');
+  const close = () => {
+    modal.classList.remove('open');
+    modal.innerHTML = '';
+  };
+  modal.onclick = async (e) => {
+    const r = e.target.closest('[data-r]')?.dataset.r;
+    if (r === 'cancel' || e.target === modal) return close();
+    if (r === 'ok') {
+      const list = $$('.excl-list input:checked', modal).map((i) => i.value);
+      close();
+      await call('set_library_filter', { excluded: list, minDurationS: null });
+      toast(tx('Wird neu eingelesen …'), 'ok');
+      setTimeout(render, 600);
+    }
+  };
 }
 
 /** „Läuft gerade“ schließen; eine Visualisierung dahinter geht mit aus. */

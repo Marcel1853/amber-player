@@ -43,6 +43,10 @@ presets and press **Delete preset** to remove it.
 
 ## Tips
 
+- At the top of Effects, **Active** shows which effects are switched on – tap one to jump to it.
+- Music too quiet after boosting the equalizer? The equalizer lowers everything by the strongest
+  boost so nothing clips. Compensate with **Settings → Playback → Volume boost**.
+
 - **Double-click** a slider to reset it to its default (0 dB on the equalizer).
 - The equalizer automatically lowers the volume by as much as you boost. All bands at +12 dB
   therefore sounds almost like all at 0 – boost specific ranges instead.

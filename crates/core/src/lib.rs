@@ -6,6 +6,7 @@ pub mod api;
 pub mod covers;
 pub mod decoder;
 pub mod effects;
+pub mod fade;
 pub mod httpsource;
 pub mod jssource;
 pub mod library;

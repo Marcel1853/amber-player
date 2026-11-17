@@ -41,6 +41,17 @@ mit **Zurück** oben.
 
 Lange Titel laufen als Laufschrift durch, wenn sie nicht in ihren Platz passen.
 
+### Lückenlos und Überblendung
+
+Titel laufen **lückenlos** ineinander: Amber Player öffnet den nächsten Titel schon ein paar
+Sekunden vor dem Ende, so entsteht keine Pause – wichtig bei Live-Alben, DJ-Mixen und
+Konzeptalben.
+
+Wer es weicher mag, stellt unter **Einstellungen → Wiedergabe → Überblendung** 2 bis 12 Sekunden
+ein: Dann blendet der nächste Titel am Ende ein, während der alte ausblendet. Titel, die auf einem
+Album direkt aufeinander folgen (z. B. Track 4 → 5), laufen trotzdem lückenlos ineinander, damit
+zusammenhängende Stücke nicht zerrissen werden. Überspringen mit ⏭ wechselt immer sofort.
+
 ## Tastenkürzel (PC)
 
 | Taste | Wirkung |
@@ -63,11 +74,22 @@ Lange Titel laufen als Laufschrift durch, wenn sie nicht in ihren Platz passen.
 **Medientasten** der Tastatur, Kopfhörer und Bluetooth-Geräte funktionieren auch – am PC über
 die Mediensteuerung des Systems (GNOME, KDE), am Handy über die Benachrichtigung.
 
+## Automatische Playlisten
+
+Oben unter **Playlisten** stehen zwei Listen, die sich von selbst aktualisieren:
+
+- **Alle Titel** – deine ganze Bibliothek.
+- **Kürzlich hinzugefügt** – Dateien, die in den letzten 30 Tagen in deine Musikordner kamen
+  (nach Dateidatum). Ältere fallen von selbst heraus, neue kommen dazu.
+
+Ein Titel aus der **Suche** spielt sofort; danach geht es mit der bisherigen Warteschlange weiter.
+
 ## Einstellungen
 
 | Bereich | Was du dort einstellst |
 |---|---|
-| **Musikordner** | Ordner hinzufügen, entfernen, neu einlesen |
+| **Musikordner** | Ordner hinzufügen, entfernen, neu einlesen; **kurze Dateien ausblenden** (unter 10/30/60 s, z. B. Sprachnachrichten, Klingeltöne) und **Ordner ausschließen** (z. B. „WhatsApp Audio“) – die Dateien selbst bleiben unangetastet |
+| **Wiedergabe** | **Überblendung** (aus = lückenlos, 2–12 s) und **Lautstärke-Anhebung** (+3 bis +12 dB für leise Kopfhörer; ein Begrenzer verhindert Übersteuern) |
 | **Fernsteuerung & MCP** (PC) | API-Adresse, Heimnetz-Freigabe, Token, **Handy koppeln**, Beispiele für Stream Deck |
 | **Aufs Handy streamen** (PC) | Playlisten als `.m3u` für andere Player-Apps (z. B. Poweramp) |
 | **Cover** | automatische Cover-Suche an/aus, fehlende erneut suchen |

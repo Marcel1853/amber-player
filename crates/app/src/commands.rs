@@ -274,6 +274,45 @@ pub async fn remove_folder<R2: Runtime>(app: AppHandle<R2>, ctx: State<'_, Ctx>,
     Ok(())
 }
 
+/// Ordner mit eigenen Titeln (mit Anzahl), ausgeschlossene Ordner und Mindestlänge.
+#[tauri::command]
+pub async fn library_filter(ctx: State<'_, Ctx>) -> R<Value> {
+    let l = lib(&ctx);
+    bg(move || {
+        let folders = l.track_folders()?;
+        let excluded = l.excluded_folders();
+        Ok(json!({
+            "folders": folders.into_iter().map(|(path, tracks)| json!({ "path": path, "tracks": tracks })).collect::<Vec<_>>(),
+            "excluded": excluded,
+            "min_duration_s": l.min_duration_s(),
+        }))
+    })
+    .await
+}
+
+/// Filter setzen und neu einlesen.
+#[tauri::command]
+pub async fn set_library_filter<R2: Runtime>(
+    app: AppHandle<R2>,
+    ctx: State<'_, Ctx>,
+    excluded: Option<Vec<String>>,
+    min_duration_s: Option<u32>,
+) -> R<()> {
+    let l = lib(&ctx);
+    bg(move || {
+        if let Some(e) = excluded {
+            l.set_excluded_folders(&e)?;
+        }
+        if let Some(m) = min_duration_s {
+            l.set_min_duration_s(m)?;
+        }
+        Ok(())
+    })
+    .await?;
+    start_scan(app);
+    Ok(())
+}
+
 #[tauri::command]
 pub fn rescan<R2: Runtime>(app: AppHandle<R2>) {
     start_scan(app);
@@ -388,6 +427,18 @@ pub fn effect_save_preset(ctx: State<'_, Ctx>, id: String, name: String) -> R<Ef
 #[tauri::command]
 pub fn effect_delete_preset(ctx: State<'_, Ctx>, id: String, name: String) -> R<EffectInfo> {
     ctx.player.effects().delete_preset(&id, &name).map_err(|e| format!("{e:#}"))
+}
+
+/// Lautstärke-Anhebung in dB (0 = aus).
+#[tauri::command]
+pub fn audio_boost(ctx: State<'_, Ctx>) -> f32 {
+    ctx.player.effects().boost_db()
+}
+
+#[tauri::command]
+pub fn set_audio_boost(ctx: State<'_, Ctx>, db: f32) -> f32 {
+    ctx.player.effects().set_boost_db(db);
+    ctx.player.effects().boost_db()
 }
 
 #[tauri::command]

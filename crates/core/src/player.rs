@@ -19,16 +19,29 @@ use tokio::sync::broadcast;
 
 use crate::analyzer::{Analyzer, VisualFrame};
 use crate::effects::{EffectChain, PluginHost};
+use crate::fade::{Controlled, TrackCtl};
 use crate::library::{Library, Sort, TrackQuery};
 use crate::model::{PlayState, RadioNow, Repeat, Status, Track};
 use crate::queue::Queue;
 
 const TICK: Duration = Duration::from_millis(200);
+/// Bewegt sich die Position so lange nicht weiter, gilt der Titel als hängen geblieben.
+const STALL_LOCAL: Duration = Duration::from_secs(8);
+const STALL_NET: Duration = Duration::from_secs(25);
+
+/// Android beendet die Audioausgabe, wenn das Gerät wechselt (Kopfhörer ein/aus, Bluetooth).
+/// Das meldet der Fehler-Callback hier; die Engine öffnet die Ausgabe dann neu.
+#[cfg(target_os = "android")]
+static OUTPUT_LOST: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 const SAVE_EVERY: Duration = Duration::from_secs(5);
 /// Unterhalb dieser Position springt „Zurück“ zum vorigen Titel, sonst an den Anfang.
 const PREV_RESTART: Duration = Duration::from_secs(3);
 const SEEK_STEP_MS: i64 = 10_000;
 const VOLUME_STEP: i16 = 5;
+/// So lange vor dem Ende wird der nächste Titel für die lückenlose Wiedergabe angehängt.
+const PRELOAD_BEFORE: Duration = Duration::from_secs(8);
+/// Höchste einstellbare Überblendung in Sekunden.
+pub const MAX_CROSSFADE: u8 = 12;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "cmd", rename_all = "snake_case")]
@@ -64,6 +77,32 @@ pub enum Command {
     Refresh,
     /// Internetradio abspielen.
     PlayStation { station: Station },
+    /// Überblendung in Sekunden (0 = aus, dann lückenlos).
+    SetCrossfade { secs: u8 },
+    /// Einen Titel sofort spielen und danach mit der bisherigen Warteschlange weitermachen
+    /// (z. B. aus der Suche). Ist die Warteschlange leer, geht es mit der Bibliothek weiter.
+    PlayNow { id: i64 },
+}
+
+/// Schon an die laufende Spur angehängter nächster Titel (lückenlose Wiedergabe).
+struct Preload {
+    track: Track,
+    ctl: Arc<TrackCtl>,
+    /// Warteschlange, wie sie nach dem Wechsel aussieht.
+    queue: Queue,
+}
+
+/// Folgen zwei Titel auf einem Album direkt aufeinander? Dann wird nicht übergeblendet,
+/// sondern lückenlos weitergespielt (Live- und Konzeptalben).
+fn album_continues(a: &Track, b: &Track) -> bool {
+    if a.album.is_empty() || a.album != b.album || a.album_artist != b.album_artist {
+        return false;
+    }
+    match (a.track_no, b.track_no) {
+        (Some(x), Some(y)) if a.disc_no == b.disc_no => y == x + 1,
+        (Some(_), Some(1)) => matches!((a.disc_no, b.disc_no), (Some(d1), Some(d2)) if d2 == d1 + 1),
+        _ => false,
+    }
 }
 
 #[derive(Serialize, Deserialize, Default)]
@@ -205,6 +244,17 @@ struct Engine {
     error: Option<String>,
     last_published_sec: u64,
     last_save: Instant,
+    /// Überblendung in Sekunden (0 = aus, lückenlos).
+    crossfade: u8,
+    /// Steuerung des laufenden Titels (zum Ausblenden).
+    cur_ctl: Option<Arc<TrackCtl>>,
+    preload: Option<Preload>,
+    /// Ausblendende Spuren einer Überblendung, mit Zeitpunkt zum Aufräumen.
+    fading: Vec<(Sink, Instant)>,
+    /// Der Übergang zum nächsten Titel ist für den laufenden schon vorbereitet (oder gescheitert).
+    next_handled: bool,
+    /// Letzte Position und seit wann sie sich nicht bewegt (Wächter gegen Hänger).
+    stall: Option<(Duration, Instant)>,
 }
 
 impl Engine {
@@ -232,6 +282,7 @@ impl Engine {
             q.current().and_then(|id| lib.track(id).ok().flatten())
         };
 
+        let lib_crossfade = lib.setting_as::<u8>("crossfade").unwrap_or(0).min(MAX_CROSSFADE);
         Self {
             volume: lib.setting_as("volume").unwrap_or(70),
             muted: false,
@@ -256,6 +307,12 @@ impl Engine {
             error: None,
             last_published_sec: u64::MAX,
             last_save: Instant::now(),
+            crossfade: lib_crossfade,
+            cur_ctl: None,
+            preload: None,
+            fading: Vec::new(),
+            next_handled: false,
+            stall: None,
         }
     }
 
@@ -265,7 +322,8 @@ impl Engine {
         let opened = OutputStream::try_default().map(|(stream, handle)| (stream, Output::Rodio(handle))).map_err(|e| e.to_string());
         #[cfg(target_os = "android")]
         let opened = android_output().map(|(stream, mixer)| (stream, Output::Mixer(mixer))).map_err(|e| format!("{e:#}"));
-        let _stream = match opened {
+        #[allow(unused_mut)]
+        let mut _stream = match opened {
             Ok((stream, handle)) => {
                 self.handle = Some(handle);
                 Some(stream)
@@ -290,6 +348,17 @@ impl Engine {
                 Err(RecvTimeoutError::Timeout) => {}
                 Err(RecvTimeoutError::Disconnected) => break,
             }
+            #[cfg(target_os = "android")]
+            if OUTPUT_LOST.swap(false, std::sync::atomic::Ordering::Relaxed) {
+                match android_output() {
+                    Ok((stream, mixer)) => {
+                        _stream = Some(stream);
+                        self.handle = Some(Output::Mixer(mixer));
+                        self.reattach();
+                    }
+                    Err(e) => log::error!("Audioausgabe neu öffnen: {e:#}"),
+                }
+            }
             self.tick();
         }
         self.save_session();
@@ -300,6 +369,27 @@ impl Engine {
     }
 
     fn handle_command(&mut self, cmd: Command) {
+        // Alles, was die Reihenfolge ändern kann: angehängten nächsten Titel verwerfen, er wird
+        // mit der neuen Reihenfolge wieder vorbereitet.
+        if !matches!(
+            cmd,
+            Command::Seek { .. }
+                | Command::SeekBy { .. }
+                | Command::SeekForward
+                | Command::SeekBack
+                | Command::SetVolume { .. }
+                | Command::VolumeUp
+                | Command::VolumeDown
+                | Command::ToggleMute
+                | Command::SleepTimer { .. }
+                | Command::Refresh
+                | Command::Play
+                | Command::Pause
+                | Command::Toggle
+                | Command::SetCrossfade { .. }
+        ) {
+            self.drop_preload();
+        }
         match cmd {
             Command::PlayList { ids, start } => {
                 let first = self.q().set(ids, start);
@@ -351,6 +441,36 @@ impl Engine {
                     .map(|m| Instant::now() + Duration::from_secs(m * 60));
             }
             Command::PlayStation { station } => self.play_station(station),
+            Command::PlayNow { id } => {
+                let empty = self.q().is_empty();
+                if empty {
+                    let ids: Vec<i64> = self
+                        .lib
+                        .tracks(&TrackQuery { sort: Sort::Artist, ..Default::default() })
+                        .unwrap_or_default()
+                        .iter()
+                        .map(|t| t.id)
+                        .collect();
+                    let start = ids.iter().position(|&x| x == id).unwrap_or(0);
+                    if ids.is_empty() {
+                        self.play_id(id);
+                    } else {
+                        let first = self.q().set(ids, start);
+                        if let Some(first) = first {
+                            self.play_id(first);
+                        }
+                    }
+                } else {
+                    self.q().play_next(id);
+                    self.advance(false);
+                }
+            }
+            Command::SetCrossfade { secs } => {
+                self.crossfade = secs.min(MAX_CROSSFADE);
+                let _ = self.lib.set_setting_json("crossfade", &self.crossfade);
+                // Neu entscheiden, wie der nächste Wechsel läuft
+                self.drop_preload();
+            }
             Command::Refresh => {
                 if let Some(t) = &self.current {
                     self.current = self.lib.track(t.id).ok().flatten();
@@ -362,6 +482,9 @@ impl Engine {
     fn play(&mut self) {
         if let Some(sink) = &self.sink {
             sink.play();
+            for (s, _) in &self.fading {
+                s.play();
+            }
             self.state = PlayState::Playing;
             return;
         }
@@ -401,11 +524,83 @@ impl Engine {
     fn pause(&mut self) {
         if let Some(sink) = &self.sink {
             sink.pause();
+            for (s, _) in &self.fading {
+                s.pause();
+            }
             self.state = PlayState::Paused;
         }
     }
 
+    /// Nach neu geöffneter Ausgabe: laufenden Titel bzw. Sender an derselben Stelle fortsetzen
+    /// (pausiert bleibt pausiert).
+    #[allow(dead_code)]
+    fn reattach(&mut self) {
+        if self.sink.is_none() {
+            return;
+        }
+        let was = self.state;
+        if let Some(station) = self.radio.clone() {
+            if was == PlayState::Playing {
+                self.play_station(station);
+            } else {
+                self.sink = None;
+                self.state = PlayState::Stopped;
+            }
+        } else if let Some(id) = self.current.as_ref().map(|t| t.id) {
+            let pos = self.position();
+            if let Err(e) = self.start(id, Some(pos)) {
+                self.error = Some(e.to_string());
+                return;
+            }
+            if was == PlayState::Paused {
+                self.pause();
+            }
+        }
+        self.publish();
+    }
+
+    /// Hängt ein Titel (Position bewegt sich nicht, z. B. kaputte Datei oder abgebrochener
+    /// Stream), wird zum nächsten gesprungen statt endlos zu warten.
+    fn watch_stall(&mut self) {
+        if self.state != PlayState::Playing || self.sink.is_none() {
+            self.stall = None;
+            return;
+        }
+        let pos = self.position();
+        match self.stall {
+            Some((p, since)) if p == pos => {
+                let online = self.radio.is_some() || self.current.as_ref().is_some_and(|t| sources::parse_path(&t.path).is_some());
+                let limit = if online { STALL_NET } else { STALL_LOCAL };
+                if since.elapsed() >= limit {
+                    let name = self.current.as_ref().map(|t| t.title.clone()).or_else(|| self.radio.as_ref().map(|s| s.name.clone())).unwrap_or_default();
+                    log::warn!("„{name}“ hängt seit {} s – weiter zum nächsten", limit.as_secs());
+                    self.stall = None;
+                    self.advance(true);
+                    self.error = Some(format!("„{name}“ ließ sich nicht abspielen"));
+                    self.publish();
+                }
+            }
+            _ => self.stall = Some((pos, Instant::now())),
+        }
+    }
+
+    /// Vorgeladenen Titel verwerfen (er endet sofort, wenn er an der Reihe wäre).
+    fn drop_preload(&mut self) {
+        if let Some(p) = self.preload.take() {
+            p.ctl.cancel();
+        }
+        self.next_handled = false;
+    }
+
+    /// Alles neben der laufenden Spur beenden: Vorgeladenes und Überblendungen.
+    fn drop_extra(&mut self) {
+        self.drop_preload();
+        self.fading.clear();
+        self.cur_ctl = None;
+    }
+
     fn stop(&mut self) {
+        self.drop_extra();
         self.sink = None;
         self.pending_seek = None;
         self.state = PlayState::Stopped;
@@ -434,6 +629,7 @@ impl Engine {
 
     /// Internetradio starten (verbindet sich und puffert vor).
     fn play_station(&mut self, station: Station) {
+        self.drop_extra();
         self.sink = None;
         self.current = None;
         *self.radio_title.lock().unwrap_or_else(|e| e.into_inner()) = None;
@@ -475,19 +671,9 @@ impl Engine {
         self.play_station(stations[idx].clone());
     }
 
-    fn start(&mut self, id: i64, seek: Option<Duration>) -> Result<()> {
-        self.sink = None;
-        self.radio = None;
-        let track = self
-            .lib
-            .track(id)?
-            .ok_or_else(|| anyhow!("Titel {id} nicht in der Bibliothek"))?;
-        self.current = Some(track.clone());
-        let handle = self
-            .handle
-            .as_ref()
-            .ok_or_else(|| anyhow!("Kein Audiogerät verfügbar"))?;
-
+    /// Öffnet die Audioquelle eines Titels (Datei, PC-Stream oder Online-Quelle). Fehlt die
+    /// Länge in der Bibliothek, wird sie aus der Quelle ergänzt.
+    fn open_track(&self, track: &mut Track) -> Result<Box<dyn Source<Item = f32> + Send>> {
         let decoder: Box<dyn Source<Item = f32> + Send> = match sources::parse_path(&track.path) {
             // Online-Titel: frische Adresse beim Plugin holen (die laufen nach einigen Stunden ab).
             // Titel vom gekoppelten PC: direkt über dessen Stream-Adresse (spulbar).
@@ -518,24 +704,145 @@ impl Engine {
             }
         };
         if track.duration_ms == 0 {
-            if let (Some(d), Some(t)) = (decoder.total_duration(), self.current.as_mut()) {
-                t.duration_ms = d.as_millis() as u64;
+            if let Some(d) = decoder.total_duration() {
+                track.duration_ms = d.as_millis() as u64;
             }
         }
-        let source = EffectChain::new(decoder, self.effects.clone())
-            .with_analyzer(self.analyzer.clone());
+        Ok(decoder)
+    }
 
-        let sink = handle.new_sink()?;
+    /// Quelle mit Effekten, Visualisierungs-Abgriff und Steuerung (Ein-/Ausblenden).
+    fn chain(&self, decoder: Box<dyn Source<Item = f32> + Send>, ctl: &Arc<TrackCtl>) -> impl Source<Item = f32> + Send + 'static {
+        Controlled::new(EffectChain::new(decoder, self.effects.clone()).with_analyzer(self.analyzer.clone()), ctl.clone())
+    }
+
+    fn start(&mut self, id: i64, seek: Option<Duration>) -> Result<()> {
+        self.drop_extra();
+        self.sink = None;
+        self.radio = None;
+        let mut track = self
+            .lib
+            .track(id)?
+            .ok_or_else(|| anyhow!("Titel {id} nicht in der Bibliothek"))?;
+        self.current = Some(track.clone());
+        if self.handle.is_none() {
+            return Err(anyhow!("Kein Audiogerät verfügbar"));
+        }
+        let decoder = self.open_track(&mut track)?;
+        self.current = Some(track);
+        let ctl = TrackCtl::new(1.0);
+        let source = self.chain(decoder, &ctl);
+        let sink = self.handle.as_ref().expect("geprüft").new_sink()?;
         sink.append(source);
         if let Some(pos) = seek.filter(|p| !p.is_zero()) {
             let _ = sink.try_seek(pos);
         }
         self.sink = Some(sink);
+        self.cur_ctl = Some(ctl);
+        self.next_handled = false;
         self.apply_volume();
         self.state = PlayState::Playing;
         self.error = None;
         let _ = self.lib.mark_played(id);
         Ok(())
+    }
+
+    /// Kurz vor dem Ende: nächsten Titel lückenlos anhängen oder überblenden.
+    fn prepare_next(&mut self) {
+        if self.next_handled || self.preload.is_some() || self.radio.is_some() || self.state != PlayState::Playing {
+            return;
+        }
+        let Some(cur) = self.current.clone() else { return };
+        if cur.duration_ms == 0 {
+            return; // Länge unbekannt: wie bisher erst am Ende wechseln
+        }
+        let remaining = Duration::from_millis(cur.duration_ms).saturating_sub(self.position());
+        let fade = Duration::from_secs(self.crossfade as u64);
+        if remaining > PRELOAD_BEFORE.max(fade) {
+            return;
+        }
+        // Wie sieht die Reihenfolge nach dem Wechsel aus? (auf einer Kopie)
+        let mut queue = self.q().clone();
+        let Some(next_id) = queue.next(true) else {
+            self.next_handled = true;
+            return;
+        };
+        let Some(next) = self.lib.track(next_id).ok().flatten() else {
+            self.next_handled = true;
+            return;
+        };
+        let crossfade = self.crossfade > 0 && !album_continues(&cur, &next);
+        if crossfade && remaining > fade {
+            return; // noch zu früh für die Überblendung
+        }
+        if !crossfade && remaining > PRELOAD_BEFORE {
+            return;
+        }
+        self.next_handled = true;
+        let mut next = next;
+        let decoder = match self.open_track(&mut next) {
+            Ok(d) => d,
+            Err(e) => {
+                // Dann wie bisher am Ende wechseln (mit Fehlerbehandlung in `advance`).
+                log::warn!("Nächsten Titel vorbereiten: {e:#}");
+                return;
+            }
+        };
+        if crossfade {
+            self.crossfade_to(next, decoder, queue);
+        } else if let Some(sink) = &self.sink {
+            let ctl = TrackCtl::new(1.0);
+            sink.append(self.chain(decoder, &ctl));
+            self.preload = Some(Preload { track: next, ctl, queue });
+        }
+    }
+
+    /// Überblenden: neuer Titel in eigener Spur einblenden, der alte blendet aus.
+    fn crossfade_to(&mut self, next: Track, decoder: Box<dyn Source<Item = f32> + Send>, queue: Queue) {
+        let secs = self.crossfade as f32;
+        let Some(handle) = self.handle.as_ref() else { return };
+        let ctl = TrackCtl::new(0.0);
+        let source = self.chain(decoder, &ctl);
+        let sink = match handle.new_sink() {
+            Ok(s) => s,
+            Err(e) => {
+                log::warn!("Überblendung: {e:#}");
+                return;
+            }
+        };
+        sink.append(source);
+        ctl.fade_to(1.0, secs);
+        if let Some(old) = self.cur_ctl.take() {
+            old.fade_to(0.0, secs);
+        }
+        if let Some(old) = self.sink.take() {
+            self.fading.push((old, Instant::now() + Duration::from_secs_f32(secs + 0.5)));
+        }
+        self.sink = Some(sink);
+        self.cur_ctl = Some(ctl);
+        *self.q() = queue;
+        let id = next.id;
+        self.current = Some(next);
+        self.next_handled = false;
+        self.apply_volume();
+        let _ = self.lib.mark_played(id);
+        self.publish();
+    }
+
+    /// Lückenlos: Ist der angehängte Titel an der Reihe, gilt er ab jetzt als der laufende.
+    fn gapless_switch(&mut self) {
+        let switched = self.preload.is_some() && self.sink.as_ref().is_some_and(|s| s.len() == 1);
+        if !switched {
+            return;
+        }
+        let p = self.preload.take().expect("geprüft");
+        *self.q() = p.queue;
+        let id = p.track.id;
+        self.current = Some(p.track);
+        self.cur_ctl = Some(p.ctl);
+        self.next_handled = false;
+        let _ = self.lib.mark_played(id);
+        self.publish();
     }
 
     fn advance(&mut self, auto: bool) {
@@ -611,14 +918,19 @@ impl Engine {
     }
 
     fn apply_volume(&self) {
-        if let Some(sink) = &self.sink {
-            let v = if self.muted { 0.0 } else { self.volume as f32 / 100.0 };
-            // Quadratische Kurve klingt gleichmäßiger als linear.
+        let v = if self.muted { 0.0 } else { self.volume as f32 / 100.0 };
+        // Quadratische Kurve klingt gleichmäßiger als linear.
+        for sink in self.sink.iter().chain(self.fading.iter().map(|(s, _)| s)) {
             sink.set_volume(v * v);
         }
     }
 
     fn tick(&mut self) {
+        let now = Instant::now();
+        self.fading.retain(|(_, until)| now < *until);
+        self.gapless_switch();
+        self.prepare_next();
+        self.watch_stall();
         if self.state == PlayState::Playing && self.sink.as_ref().is_some_and(|s| s.empty()) {
             self.advance(true);
             self.publish();
@@ -677,6 +989,7 @@ impl Engine {
                 .map(|d| d.saturating_duration_since(Instant::now()).as_secs()),
             queue_length: q.len(),
             error: self.error.clone(),
+            crossfade: self.crossfade,
         }
     }
 
@@ -731,7 +1044,10 @@ fn android_output() -> Result<(rodio::cpal::Stream, Arc<rodio::dynamic_mixer::Dy
     let build = |buffer: BufferSize| -> Result<(rodio::cpal::Stream, Arc<rodio::dynamic_mixer::DynamicMixerController<f32>>)> {
         let (ctl, mut mixer) = rodio::dynamic_mixer::mixer::<f32>(channels, rate.0);
         let config = StreamConfig { channels, sample_rate: rate, buffer_size: buffer };
-        let on_err = |e| log::error!("Audioausgabe: {e}");
+        let on_err = |e| {
+            log::warn!("Audioausgabe unterbrochen ({e}) – wird neu geöffnet");
+            OUTPUT_LOST.store(true, std::sync::atomic::Ordering::Relaxed);
+        };
         let stream = match def.sample_format() {
             SampleFormat::I16 => device.build_output_stream(
                 &config,
@@ -762,4 +1078,22 @@ fn android_output() -> Result<(rodio::cpal::Stream, Arc<rodio::dynamic_mixer::Dy
         log::warn!("Größerer Audiopuffer nicht möglich ({e:#}), nehme den Standard");
         build(BufferSize::Default)
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn t(album: &str, disc: Option<u32>, no: Option<u32>) -> Track {
+        Track { album: album.into(), album_artist: "A".into(), disc_no: disc, track_no: no, ..Default::default() }
+    }
+
+    #[test]
+    fn album_continues_only_for_direct_successors() {
+        assert!(album_continues(&t("Live", None, Some(3)), &t("Live", None, Some(4))));
+        assert!(!album_continues(&t("Live", None, Some(3)), &t("Live", None, Some(7))));
+        assert!(!album_continues(&t("Live", None, Some(3)), &t("Anderes", None, Some(4))));
+        assert!(album_continues(&t("Box", Some(1), Some(12)), &t("Box", Some(2), Some(1))));
+        assert!(!album_continues(&t("", None, Some(1)), &t("", None, Some(2))));
+    }
 }
