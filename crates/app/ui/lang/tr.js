@@ -569,5 +569,13 @@ I18N.tr = {
  "Noch keine Titel eingelesen.": "Henüz parça taranmadı.",
  "Wird neu eingelesen …": "Yeniden taranıyor …",
  "ausgeschlossen": "hariç",
- "keine": "yok"
+ "keine": "yok",
+ "Fehlersuche": "Sorun giderme",
+ "Protokoll": "Günlük",
+ "Zeichnet auf, was der Player tut (Titelwechsel, Fehler, Medientasten, Kopfhörer). Hilft, Fehler zu finden – bei Bedarf teilen.": "Çaların ne yaptığını kaydeder (parça değişimleri, hatalar, medya tuşları, kulaklık). Hataları bulmaya yardım eder – gerekirse paylaş.",
+ "Ansehen": "Görüntüle",
+ "leer": "boş",
+ "Noch keine Einträge. Schalte das Protokoll ein und nutze den Player wie gewohnt.": "Henüz kayıt yok. Günlüğü aç ve çaları her zamanki gibi kullan.",
+ "Protokoll von Amber Player": "Amber Player günlüğü",
+ "Protokoll geleert": "Günlük temizlendi"
 };

@@ -38,6 +38,20 @@ Amber Player spielt weiter, wenn du die App verlässt oder den Bildschirm aussch
 > Beim ersten Start fragt Amber Player danach; nachträglich: Android-Einstellungen → Apps →
 > Amber Player → Akku → **Nicht eingeschränkt**.
 
+## Widgets
+
+Lange auf den Startbildschirm drücken → **Widgets** → **Amber Player**:
+
+| Widget | Inhalt |
+|---|---|
+| **Kompakt** (4×1) | Cover, Titel und Interpret, Zurück · Play · Weiter |
+| **Groß** (4×2) | großes Cover, Titel, Interpret, Album und Tasten |
+| **Quadrat** (2×2) | Cover als Hintergrund, Titel und Play-Taste |
+| **Radio** (4×2) | laufender Sender mit Logo und Song, Senderwechsel, darunter bis zu fünf gespeicherte Sender zum Antippen |
+
+Cover oder Titel antippen öffnet die App. Läuft Amber Player gerade nicht, öffnen auch die Tasten
+die App. Die Widgets zeigen den letzten Stand auch nach dem Schließen.
+
 ## Vollbild
 
 Standardmäßig blendet die App Status- und Navigationsleiste aus. Wischen vom Rand zeigt sie

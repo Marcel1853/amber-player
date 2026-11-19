@@ -6,4 +6,15 @@
     <string name="amber_pause">Pauze</string>
     <string name="amber_play">Afspelen</string>
     <string name="amber_next">Volgende</string>
+    <string name="amber_widget_small">Amber Player – compact</string>
+    <string name="amber_widget_small_desc">Hoes, titel en knoppen op één regel</string>
+    <string name="amber_widget_large">Amber Player – groot</string>
+    <string name="amber_widget_large_desc">Grote hoes met titel, artiest, album en knoppen</string>
+    <string name="amber_widget_square">Amber Player – vierkant</string>
+    <string name="amber_widget_square_desc">Hoes met titel en afspeelknop</string>
+    <string name="amber_widget_radio">Amber Player – radio</string>
+    <string name="amber_widget_radio_desc">Huidige zender en je opgeslagen zenders om aan te tikken</string>
+    <string name="amber_widget_radio_empty">Radio</string>
+    <string name="amber_widget_radio_hint">Tik op een zender om af te spelen</string>
+    <string name="amber_widget_radio_none">Sla zenders op in de app onder Radio met ★</string>
 </resources>

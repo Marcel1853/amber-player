@@ -569,5 +569,13 @@ I18N.en = {
  "Noch keine Titel eingelesen.": "No tracks scanned yet.",
  "Wird neu eingelesen …": "Rescanning …",
  "ausgeschlossen": "excluded",
- "keine": "none"
+ "keine": "none",
+ "Fehlersuche": "Troubleshooting",
+ "Protokoll": "Log",
+ "Zeichnet auf, was der Player tut (Titelwechsel, Fehler, Medientasten, Kopfhörer). Hilft, Fehler zu finden – bei Bedarf teilen.": "Records what the player does (track changes, errors, media buttons, headphones). Helps to find bugs – share it if needed.",
+ "Ansehen": "View",
+ "leer": "empty",
+ "Noch keine Einträge. Schalte das Protokoll ein und nutze den Player wie gewohnt.": "No entries yet. Turn the log on and use the player as usual.",
+ "Protokoll von Amber Player": "Amber Player log",
+ "Protokoll geleert": "Log cleared"
 };

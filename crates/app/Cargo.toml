@@ -43,3 +43,5 @@ raw-window-handle = "0.6"
 # Android: Protokoll ins Handy-Log (logcat)
 [target.'cfg(target_os = "android")'.dependencies]
 android_logger = "0.14"
+# Cover für den Sperrbildschirm
+base64 = "0.22"

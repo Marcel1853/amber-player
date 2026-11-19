@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Kompakt (4×1): Cover, Titel/Interpret, Zurück/Play/Weiter -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/amber_root"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@drawable/amber_widget_bg" android:gravity="center_vertical"
+    android:orientation="horizontal" android:padding="8dp">
+
+    <ImageView android:id="@+id/amber_cover"
+        android:layout_width="48dp" android:layout_height="48dp"
+        android:background="@drawable/amber_widget_cover_bg" android:clipToOutline="true"
+        android:scaleType="centerCrop" android:src="@drawable/ic_amber_note" android:padding="0dp"
+        android:contentDescription="@null" />
+
+    <LinearLayout android:id="@+id/amber_text"
+        android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+        android:layout_marginStart="10dp" android:orientation="vertical">
+        <TextView android:id="@+id/amber_title"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:ellipsize="end" android:maxLines="1" android:text="Amber Player"
+            android:textColor="#FFF4EDE4" android:textSize="15sp" android:textStyle="bold" />
+        <TextView android:id="@+id/amber_artist"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:ellipsize="end" android:maxLines="1" android:text=""
+            android:textColor="#FFF2A03D" android:textSize="12.5sp" />
+    </LinearLayout>
+
+    <ImageButton android:id="@+id/amber_prev"
+        android:layout_width="38dp" android:layout_height="38dp" android:background="@null"
+        android:src="@drawable/ic_amber_prev" android:contentDescription="@string/amber_prev" />
+    <ImageButton android:id="@+id/amber_play"
+        android:layout_width="44dp" android:layout_height="44dp" android:layout_marginHorizontal="2dp"
+        android:background="@drawable/amber_widget_play_bg" android:padding="10dp" android:scaleType="fitCenter"
+        android:src="@drawable/ic_amber_play" android:contentDescription="@string/amber_play" />
+    <ImageButton android:id="@+id/amber_next"
+        android:layout_width="38dp" android:layout_height="38dp" android:background="@null"
+        android:src="@drawable/ic_amber_next" android:contentDescription="@string/amber_next" />
+</LinearLayout>

@@ -89,6 +89,7 @@ Ein Titel aus der **Suche** spielt sofort; danach geht es mit der bisherigen War
 | Bereich | Was du dort einstellst |
 |---|---|
 | **Musikordner** | Ordner hinzufügen, entfernen, neu einlesen; **kurze Dateien ausblenden** (unter 10/30/60 s, z. B. Sprachnachrichten, Klingeltöne) und **Ordner ausschließen** (z. B. „WhatsApp Audio“) – die Dateien selbst bleiben unangetastet |
+| **Fehlersuche** | **Protokoll** ein/aus – zeichnet Titelwechsel, Fehler, Medientasten und Kopfhörer-Wechsel auf; ansehen, teilen bzw. exportieren, leeren |
 | **Wiedergabe** | **Überblendung** (aus = lückenlos, 2–12 s) und **Lautstärke-Anhebung** (+3 bis +12 dB für leise Kopfhörer; ein Begrenzer verhindert Übersteuern) |
 | **Fernsteuerung & MCP** (PC) | API-Adresse, Heimnetz-Freigabe, Token, **Handy koppeln**, Beispiele für Stream Deck |
 | **Aufs Handy streamen** (PC) | Playlisten als `.m3u` für andere Player-Apps (z. B. Poweramp) |

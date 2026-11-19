@@ -17,6 +17,7 @@ import app.tauri.annotation.Command
 import app.tauri.annotation.InvokeArg
 import app.tauri.annotation.Permission
 import app.tauri.annotation.TauriPlugin
+import app.tauri.plugin.Channel
 import app.tauri.plugin.Invoke
 import app.tauri.plugin.JSObject
 import app.tauri.plugin.Plugin
@@ -24,6 +25,11 @@ import app.tauri.plugin.Plugin
 @InvokeArg
 class UrlArgs {
     var url: String = ""
+}
+
+@InvokeArg
+class MediaChannelArgs {
+    lateinit var channel: Channel
 }
 
 @InvokeArg
@@ -50,6 +56,22 @@ class MediaArgs {
     var durationMs: Long = 0
     /** Cover als Base64-JPEG (klein), leer = kein Cover */
     var cover: String? = null
+    /** Läuft Internetradio? Dann sind Sender-ID und -Name gesetzt. */
+    var radio: Boolean = false
+    var stationId: Long = 0
+    var stationName: String = ""
+}
+
+@InvokeArg
+class StationItem {
+    var id: Long = 0
+    var name: String = ""
+    var logo: String = ""
+}
+
+@InvokeArg
+class StationsArgs {
+    var stations: Array<StationItem> = arrayOf()
 }
 
 /**
@@ -178,18 +200,48 @@ class AmberMobilePlugin(private val activity: Activity) : Plugin(activity) {
         invoke.resolve(result)
     }
 
-    /** Ereignis an die Oberfläche: play, pause, next, prev, stop, seek. */
+    /** Direkter Draht zum Player (vom Rust-Teil verbunden). */
+    private var mediaChannel: Channel? = null
+
+    @Command
+    fun connectMedia(invoke: Invoke) {
+        mediaChannel = invoke.parseArgs(MediaChannelArgs::class.java).channel
+        invoke.resolve()
+    }
+
+    /**
+     * Medientaste: play, pause, next, prev, stop, seek. Geht direkt an den Player; nur falls der
+     * Draht (noch) nicht steht, an die Oberfläche.
+     */
     fun emit(action: String, positionMs: Long = 0) {
         val payload = JSObject()
         payload.put("action", action)
         payload.put("positionMs", positionMs)
-        trigger("media", payload)
+        val ch = mediaChannel
+        if (ch != null) ch.send(payload) else trigger("media", payload)
+    }
+
+    /** Meldung ins Fehlerprotokoll von Amber Player (wenn eingeschaltet). */
+    fun note(message: String) {
+        android.util.Log.w("AmberPlayer", message)
+        val payload = JSObject()
+        payload.put("action", "log")
+        payload.put("message", message)
+        mediaChannel?.send(payload)
     }
 
     @Command
     fun updateMedia(invoke: Invoke) {
         val args = invoke.parseArgs(MediaArgs::class.java)
         PlaybackService.update(activity, args)
+        invoke.resolve()
+    }
+
+    /** Gespeicherte Sender fürs Radio-Widget (vom Player). */
+    @Command
+    fun updateStations(invoke: Invoke) {
+        val args = invoke.parseArgs(StationsArgs::class.java)
+        AmberWidgets.saveStations(activity, args.stations.toList())
         invoke.resolve()
     }
 

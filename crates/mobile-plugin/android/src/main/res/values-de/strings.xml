@@ -6,4 +6,15 @@
     <string name="amber_pause">Pause</string>
     <string name="amber_play">Abspielen</string>
     <string name="amber_next">Weiter</string>
+    <string name="amber_widget_small">Amber Player – kompakt</string>
+    <string name="amber_widget_small_desc">Cover, Titel und Tasten in einer Zeile</string>
+    <string name="amber_widget_large">Amber Player – groß</string>
+    <string name="amber_widget_large_desc">Großes Cover mit Titel, Interpret, Album und Tasten</string>
+    <string name="amber_widget_square">Amber Player – Quadrat</string>
+    <string name="amber_widget_square_desc">Cover mit Titel und Play-Taste</string>
+    <string name="amber_widget_radio">Amber Player – Radio</string>
+    <string name="amber_widget_radio_desc">Laufender Sender und deine gespeicherten Sender zum Antippen</string>
+    <string name="amber_widget_radio_empty">Radio</string>
+    <string name="amber_widget_radio_hint">Sender antippen zum Abspielen</string>
+    <string name="amber_widget_radio_none">Sender in der App unter Radio mit ★ speichern</string>
 </resources>

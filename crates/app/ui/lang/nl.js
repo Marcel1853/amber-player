@@ -569,5 +569,13 @@ I18N.nl = {
  "Noch keine Titel eingelesen.": "Nog geen nummers ingelezen.",
  "Wird neu eingelesen …": "Opnieuw inlezen …",
  "ausgeschlossen": "uitgesloten",
- "keine": "geen"
+ "keine": "geen",
+ "Fehlersuche": "Probleemoplossing",
+ "Protokoll": "Logboek",
+ "Zeichnet auf, was der Player tut (Titelwechsel, Fehler, Medientasten, Kopfhörer). Hilft, Fehler zu finden – bei Bedarf teilen.": "Legt vast wat de speler doet (nummerwissels, fouten, mediaknoppen, koptelefoon). Helpt fouten te vinden – deel het indien nodig.",
+ "Ansehen": "Bekijken",
+ "leer": "leeg",
+ "Noch keine Einträge. Schalte das Protokoll ein und nutze den Player wie gewohnt.": "Nog geen regels. Zet het logboek aan en gebruik de speler zoals altijd.",
+ "Protokoll von Amber Player": "Logboek van Amber Player",
+ "Protokoll geleert": "Logboek geleegd"
 };

@@ -88,6 +88,7 @@ A track from the **search** plays immediately; afterwards your previous queue co
 | Section | What you set there |
 |---|---|
 | **Music folders** | add, remove, rescan folders; **hide short files** (under 10/30/60 s, e.g. voice messages, ringtones) and **exclude folders** (e.g. “WhatsApp Audio”) – the files themselves stay untouched |
+| **Troubleshooting** | **Log** on/off – records track changes, errors, media buttons and headphone changes; view, share or export, clear |
 | **Playback** | **Crossfade** (off = gapless, 2–12 s) and **volume boost** (+3 to +12 dB for quiet headphones; a limiter prevents clipping) |
 | **Remote control & MCP** (PC) | API address, home network access, token, **Pair phone**, Stream Deck examples |
 | **Stream to your phone** (PC) | playlists as `.m3u` for other player apps (e.g. Poweramp) |

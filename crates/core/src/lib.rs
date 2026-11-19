@@ -4,6 +4,7 @@ pub mod analyzer;
 #[cfg(feature = "server")]
 pub mod api;
 pub mod covers;
+pub mod debuglog;
 pub mod decoder;
 pub mod effects;
 pub mod fade;

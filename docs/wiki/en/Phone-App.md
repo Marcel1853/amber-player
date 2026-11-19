@@ -36,6 +36,20 @@ Amber Player keeps playing when you leave the app or turn off the screen:
 > Amber Player asks about this on first start; later: Android settings → Apps → Amber Player →
 > Battery → **Unrestricted**.
 
+## Widgets
+
+Long-press the home screen → **Widgets** → **Amber Player**:
+
+| Widget | Content |
+|---|---|
+| **Compact** (4×1) | cover, title and artist, previous · play · next |
+| **Large** (4×2) | large cover, title, artist, album and buttons |
+| **Square** (2×2) | cover as background, title and play button |
+| **Radio** (4×2) | current station with logo and song, station switching, plus up to five saved stations to tap |
+
+Tapping the cover or title opens the app. If Amber Player isn't running, the buttons open the app
+too. The widgets keep showing the last state after the app is closed.
+
 ## Full screen
 
 By default the app hides the status and navigation bars. Swiping from the edge shows them

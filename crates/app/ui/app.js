@@ -1826,6 +1826,23 @@ async function renderSettings(el, v, fresh) {
     </div>
 
     <div class="box">
+      <h3>${esc(tx('Fehlersuche'))}</h3>
+      <div class="kv">
+        <span class="k">${esc(tx('Protokoll'))}</span>
+        <span style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <label class="switch"><input type="checkbox" id="debugOn"><span></span></label>
+          <span class="hint" style="margin:0">${esc(tx('Zeichnet auf, was der Player tut (Titelwechsel, Fehler, Medientasten, Kopfhörer). Hilft, Fehler zu finden – bei Bedarf teilen.'))}</span>
+        </span>
+      </div>
+      <div class="actions" id="debugActions">
+        <button class="btn small" data-act="debug-show">${icon('list')} ${esc(tx('Ansehen'))}</button>
+        <button class="btn small" data-act="debug-share">${icon('export')} ${esc(IS_ANDROID ? tx('Teilen') : tx('Exportieren'))}</button>
+        <button class="btn small danger" data-act="debug-clear">${icon('trash')} ${esc(tx('Leeren'))}</button>
+        <span class="hint" id="debugSize" style="margin:0"></span>
+      </div>
+    </div>
+
+    <div class="box">
       <h3>${esc(tx('Wiedergabe'))}</h3>
       <div class="kv">
         <span class="k">${esc(tx('Überblendung'))}</span>
@@ -1935,6 +1952,36 @@ async function renderSettings(el, v, fresh) {
       }
       return;
     }
+    if (e.target.closest('[data-act="debug-show"]')) {
+      const text = await invoke('debug_log_text');
+      const modal = $('#modal');
+      modal.innerHTML = `<div class="dialog debuglog" role="dialog"><h3>${esc(tx('Protokoll'))}</h3>
+        <pre data-raw>${esc(text.split('\n').slice(-400).join('\n') || tx('Noch keine Einträge. Schalte das Protokoll ein und nutze den Player wie gewohnt.'))}</pre>
+        <div class="actions"><button class="btn primary" data-r="ok">OK</button></div></div>`;
+      modal.classList.add('open');
+      const pre = $('pre', modal);
+      pre.scrollTop = pre.scrollHeight;
+      modal.onclick = (ev) => {
+        if (ev.target.closest('[data-r]') || ev.target === modal) {
+          modal.classList.remove('open');
+          modal.innerHTML = '';
+        }
+      };
+      return;
+    }
+    if (e.target.closest('[data-act="debug-share"]')) {
+      const path = await call('debug_log_export').catch(() => null);
+      if (!path) return;
+      if (IS_ANDROID) invoke('plugin:amber-mobile|share_file', { path, title: tx('Protokoll von Amber Player') }).catch((er) => toast(String(er), 'err'));
+      else toast(tx('Gespeichert: {path}', { path }), 'ok');
+      return;
+    }
+    if (e.target.closest('[data-act="debug-clear"]')) {
+      await invoke('debug_log_clear');
+      $('#debugSize', el).textContent = tx('leer');
+      toast(tx('Protokoll geleert'), 'ok');
+      return;
+    }
     if (e.target.closest('[data-act="exclude"]')) {
       excludeFoldersDialog();
       return;
@@ -2037,6 +2084,20 @@ async function renderSettings(el, v, fresh) {
     $('#exclInfo', el).textContent = filt.excluded.length ? plural(filt.excluded.length, 'Ordner', 'Ordner') : tx('keine');
     minSel.addEventListener('change', () => {
       call('set_library_filter', { minDurationS: Number(minSel.value), excluded: null }).then(() => toast(tx('Wird neu eingelesen …'), 'ok')).catch(() => {});
+    });
+  }
+  // Fehlersuche: Protokoll
+  const debugBox = $('#debugOn', el);
+  const debugInfo = async () => {
+    const i = await invoke('debug_log_info').catch(() => ({ enabled: false, bytes: 0 }));
+    debugBox.checked = i.enabled;
+    $('#debugSize', el).textContent = i.bytes ? `${Math.max(1, Math.round(i.bytes / 1024))} KB` : tx('leer');
+  };
+  if (debugBox) {
+    debugInfo();
+    debugBox.addEventListener('change', async () => {
+      await call('set_debug_log', { on: debugBox.checked });
+      debugInfo();
     });
   }
   const boostSel = $('#boostSel', el);
@@ -3595,7 +3656,9 @@ const androidMedia = {
   },
 
   async update(s, prev) {
-    if (!IS_ANDROID) return;
+    // Am Handy aktualisiert der Player Benachrichtigung und Sperrbildschirm selbst (auch wenn
+    // Android die Oberfläche pausiert oder beendet hat) – hier nichts mehr tun.
+    if (!IS_ANDROID || window.__AMBER_NATIVE_MEDIA !== false) return;
     const t = s.track;
     const r = !t ? s.radio : null;
     if (!t && !r) {

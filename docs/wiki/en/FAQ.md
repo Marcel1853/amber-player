@@ -63,6 +63,17 @@ Boost specific ranges or use a preset.
 Only while music plays. Without music Amber Player quits completely; also when the music ends or
 after a minute of pause.
 
+**On the phone nothing responds, the music hangs.**
+Since version 0.9.1, media buttons and the lock screen go straight to the player, even when
+Android pauses the interface on a locked screen or ends it to free memory. In that case only the
+interface is reloaded and the music keeps playing. If a track gets stuck, Amber Player skips to
+the next one after 8 seconds. If something odd still happens: turn on **Settings →
+Troubleshooting → Log**, reproduce the problem and pass the log on via **Share** (phone) or
+**Export** (PC).
+
+**Tracks “from the PC” don't play.**
+They are streamed from the PC – if the PC is off or not on the same Wi-Fi, Amber Player skips them.
+
 ## Phone and PC
 
 **The phone can't find the PC.**

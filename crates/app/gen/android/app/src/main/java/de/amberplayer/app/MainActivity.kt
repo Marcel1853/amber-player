@@ -1,6 +1,10 @@
 package de.amberplayer.app
 
+import android.content.Intent
 import android.os.Bundle
+import android.webkit.WebView
+import androidx.lifecycle.Lifecycle
+import androidx.webkit.WebViewCompat
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
@@ -9,6 +13,21 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 
 class MainActivity : TauriActivity() {
+  /**
+   * Beendet Android den Prozess der Oberfläche (Speichermangel, meist bei gesperrtem Bildschirm),
+   * würde die WebView sonst die ganze App mitreißen – samt laufender Musik. Stattdessen wird nur
+   * die Oberfläche neu aufgebaut; Player, Benachrichtigung und Medientasten laufen weiter.
+   */
+  override fun onWebViewCreate(webView: WebView) {
+    val inner = WebViewCompat.getWebViewClient(webView)
+    webView.webViewClient = RecoveringWebViewClient(inner) {
+      de.amberplayer.mobile.AmberMobilePlugin.instance?.note("Oberfläche wurde von Android beendet – wird neu geladen")
+      val visible = lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
+      finish()
+      if (visible) startActivity(Intent(this, MainActivity::class.java))
+    }
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)

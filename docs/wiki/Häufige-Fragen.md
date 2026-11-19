@@ -59,6 +59,18 @@ nichts übersteuert. Heb gezielt einzelne Bereiche an oder nimm ein Preset.
 Nur solange Musik spielt. Ohne Musik beendet sich Amber Player komplett; nach dem Ende der Musik
 oder einer Minute Pause ebenfalls.
 
+**Am Handy reagiert nichts mehr, die Musik hängt.**
+Seit Version 0.9.1 laufen Medientasten und Sperrbildschirm direkt über den Player, auch wenn
+Android die Oberfläche bei gesperrtem Bildschirm pausiert oder wegen Speichermangel beendet
+hat. In dem Fall wird nur die Oberfläche neu geladen, die Musik läuft weiter. Bleibt ein Titel
+hängen, springt Amber Player nach 8 Sekunden zum nächsten. Passiert trotzdem etwas Seltsames:
+**Einstellungen → Fehlersuche → Protokoll** einschalten, den Fehler nachstellen und das Protokoll
+über **Teilen** (Handy) bzw. **Exportieren** (PC) weitergeben.
+
+**Titel „vom PC“ spielen nicht.**
+Sie werden vom PC gestreamt – ist der PC aus oder nicht im selben WLAN, überspringt Amber Player
+sie.
+
 ## Handy und PC
 
 **Das Handy findet den PC nicht.**

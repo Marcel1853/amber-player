@@ -569,5 +569,13 @@ I18N.it = {
  "Noch keine Titel eingelesen.": "Nessun brano ancora letto.",
  "Wird neu eingelesen …": "Nuova lettura …",
  "ausgeschlossen": "esclusa",
- "keine": "nessuna"
+ "keine": "nessuna",
+ "Fehlersuche": "Risoluzione problemi",
+ "Protokoll": "Registro",
+ "Zeichnet auf, was der Player tut (Titelwechsel, Fehler, Medientasten, Kopfhörer). Hilft, Fehler zu finden – bei Bedarf teilen.": "Registra cosa fa il lettore (cambi brano, errori, tasti multimediali, cuffie). Aiuta a trovare i problemi – condividilo se serve.",
+ "Ansehen": "Visualizza",
+ "leer": "vuoto",
+ "Noch keine Einträge. Schalte das Protokoll ein und nutze den Player wie gewohnt.": "Ancora nessuna voce. Attiva il registro e usa il lettore come al solito.",
+ "Protokoll von Amber Player": "Registro di Amber Player",
+ "Protokoll geleert": "Registro svuotato"
 };

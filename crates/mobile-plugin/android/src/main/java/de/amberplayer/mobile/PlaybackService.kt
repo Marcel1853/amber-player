@@ -48,6 +48,7 @@ class PlaybackService : Service() {
 
         fun stop(ctx: Context) {
             last = null
+            AmberWidgets.markStopped(ctx)
             ctx.stopService(Intent(ctx, PlaybackService::class.java))
         }
     }
@@ -125,7 +126,12 @@ class PlaybackService : Service() {
             coverKey = key
             coverBitmap = try {
                 val bytes = Base64.decode(data, Base64.DEFAULT)
-                BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                // große Cover verkleinert laden (bis ~512 px) – spart Speicher
+                val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
+                var sample = 1
+                while (bounds.outWidth / (sample * 2) >= 512 && bounds.outHeight / (sample * 2) >= 512) sample *= 2
+                BitmapFactory.decodeByteArray(bytes, 0, bytes.size, BitmapFactory.Options().apply { inSampleSize = sample })
             } catch (e: Exception) {
                 null
             }
@@ -135,6 +141,7 @@ class PlaybackService : Service() {
 
     private fun render(args: MediaArgs) {
         val art = cover(args)
+        AmberWidgets.update(this, args, art)
         session.setMetadata(
             MediaMetadataCompat.Builder()
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE, args.title)
@@ -252,6 +259,7 @@ class PlaybackService : Service() {
     }
 
     override fun onDestroy() {
+        AmberWidgets.markStopped(this)
         unregisterNoisy()
         focusRequest?.let { AudioManagerCompat.abandonAudioFocusRequest(audio, it) }
         focusRequest = null

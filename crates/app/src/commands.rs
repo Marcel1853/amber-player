@@ -429,6 +429,55 @@ pub fn effect_delete_preset(ctx: State<'_, Ctx>, id: String, name: String) -> R<
     ctx.player.effects().delete_preset(&id, &name).map_err(|e| format!("{e:#}"))
 }
 
+/// Fehlerprotokoll: an/aus und Größe.
+#[tauri::command]
+pub fn debug_log_info() -> Value {
+    let size = std::fs::metadata(amber_core::debuglog::path()).map(|m| m.len()).unwrap_or(0);
+    json!({ "enabled": amber_core::debuglog::enabled(), "bytes": size })
+}
+
+#[tauri::command]
+pub fn set_debug_log(ctx: State<'_, Ctx>, on: bool) -> R<()> {
+    amber_core::debuglog::set_enabled(on);
+    ctx.player
+        .library()
+        .set_setting_json(amber_core::debuglog::SETTING, &on)
+        .map_err(|e| format!("{e:#}"))
+}
+
+#[tauri::command]
+pub fn debug_log_text() -> String {
+    amber_core::debuglog::read()
+}
+
+#[tauri::command]
+pub fn debug_log_clear() {
+    amber_core::debuglog::clear();
+}
+
+/// Protokoll zum Weitergeben speichern: am Handy in den Cache (für „Teilen“), am PC per Dialog.
+#[tauri::command]
+pub async fn debug_log_export(app: tauri::AppHandle) -> R<Option<String>> {
+    let text = amber_core::debuglog::read();
+    let name = format!("amber-player-protokoll-{}.txt", env!("CARGO_PKG_VERSION"));
+    #[cfg(mobile)]
+    let path: PathBuf = {
+        use tauri::Manager;
+        let dir = app.path().app_cache_dir().map_err(err)?.join("share");
+        std::fs::create_dir_all(&dir).map_err(err)?;
+        dir.join(name)
+    };
+    #[cfg(not(mobile))]
+    let path: PathBuf = {
+        let Some(file) = app.dialog().file().set_title("Protokoll speichern").set_file_name(name).add_filter("Text", &["txt"]).blocking_save_file() else {
+            return Ok(None);
+        };
+        file.into_path().map_err(err)?
+    };
+    std::fs::write(&path, text).map_err(err)?;
+    Ok(Some(path.to_string_lossy().into_owned()))
+}
+
 /// Lautstärke-Anhebung in dB (0 = aus).
 #[tauri::command]
 pub fn audio_boost(ctx: State<'_, Ctx>) -> f32 {

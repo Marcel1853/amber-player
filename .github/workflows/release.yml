@@ -249,12 +249,20 @@ jobs:
           {
             echo "## Amber Player $VERSION"
             echo
+            # Neuerungen dieser Version aus CHANGELOG.md (Abschnitt „## $VERSION“ bis zum nächsten)
+            if grep -q "^## $VERSION\$" CHANGELOG.md 2>/dev/null; then
+              echo "### Neu in dieser Version"
+              echo
+              awk -v v="## $VERSION" '$0 == v {on=1; next} on && /^## / {exit} on' CHANGELOG.md
+              echo
+            fi
             echo "| Datei | Für |"
             echo "|---|---|"
             echo "| \`.deb\` | Ubuntu, Debian, Linux Mint, Pop!_OS |"
             echo "| \`.rpm\` | Fedora, openSUSE |"
             echo "| \`.AppImage\` | alle Linux-Distributionen |"
-            echo "| \`nachtfahrt.amberplugin\`, \`telefon.amberplugin\`, \`sternenfeld.amberplugin\` | Beispiel-Plugins (MIT) – in Amber Player unter *Installieren* auswählen |"
+            echo "| \`amber-studio.amberplugin\`, \`amber-studio-klang.amberplugin\` | 30 Visualisierungen und 20 Klangeffekte (MIT) – in Amber Player unter *Plugin installieren* auswählen |"
+            echo "| \`nachtfahrt.amberplugin\`, \`telefon.amberplugin\`, \`sternenfeld.amberplugin\` | Beispiel-Plugins und Vorlagen (MIT) |"
             if ls ausgabe/*.apk >/dev/null 2>&1; then
               echo "| \`.apk\` | Android (Handy und Tablet, 64 Bit) |"
             else

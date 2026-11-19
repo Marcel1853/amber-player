@@ -6,6 +6,8 @@ mod commands;
 mod config;
 #[cfg(desktop)]
 mod media;
+#[cfg(target_os = "android")]
+mod mobile_media;
 
 use std::sync::{Arc, Mutex};
 
@@ -91,17 +93,64 @@ pub fn run_headless(args: &[String]) -> anyhow::Result<()> {
     rt.block_on(amber_core::api::serve(player, cfg.bind_addr(), cfg.required_token()))
 }
 
+/// Meldungen gehen ans System-Log (Handy: logcat, PC: Konsole) und – wenn unter
+/// Einstellungen → Fehlersuche eingeschaltet – zusätzlich ins Fehlerprotokoll von Amber Player.
+struct AppLogger {
+    inner: Box<dyn log::Log>,
+}
+
+impl log::Log for AppLogger {
+    fn enabled(&self, m: &log::Metadata) -> bool {
+        self.inner.enabled(m) || (amber_core::debuglog::enabled() && m.level() <= log::Level::Info)
+    }
+
+    fn log(&self, r: &log::Record) {
+        if self.inner.enabled(r.metadata()) {
+            self.inner.log(r);
+        }
+        // Ins Protokoll: eigene Meldungen ab „Info“, fremde Bibliotheken nur Warnungen und Fehler
+        let ours = r.target().starts_with("amber") || r.target().starts_with("tauri_plugin_amber");
+        if amber_core::debuglog::enabled()
+            && r.level() <= log::Level::Info
+            && (ours || r.level() <= log::Level::Warn)
+            && !r.target().starts_with("lofty")
+        {
+            amber_core::debuglog::record(r.level().as_str(), r.target(), &r.args().to_string());
+        }
+    }
+
+    fn flush(&self) {
+        self.inner.flush();
+    }
+}
+
+/// Protokoll einrichten (einmalig; auch für den Betrieb ohne Oberfläche).
+pub fn init_logging() {
+    static ONCE: std::sync::Once = std::sync::Once::new();
+    ONCE.call_once(|| {
+        #[cfg(target_os = "android")]
+        let inner: Box<dyn log::Log> = Box::new(android_logger::AndroidLogger::new(
+            android_logger::Config::default().with_tag("AmberPlayer").with_max_level(log::LevelFilter::Info),
+        ));
+        #[cfg(not(target_os = "android"))]
+        let inner: Box<dyn log::Log> =
+            Box::new(env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).build());
+        if log::set_boxed_logger(Box::new(AppLogger { inner })).is_ok() {
+            log::set_max_level(log::LevelFilter::Info);
+        }
+        // Abstürze mit Meldung ins Log schreiben, damit sie sich finden lassen.
+        let default_hook = std::panic::take_hook();
+        std::panic::set_hook(Box::new(move |info| {
+            log::error!("Absturz: {info}");
+            default_hook(info);
+        }));
+    });
+}
+
 /// Startet die App mit Oberfläche (am PC und auf Android).
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    #[cfg(target_os = "android")]
-    {
-        android_logger::init_once(android_logger::Config::default().with_tag("AmberPlayer").with_max_level(log::LevelFilter::Info));
-        // Abstürze mit Meldung ins Handy-Log schreiben, damit sie sich finden lassen.
-        std::panic::set_hook(Box::new(|info| log::error!("Absturz: {info}")));
-    }
-    #[cfg(not(target_os = "android"))]
-    let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).try_init();
+    init_logging();
 
     #[allow(unused_mut)]
     let mut builder = tauri::Builder::default();
@@ -156,6 +205,11 @@ pub fn run() {
             commands::audio_boost,
             commands::set_audio_boost,
             commands::library_filter,
+            commands::debug_log_info,
+            commands::set_debug_log,
+            commands::debug_log_text,
+            commands::debug_log_clear,
+            commands::debug_log_export,
             commands::set_library_filter,
             commands::pc_install_plugin,
             commands::export_plugin_package,
@@ -216,6 +270,9 @@ pub fn run() {
                 format!("Bibliothek konnte nicht geöffnet werden: {e:#}")
             })?;
             log::info!("Start: Bibliothek und Player bereit");
+            amber_core::debuglog::set_enabled(
+                player.library().setting_as::<bool>(amber_core::debuglog::SETTING).unwrap_or(false),
+            );
             let mut cfg = ApiConfig::load(player.library());
             cfg.ensure_token();
             cfg.save(player.library());
@@ -262,6 +319,10 @@ pub fn run() {
                     }
                 }
             });
+
+            // Handy: Medientasten und Sperrbildschirm direkt mit dem Player verbinden
+            #[cfg(target_os = "android")]
+            mobile_media::start(&handle, player.clone());
 
             // Medientasten und Systemsteuerung (MPRIS / Windows / macOS)
             #[cfg(desktop)]

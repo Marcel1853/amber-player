@@ -523,6 +523,7 @@ impl Engine {
 
     fn pause(&mut self) {
         if let Some(sink) = &self.sink {
+            log::info!("Pause");
             sink.pause();
             for (s, _) in &self.fading {
                 s.pause();
@@ -535,6 +536,7 @@ impl Engine {
     /// (pausiert bleibt pausiert).
     #[allow(dead_code)]
     fn reattach(&mut self) {
+        log::info!("Audioausgabe neu geöffnet, setze Wiedergabe fort");
         if self.sink.is_none() {
             return;
         }
@@ -600,6 +602,7 @@ impl Engine {
     }
 
     fn stop(&mut self) {
+        log::info!("Wiedergabe gestoppt");
         self.drop_extra();
         self.sink = None;
         self.pending_seek = None;
@@ -680,6 +683,9 @@ impl Engine {
             Some((crate::pc::SOURCE_ID, file)) => {
                 let link = crate::pc::PcLink::load(&self.lib)
                     .ok_or_else(|| anyhow!("Kein PC gekoppelt – „{}“ liegt auf dem PC", track.title))?;
+                if !link.reachable() {
+                    return Err(anyhow!("PC nicht erreichbar – „{}“ liegt auf dem PC", track.title));
+                }
                 Box::new(
                     crate::httpsource::open_url(&link.stream_url(file), Default::default())
                         .with_context(|| format!("„{}“ lässt sich nicht vom PC laden", track.title))?,
@@ -728,6 +734,12 @@ impl Engine {
         if self.handle.is_none() {
             return Err(anyhow!("Kein Audiogerät verfügbar"));
         }
+        let where_ = match sources::parse_path(&track.path) {
+            Some((crate::pc::SOURCE_ID, _)) => "vom PC",
+            Some(_) => "online",
+            None => "Datei",
+        };
+        log::info!("Spiele „{}“ ({where_}, Titel {id}{})", track.title, seek.map(|p| format!(", ab {} s", p.as_secs())).unwrap_or_default());
         let decoder = self.open_track(&mut track)?;
         self.current = Some(track);
         let ctl = TrackCtl::new(1.0);
@@ -800,6 +812,7 @@ impl Engine {
     /// Überblenden: neuer Titel in eigener Spur einblenden, der alte blendet aus.
     fn crossfade_to(&mut self, next: Track, decoder: Box<dyn Source<Item = f32> + Send>, queue: Queue) {
         let secs = self.crossfade as f32;
+        log::info!("Überblende ({secs} s) zu „{}“", next.title);
         let Some(handle) = self.handle.as_ref() else { return };
         let ctl = TrackCtl::new(0.0);
         let source = self.chain(decoder, &ctl);
@@ -836,6 +849,7 @@ impl Engine {
             return;
         }
         let p = self.preload.take().expect("geprüft");
+        log::info!("Lückenlos weiter mit „{}“", p.track.title);
         *self.q() = p.queue;
         let id = p.track.id;
         self.current = Some(p.track);
@@ -846,6 +860,7 @@ impl Engine {
     }
 
     fn advance(&mut self, auto: bool) {
+        log::info!("Nächster Titel ({})", if auto { "Titel zu Ende" } else { "Weiter gedrückt" });
         if self.radio.is_some() {
             if auto {
                 self.stop();

@@ -569,5 +569,13 @@ I18N.es = {
  "Noch keine Titel eingelesen.": "Aún no hay canciones.",
  "Wird neu eingelesen …": "Volviendo a leer …",
  "ausgeschlossen": "excluida",
- "keine": "ninguna"
+ "keine": "ninguna",
+ "Fehlersuche": "Solución de problemas",
+ "Protokoll": "Registro",
+ "Zeichnet auf, was der Player tut (Titelwechsel, Fehler, Medientasten, Kopfhörer). Hilft, Fehler zu finden – bei Bedarf teilen.": "Registra lo que hace el reproductor (cambios de canción, errores, botones multimedia, auriculares). Ayuda a encontrar fallos; compártelo si hace falta.",
+ "Ansehen": "Ver",
+ "leer": "vacío",
+ "Noch keine Einträge. Schalte das Protokoll ein und nutze den Player wie gewohnt.": "Aún no hay entradas. Activa el registro y usa el reproductor como siempre.",
+ "Protokoll von Amber Player": "Registro de Amber Player",
+ "Protokoll geleert": "Registro vaciado"
 };

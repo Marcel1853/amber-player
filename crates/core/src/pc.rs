@@ -29,7 +29,36 @@ pub struct PcLink {
     pub token: String,
 }
 
+/// Letztes Ergebnis der Erreichbarkeitsprüfung: (Adresse, erreichbar, Zeitpunkt).
+static REACH: std::sync::Mutex<Option<(String, bool, std::time::Instant)>> = std::sync::Mutex::new(None);
+
 impl PcLink {
+    /// Ist der PC gerade erreichbar? Prüft in höchstens 1,5 s (TCP-Verbindung zum Port) und merkt
+    /// sich das Ergebnis eine Weile – so bleibt der Player nicht hängen, wenn man unterwegs ist
+    /// und Titel „vom PC“ in der Warteschlange stehen.
+    pub fn reachable(&self) -> bool {
+        use std::net::{TcpStream, ToSocketAddrs};
+        use std::time::{Duration, Instant};
+        if let Some((url, ok, at)) = REACH.lock().unwrap_or_else(|e| e.into_inner()).as_ref() {
+            let keep = if *ok { Duration::from_secs(60) } else { Duration::from_secs(20) };
+            if url == &self.url && at.elapsed() < keep {
+                return *ok;
+            }
+        }
+        let host = self.url.trim_start_matches("http://").trim_start_matches("https://");
+        let host = host.split('/').next().unwrap_or(host);
+        let ok = host
+            .to_socket_addrs()
+            .ok()
+            .and_then(|mut a| a.next())
+            .is_some_and(|addr| TcpStream::connect_timeout(&addr, Duration::from_millis(1500)).is_ok());
+        if !ok {
+            log::info!("PC unter {} nicht erreichbar – Titel vom PC werden übersprungen", self.url);
+        }
+        *REACH.lock().unwrap_or_else(|e| e.into_inner()) = Some((self.url.clone(), ok, Instant::now()));
+        ok
+    }
+
     pub fn load(lib: &Library) -> Option<Self> {
         lib.setting_as::<Self>(KEY).filter(|l| !l.url.is_empty())
     }
@@ -193,5 +222,17 @@ mod tests {
         assert_eq!(l.with_token("/api/search?q=a"), "http://pc:7878/api/search?q=a&token=t");
         assert_eq!(percent_decode("a%20b+c"), "a b c");
         assert_eq!(percent_decode("100%"), "100%");
+    }
+
+    #[test]
+    fn unreachable_pc_is_detected_quickly_and_remembered() {
+        // 192.0.2.x ist ein Adressbereich, der garantiert nirgends hinführt
+        let link = PcLink { url: "http://192.0.2.1:7878".into(), token: String::new() };
+        let t = std::time::Instant::now();
+        assert!(!link.reachable());
+        assert!(t.elapsed() < std::time::Duration::from_secs(3), "schnell erkannt");
+        let t = std::time::Instant::now();
+        assert!(!link.reachable());
+        assert!(t.elapsed() < std::time::Duration::from_millis(50), "zweites Mal aus dem Speicher");
     }
 }

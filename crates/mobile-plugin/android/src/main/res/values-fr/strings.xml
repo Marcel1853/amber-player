@@ -6,4 +6,15 @@
     <string name="amber_pause">Pause</string>
     <string name="amber_play">Lecture</string>
     <string name="amber_next">Suivant</string>
+    <string name="amber_widget_small">Amber Player – compact</string>
+    <string name="amber_widget_small_desc">Pochette, titre et commandes sur une ligne</string>
+    <string name="amber_widget_large">Amber Player – grand</string>
+    <string name="amber_widget_large_desc">Grande pochette avec titre, artiste, album et commandes</string>
+    <string name="amber_widget_square">Amber Player – carré</string>
+    <string name="amber_widget_square_desc">Pochette avec titre et bouton lecture</string>
+    <string name="amber_widget_radio">Amber Player – radio</string>
+    <string name="amber_widget_radio_desc">Station en cours et tes stations enregistrées à toucher</string>
+    <string name="amber_widget_radio_empty">Radio</string>
+    <string name="amber_widget_radio_hint">Touche une station pour l’écouter</string>
+    <string name="amber_widget_radio_none">Enregistre des stations dans l’app sous Radio avec ★</string>
 </resources>

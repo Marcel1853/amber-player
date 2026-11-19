@@ -569,5 +569,13 @@ I18N.pl = {
  "Noch keine Titel eingelesen.": "Nie wczytano jeszcze utworów.",
  "Wird neu eingelesen …": "Ponowne wczytywanie …",
  "ausgeschlossen": "wykluczony",
- "keine": "brak"
+ "keine": "brak",
+ "Fehlersuche": "Rozwiązywanie problemów",
+ "Protokoll": "Dziennik",
+ "Zeichnet auf, was der Player tut (Titelwechsel, Fehler, Medientasten, Kopfhörer). Hilft, Fehler zu finden – bei Bedarf teilen.": "Zapisuje, co robi odtwarzacz (zmiany utworów, błędy, przyciski multimedialne, słuchawki). Pomaga znaleźć błędy – w razie potrzeby udostępnij.",
+ "Ansehen": "Pokaż",
+ "leer": "pusty",
+ "Noch keine Einträge. Schalte das Protokoll ein und nutze den Player wie gewohnt.": "Brak wpisów. Włącz dziennik i korzystaj z odtwarzacza jak zwykle.",
+ "Protokoll von Amber Player": "Dziennik Amber Player",
+ "Protokoll geleert": "Dziennik wyczyszczony"
 };

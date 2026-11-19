@@ -569,5 +569,13 @@ I18N.fr = {
  "Noch keine Titel eingelesen.": "Aucun titre lu pour l’instant.",
  "Wird neu eingelesen …": "Nouvelle lecture …",
  "ausgeschlossen": "exclu",
- "keine": "aucun"
+ "keine": "aucun",
+ "Fehlersuche": "Dépannage",
+ "Protokoll": "Journal",
+ "Zeichnet auf, was der Player tut (Titelwechsel, Fehler, Medientasten, Kopfhörer). Hilft, Fehler zu finden – bei Bedarf teilen.": "Enregistre ce que fait le lecteur (changements de titre, erreurs, touches multimédia, casque). Aide à trouver les bugs – partage-le si besoin.",
+ "Ansehen": "Afficher",
+ "leer": "vide",
+ "Noch keine Einträge. Schalte das Protokoll ein und nutze den Player wie gewohnt.": "Aucune entrée pour l’instant. Active le journal et utilise le lecteur normalement.",
+ "Protokoll von Amber Player": "Journal d’Amber Player",
+ "Protokoll geleert": "Journal vidé"
 };

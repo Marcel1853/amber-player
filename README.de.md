@@ -76,7 +76,8 @@ Geschrieben in Rust (Tauri 2, rodio), mit eigener Oberfläche im warmen Dunkel-D
 **Handy und PC zusammen**
 - **Android-App** mit allen Funktionen zum Hören: Bibliothek, Playlisten, Effekte,
   Visualisierungen, Radio. Hintergrund-Wiedergabe mit Benachrichtigung, Sperrbildschirm und
-  Kopfhörer-/Bluetooth-Tasten.
+  Kopfhörer-/Bluetooth-Tasten, dazu **Widgets** für den Startbildschirm (kompakt, groß, Quadrat
+  und Radio).
 - **Mit dem PC koppeln** (QR-Code direkt in der App scannen): den PC vom Handy aus fernsteuern –
   Wiedergabe, Spulen, Hauptlautstärke des PCs, Klangeffekte –, Musik und Playlisten ohne Kopieren
   aufs Handy streamen und Plugins vom PC aufs Handy holen.

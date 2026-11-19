@@ -11,6 +11,25 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application>
+        <!-- Startbildschirm-Widgets -->
+        <receiver android:name="de.amberplayer.mobile.AmberWidgetSmall" android:exported="false" android:label="@string/amber_widget_small">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/amber_widget_small_info" />
+        </receiver>
+        <receiver android:name="de.amberplayer.mobile.AmberWidgetLarge" android:exported="false" android:label="@string/amber_widget_large">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/amber_widget_large_info" />
+        </receiver>
+        <receiver android:name="de.amberplayer.mobile.AmberWidgetSquare" android:exported="false" android:label="@string/amber_widget_square">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/amber_widget_square_info" />
+        </receiver>
+        <receiver android:name="de.amberplayer.mobile.AmberWidgetRadio" android:exported="false" android:label="@string/amber_widget_radio">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/amber_widget_radio_info" />
+        </receiver>
+        <receiver android:name="de.amberplayer.mobile.AmberWidgetAction" android:exported="false" />
+
         <service
             android:name="de.amberplayer.mobile.PlaybackService"
             android:exported="false"

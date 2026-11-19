@@ -6,4 +6,15 @@
     <string name="amber_pause">Duraklat</string>
     <string name="amber_play">Çal</string>
     <string name="amber_next">Sonraki</string>
+    <string name="amber_widget_small">Amber Player – kompakt</string>
+    <string name="amber_widget_small_desc">Kapak, başlık ve tuşlar tek satırda</string>
+    <string name="amber_widget_large">Amber Player – büyük</string>
+    <string name="amber_widget_large_desc">Başlık, sanatçı, albüm ve tuşlarla büyük kapak</string>
+    <string name="amber_widget_square">Amber Player – kare</string>
+    <string name="amber_widget_square_desc">Başlık ve oynat tuşuyla kapak</string>
+    <string name="amber_widget_radio">Amber Player – radyo</string>
+    <string name="amber_widget_radio_desc">Çalan istasyon ve dokunmak için kayıtlı istasyonların</string>
+    <string name="amber_widget_radio_empty">Radyo</string>
+    <string name="amber_widget_radio_hint">Dinlemek için bir istasyona dokun</string>
+    <string name="amber_widget_radio_none">İstasyonları uygulamada Radyo altında ★ ile kaydet</string>
 </resources>
