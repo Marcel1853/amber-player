@@ -1117,3 +1117,12 @@ a.icon-btn { font-weight: 700; font-size: 15px; text-decoration: none; color: in
   max-height: min(60vh, 560px); overflow: auto; margin: 8px 0 12px; padding: 12px; border-radius: 10px;
   background: var(--panel); border: 1px solid var(--line); font: 11.5px/1.45 ui-monospace, monospace; white-space: pre-wrap; word-break: break-word;
 }
+
+/* Equalizer für andere Apps: adb-Befehl zum Abschreiben */
+.geq-cmd { display: block; margin-top: 6px; padding: 6px 8px; border-radius: 6px; background: var(--bg-2, rgba(127,127,127,.15)); font-size: 12px; word-break: break-all; user-select: all; }
+
+/* Effekte: wirkt auch in anderen Apps? */
+.outside-badge { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 999px; font-family: var(--sans, inherit); font-size: 11px; font-weight: 600; vertical-align: middle; border: 1px solid var(--line, rgba(127,127,127,.3)); color: var(--text-2); }
+.outside-badge.full { color: #3fb27f; border-color: rgba(63,178,127,.45); }
+.outside-badge.approx, .outside-badge.partial { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+.outside-badge.none { color: var(--text-3); }

@@ -77,6 +77,8 @@ Written in Rust (Tauri 2, rodio), with its own interface in a warm dark design.
 - **Android app** with everything for listening: library, playlists, effects, visualizers,
   radio. Background playback with notification, lock screen and headphone/Bluetooth buttons, plus
   **home-screen widgets** (compact, large, square and radio).
+- **Effects for other apps:** equalizer, tone, plugin filters, balance, reverb, 8D flight, boost
+  and limiter can also work in YT Music, Spotify & co.
 - **Pair with your PC** (scan the QR code right in the app): control the PC from your phone –
   playback, seeking, the PC's main volume, sound effects – stream music and playlists to the
   phone without copying files, and get plugins from the PC onto the phone.

@@ -14,6 +14,8 @@ Alles, was die Oberfläche von Amber Player auf Android braucht
 - `allow-move-to-back`
 - `allow-share-file`
 - `allow-take-shared-file`
+- `allow-global-eq-get`
+- `allow-global-eq-set`
 - `allow-check-permissions`
 - `allow-request-permissions`
 - `allow-register-listener`
@@ -76,6 +78,58 @@ Enables the get_fullscreen command without any pre-configured scope.
 <td>
 
 Denies the get_fullscreen command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`amber-mobile:allow-global-eq-get`
+
+</td>
+<td>
+
+Enables the global_eq_get command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`amber-mobile:deny-global-eq-get`
+
+</td>
+<td>
+
+Denies the global_eq_get command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`amber-mobile:allow-global-eq-set`
+
+</td>
+<td>
+
+Enables the global_eq_set command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`amber-mobile:deny-global-eq-set`
+
+</td>
+<td>
+
+Denies the global_eq_set command without any pre-configured scope.
 
 </td>
 </tr>

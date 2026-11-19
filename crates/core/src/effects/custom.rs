@@ -456,6 +456,31 @@ impl EffectPlugin for CustomPlugin {
     fn source(&self) -> Option<String> {
         self.source.clone()
     }
+    /// Filter, Pegel und Auto-Pan gehen in anderen Apps; Echo, Breite, Verzerrung und Kompressor nicht.
+    fn outside(&self) -> super::Outside {
+        let ok = |k: &BlockKind| {
+            matches!(
+                k,
+                BlockKind::Gain | BlockKind::Peaking | BlockKind::LowShelf | BlockKind::HighShelf | BlockKind::LowPass | BlockKind::HighPass | BlockKind::AutoPan
+            )
+        };
+        let good = self.blocks.iter().filter(|b| ok(&b.kind)).count();
+        if good == self.blocks.len() {
+            super::Outside::Full
+        } else if good > 0 {
+            super::Outside::Partial
+        } else {
+            super::Outside::None
+        }
+    }
+    fn outside_autopan(&self, values: &[f32]) -> Vec<(f32, f32)> {
+        let mix = self.mix.eval(values).clamp(0.0, 1.0);
+        self.blocks
+            .iter()
+            .filter(|b| matches!(b.kind, BlockKind::AutoPan))
+            .map(|b| (b.fields[0].eval(values).clamp(0.01, 20.0), (b.fields[1].eval(values) * mix).clamp(0.0, 1.0)))
+            .collect()
+    }
     fn create(&self, sample_rate: u32, channels: u16) -> Box<dyn Processor> {
         let ch = (channels as usize).clamp(1, MAX_CHANNELS);
         Box::new(CustomProcessor {

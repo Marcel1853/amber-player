@@ -17,4 +17,10 @@
     <string name="amber_widget_radio_empty">Radio</string>
     <string name="amber_widget_radio_hint">Dotknij stacji, aby słuchać</string>
     <string name="amber_widget_radio_none">Zapisz stacje w aplikacji w Radio za pomocą ★</string>
+    <string name="amber_geq_channel">Korektor dla innych aplikacji</string>
+    <string name="amber_geq_title">Korektor Amber aktywny</string>
+    <string name="amber_geq_global">Działa na cały dźwięk (globalnie)</string>
+    <string name="amber_geq_waiting">Czeka na aplikację muzyczną …</string>
+    <string name="amber_geq_apps">Aktywny dla: %1$s</string>
+    <string name="amber_geq_off">Wyłącz</string>
 </resources>

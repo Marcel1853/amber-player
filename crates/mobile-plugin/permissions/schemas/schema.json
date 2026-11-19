@@ -319,6 +319,30 @@
           "markdownDescription": "Denies the get_fullscreen command without any pre-configured scope."
         },
         {
+          "description": "Enables the global_eq_get command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-global-eq-get",
+          "markdownDescription": "Enables the global_eq_get command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the global_eq_get command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-global-eq-get",
+          "markdownDescription": "Denies the global_eq_get command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the global_eq_set command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-global-eq-set",
+          "markdownDescription": "Enables the global_eq_set command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the global_eq_set command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-global-eq-set",
+          "markdownDescription": "Denies the global_eq_set command without any pre-configured scope."
+        },
+        {
           "description": "Enables the ignore_battery_optimizations command without any pre-configured scope.",
           "type": "string",
           "const": "allow-ignore-battery-optimizations",
@@ -463,10 +487,10 @@
           "markdownDescription": "Denies the update_media command without any pre-configured scope."
         },
         {
-          "description": "Alles, was die Oberfläche von Amber Player auf Android braucht\n#### This default permission set includes:\n\n- `allow-update-media`\n- `allow-stop-media`\n- `allow-ignore-battery-optimizations`\n- `allow-take-pair-link`\n- `allow-get-fullscreen`\n- `allow-set-fullscreen`\n- `allow-open-url`\n- `allow-move-to-back`\n- `allow-share-file`\n- `allow-take-shared-file`\n- `allow-check-permissions`\n- `allow-request-permissions`\n- `allow-register-listener`\n- `allow-remove-listener`",
+          "description": "Alles, was die Oberfläche von Amber Player auf Android braucht\n#### This default permission set includes:\n\n- `allow-update-media`\n- `allow-stop-media`\n- `allow-ignore-battery-optimizations`\n- `allow-take-pair-link`\n- `allow-get-fullscreen`\n- `allow-set-fullscreen`\n- `allow-open-url`\n- `allow-move-to-back`\n- `allow-share-file`\n- `allow-take-shared-file`\n- `allow-global-eq-get`\n- `allow-global-eq-set`\n- `allow-check-permissions`\n- `allow-request-permissions`\n- `allow-register-listener`\n- `allow-remove-listener`",
           "type": "string",
           "const": "default",
-          "markdownDescription": "Alles, was die Oberfläche von Amber Player auf Android braucht\n#### This default permission set includes:\n\n- `allow-update-media`\n- `allow-stop-media`\n- `allow-ignore-battery-optimizations`\n- `allow-take-pair-link`\n- `allow-get-fullscreen`\n- `allow-set-fullscreen`\n- `allow-open-url`\n- `allow-move-to-back`\n- `allow-share-file`\n- `allow-take-shared-file`\n- `allow-check-permissions`\n- `allow-request-permissions`\n- `allow-register-listener`\n- `allow-remove-listener`"
+          "markdownDescription": "Alles, was die Oberfläche von Amber Player auf Android braucht\n#### This default permission set includes:\n\n- `allow-update-media`\n- `allow-stop-media`\n- `allow-ignore-battery-optimizations`\n- `allow-take-pair-link`\n- `allow-get-fullscreen`\n- `allow-set-fullscreen`\n- `allow-open-url`\n- `allow-move-to-back`\n- `allow-share-file`\n- `allow-take-shared-file`\n- `allow-global-eq-get`\n- `allow-global-eq-set`\n- `allow-check-permissions`\n- `allow-request-permissions`\n- `allow-register-listener`\n- `allow-remove-listener`"
         }
       ]
     }

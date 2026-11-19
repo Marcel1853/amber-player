@@ -52,6 +52,9 @@ impl EffectPlugin for Reverb {
         ]
     }
 
+    fn outside(&self) -> super::Outside {
+        super::Outside::Approx
+    }
     fn create(&self, sample_rate: u32, channels: u16) -> Box<dyn Processor> {
         let rate = sample_rate.max(8000) as f32;
         let scale = rate / 44100.0;

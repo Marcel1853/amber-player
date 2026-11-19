@@ -1625,6 +1625,18 @@ async function renderEffects(el, v, fresh) {
 
 let fxPackages = [];
 
+/** Handy: Schild, ob der Effekt auch in anderen Apps wirkt (Einstellungen → Effekte für andere Apps). */
+function outsideBadge(fx) {
+  if (!IS_ANDROID || !fx.outside) return '';
+  const info = {
+    full: [tx('Auch in anderen Apps'), tx('Wirkt mit „Effekte für andere Apps“ auch in YT Music, Spotify & Co.')],
+    approx: [tx('Andere Apps: ähnlich'), tx('Wird in anderen Apps mit Androids eigenem Baustein nachgebildet und klingt dort etwas anders.')],
+    partial: [tx('Andere Apps: teilweise'), tx('Ein Teil wirkt auch in anderen Apps – Echo, Stereobreite, Verzerrung und Kompressor gehen dort nicht.')],
+    none: [tx('Nur in Amber'), tx('Wirkt nicht in anderen Apps, dafür hat Android keinen Baustein.')],
+  }[fx.outside];
+  return info ? `<span class="outside-badge ${fx.outside}" title="${esc(info[1])}">${esc(info[0])}</span>` : '';
+}
+
 function fxCard(fx) {
   const origin = pluginOrigin(fx.source, fxPackages);
   const isEq = fx.id === 'equalizer';
@@ -1651,7 +1663,7 @@ function fxCard(fx) {
   return `<div class="fx${fx.enabled ? '' : ' off'}" data-id="${fx.id}">
     <div class="fx-head">
       <label class="switch" title="An/Aus"><input type="checkbox" data-enable ${fx.enabled ? 'checked' : ''}><span></span></label>
-      <div class="grow"><h3>${esc(fx.name)}${origin ? `<span class="src-badge" data-raw title="${esc(origin.title)}">${esc(origin.label)}</span>` : ''}</h3><p>${esc(fx.description)}</p></div>
+      <div class="grow"><h3>${esc(fx.name)}${origin ? `<span class="src-badge" data-raw title="${esc(origin.title)}">${esc(origin.label)}</span>` : ''}${outsideBadge(fx)}</h3><p>${esc(fx.description)}</p></div>
       ${presets}
     </div>
     <div class="fx-body">${body}</div>
@@ -1859,6 +1871,29 @@ async function renderSettings(el, v, fresh) {
         <span class="hint">${esc(tx('Für leise Kopfhörer: macht alles lauter. Ein Begrenzer verhindert Übersteuern und Knacken – bei viel Anhebung klingen sehr laute Stellen etwas dichter.'))}${IS_ANDROID ? ' ' + esc(tx('Tipp: Android begrenzt die Kopfhörer-Lautstärke zum Gehörschutz. Erscheint beim Lauterstellen die Warnung, einmal bestätigen.')) : ''}</span></span>
       </div>
     </div>
+
+    ${IS_ANDROID ? `<div class="box" id="geqBox">
+      <h3>${esc(tx('Effekte für andere Apps'))}</h3>
+      <div class="kv">
+        <span class="k">${esc(tx('Einschalten'))}</span>
+        <span style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <label class="switch"><input type="checkbox" id="geqOn"><span></span></label>
+          <span class="hint" style="margin:0">${esc(tx('Deine Klangeffekte aus Amber Player wirken auch in anderen Musik-Apps: Equalizer, Ton, Balance, Hall, die Filter aus Plugins, das Kreisen vom 8D-Rundflug und die Lautstärke-Anhebung samt Begrenzer. Echo, Verzerrung und Stereobreite gehen dort nicht – an jedem Effekt steht, ob er in anderen Apps wirkt. Eine Benachrichtigung zeigt das an; dort „Ausschalten“ – wieder an geht nur hier.'))}</span>
+        </span>
+        <span class="k">${esc(tx('Wirkt auf'))}</span>
+        <span><select class="select" id="geqMode">
+          <option value="apps">${esc(tx('Erkannte Musik-Apps'))}</option>
+          <option value="global">${esc(tx('Gesamten Ton (global)'))}</option>
+        </select>
+        <span class="hint">${esc(tx('„Erkannte Musik-Apps“ funktioniert mit Apps, die einen Equalizer anbieten (z. B. Spotify, Poweramp, VLC). „Global“ wirkt auf alles, geht aber nicht auf jedem Handy.'))}</span>
+        <span class="hint" id="geqApps"></span>
+        <span class="hint">${esc(tx('Nur eine Equalizer-App gleichzeitig: Läuft daneben z. B. der Poweramp Equalizer, überschreiben sie sich gegenseitig.'))}</span></span>
+        <span class="k">${esc(tx('Erweiterte Erkennung'))}</span>
+        <span><span id="geqDump" class="hint" style="margin:0;display:block"></span>
+        <span class="hint" id="geqDumpHow" hidden>${esc(tx('Erkennt auch Apps, die sich nicht beim Equalizer melden (z. B. YouTube). Einmalig am PC mit USB- oder WLAN-Debugging freigeben:'))}
+          <code class="geq-cmd" data-raw>adb shell pm grant de.amberplayer.app android.permission.DUMP</code></span></span>
+      </div>
+    </div>` : ''}
 
     <div class="box">
       <h3>Darstellung</h3>
@@ -2099,6 +2134,32 @@ async function renderSettings(el, v, fresh) {
       await call('set_debug_log', { on: debugBox.checked });
       debugInfo();
     });
+  }
+  const geqOn = $('#geqOn', el);
+  if (geqOn) {
+    const geqMode = $('#geqMode', el);
+    const geqApps = $('#geqApps', el);
+    const geqLoad = () =>
+      invoke('plugin:amber-mobile|global_eq_get')
+        .then((r) => {
+          if (!r?.supported) {
+            $('#geqBox', el).hidden = true;
+            return;
+          }
+          geqOn.checked = !!r.on;
+          geqMode.value = r.mode === 'global' ? 'global' : 'apps';
+          $('#geqDump', el).textContent = r.dump ? tx('Freigegeben – auch YouTube und andere Apps werden erkannt.') : tx('Nicht freigegeben');
+          $('#geqDumpHow', el).hidden = !!r.dump;
+          geqApps.textContent = r.on && r.mode !== 'global' ? (r.apps?.length ? tx('Aktiv für: {apps}', { apps: r.apps.join(', ') }) : tx('Wartet auf eine Musik-App …')) : '';
+        })
+        .catch(() => ($('#geqBox', el).hidden = true));
+    const geqSave = () =>
+      invoke('plugin:amber-mobile|global_eq_set', { on: geqOn.checked, mode: geqMode.value })
+        .then(() => setTimeout(geqLoad, 600))
+        .catch((e) => toast(String(e), 'err'));
+    geqOn.addEventListener('change', geqSave);
+    geqMode.addEventListener('change', () => geqOn.checked && geqSave());
+    geqLoad();
   }
   const boostSel = $('#boostSel', el);
   if (boostSel) {

@@ -22,6 +22,9 @@ und werden gespeichert.
 | **8D-Rundflug** | die Musik wandert langsam um den Kopf – am besten mit Kopfhörern |
 | **Vorverstärker & Limiter** | lauter/leiser und Spitzen abfangen |
 
+Am Handy wirken die meisten Effekte auf Wunsch auch in anderen Musik-Apps – siehe
+[Handy-App → Effekte für andere Apps](Handy-App.md#effekte-für-andere-apps).
+
 ## Hall
 
 | Regler | Wirkung |

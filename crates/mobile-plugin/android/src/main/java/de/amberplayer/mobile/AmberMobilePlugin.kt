@@ -2,6 +2,7 @@ package de.amberplayer.mobile
 
 import android.app.Activity
 import android.content.Intent
+import androidx.core.content.ContextCompat
 import android.net.Uri
 import android.os.PowerManager
 import android.provider.OpenableColumns
@@ -25,6 +26,12 @@ import app.tauri.plugin.Plugin
 @InvokeArg
 class UrlArgs {
     var url: String = ""
+}
+
+@InvokeArg
+class GlobalEqArgs {
+    var on: Boolean = false
+    var mode: String = "apps"
 }
 
 @InvokeArg
@@ -102,6 +109,14 @@ class AmberMobilePlugin(private val activity: Activity) : Plugin(activity) {
         instance = this
         pairLinkOf(activity.intent)?.let { pendingPair = it }
         sharedFileOf(activity.intent)?.let { pendingFile = it }
+        // Meldungen des Effekt-Dienstes (eigener Prozess) ins Fehlerprotokoll übernehmen
+        ContextCompat.registerReceiver(activity, object : android.content.BroadcastReceiver() {
+            override fun onReceive(ctx: android.content.Context, intent: Intent) {
+                intent.getStringExtra("message")?.let { note(it) }
+            }
+        }, android.content.IntentFilter(GlobalEq.NOTE_ACTION), ContextCompat.RECEIVER_NOT_EXPORTED)
+        // Effekte für andere Apps waren an (z. B. nach einem Update)? Dann wieder starten.
+        if (GlobalEq.enabled(activity)) GlobalEq.setEnabled(activity, true, GlobalEq.mode(activity))
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -295,6 +310,41 @@ class AmberMobilePlugin(private val activity: Activity) : Plugin(activity) {
         }
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         activity.startActivity(intent)
+        invoke.resolve()
+    }
+
+    /** Equalizer für andere Apps: Zustand für die Einstellungen. */
+    @Command
+    fun globalEqGet(invoke: Invoke) {
+        val result = JSObject()
+        result.put("supported", GlobalEq.supported())
+        result.put("on", GlobalEq.enabled(activity))
+        result.put("mode", GlobalEq.mode(activity))
+        result.put("apps", org.json.JSONArray(GlobalEq.statusApps(activity)))
+        result.put("dump", GlobalEq.dumpGranted(activity))
+        result.put("pkg", activity.packageName)
+        invoke.resolve(result)
+    }
+
+    private fun appLabel(pkg: String): String = try {
+        val pm = activity.packageManager
+        pm.getApplicationLabel(pm.getApplicationInfo(pkg, 0)).toString()
+    } catch (e: Exception) {
+        pkg
+    }
+
+    /** Equalizer für andere Apps ein-/ausschalten (Aus geht auch über die Benachrichtigung). */
+    @Command
+    fun globalEqSet(invoke: Invoke) {
+        val args = invoke.parseArgs(GlobalEqArgs::class.java)
+        GlobalEq.setEnabled(activity, args.on, args.mode)
+        invoke.resolve()
+    }
+
+    /** Bänder und Anhebung vom Player (bei jeder Änderung am Equalizer). */
+    @Command
+    fun globalEqValues(invoke: Invoke) {
+        GlobalEq.setProfile(activity, invoke.getArgs().toString())
         invoke.resolve()
     }
 

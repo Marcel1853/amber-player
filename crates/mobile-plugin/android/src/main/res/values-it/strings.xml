@@ -17,4 +17,10 @@
     <string name="amber_widget_radio_empty">Radio</string>
     <string name="amber_widget_radio_hint">Tocca una stazione per ascoltarla</string>
     <string name="amber_widget_radio_none">Salva le stazioni nell’app in Radio con ★</string>
+    <string name="amber_geq_channel">Equalizzatore per altre app</string>
+    <string name="amber_geq_title">Equalizzatore Amber attivo</string>
+    <string name="amber_geq_global">Agisce su tutto l’audio (globale)</string>
+    <string name="amber_geq_waiting">In attesa di un’app musicale …</string>
+    <string name="amber_geq_apps">Attivo per: %1$s</string>
+    <string name="amber_geq_off">Disattiva</string>
 </resources>

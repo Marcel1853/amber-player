@@ -27,6 +27,9 @@ impl EffectPlugin for StereoWidth {
         vec![p("Normal", [100.0, 0.0]), p("Mono", [0.0, 0.0]), p("Breit", [150.0, 0.0])]
     }
 
+    fn outside(&self) -> super::Outside {
+        super::Outside::Partial
+    }
     fn create(&self, _sample_rate: u32, _channels: u16) -> Box<dyn Processor> {
         Box::new(WidthProcessor { width: 1.0, left: 1.0, right: 1.0 })
     }

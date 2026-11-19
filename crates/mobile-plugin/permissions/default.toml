@@ -13,6 +13,8 @@ permissions = [
   "allow-move-to-back",
   "allow-share-file",
   "allow-take-shared-file",
+  "allow-global-eq-get",
+  "allow-global-eq-set",
   "allow-check-permissions",
   "allow-request-permissions",
   "allow-register-listener",

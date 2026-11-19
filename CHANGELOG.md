@@ -3,6 +3,20 @@
 Neueste Version oben. Der Abschnitt einer Version erscheint automatisch in ihrer
 [Release-Übersicht](https://github.com/Marcel1853/amber-player/releases).
 
+## 0.9.2
+
+**Handy**
+- **Effekte für andere Apps:** Deine Klangeffekte wirken auf Wunsch auch in YT Music, Spotify &
+  Co. – Equalizer, Ton, alle Filter aus Plugins (z. B. Altes Radio), Balance, Hall, das Kreisen
+  vom 8D-Rundflug, Lautstärke-Anhebung und Begrenzer. Einschalten unter Einstellungen → Effekte
+  für andere Apps.
+- An jedem Effekt steht, ob er auch in anderen Apps wirkt (ganz, ähnlich, teilweise oder nur in
+  Amber).
+- Eine Benachrichtigung zeigt, für welche App die Effekte gerade wirken, mit „Ausschalten“. Die
+  Effekte laufen weiter, auch wenn Amber Player aus der App-Übersicht gewischt wird.
+- Erweiterte Erkennung für Apps, die sich nicht beim Equalizer melden (z. B. YouTube) – mit
+  einmaliger Freigabe per Debugging.
+
 ## 0.9.1
 
 **Handy**

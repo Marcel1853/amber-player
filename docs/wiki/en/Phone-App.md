@@ -50,6 +50,38 @@ Long-press the home screen → **Widgets** → **Amber Player**:
 Tapping the cover or title opens the app. If Amber Player isn't running, the buttons open the app
 too. The widgets keep showing the last state after the app is closed.
 
+## Effects for other apps
+
+Your sound effects from Amber Player can also work in other music apps – e.g. YT Music, Spotify
+or Poweramp. Turn on: **Settings → Effects for other apps → Turn on**.
+
+| Works in other apps | Only in Amber |
+|---|---|
+| Equalizer, tone, bass booster, clearer voices and all filters from plugins (e.g. Old radio, Amber Studio Sound) | Echo, distortion, stereo width, headphone crossfeed |
+| Balance, volume boost and limiter (nothing clips) | |
+| Reverb (recreated with Android's own reverb, sounds a little different) | |
+| the circling of the 8D flight | |
+
+Each effect shows a small tag: **Also in other apps**, **Other apps: similar**, **Other apps:
+partly** or **Only in Amber**.
+
+- While the effects are on, a **notification** shows which app they're working on. Tap **Turn
+  off** there – turning them back on only works in the app. It can only be swiped away while no
+  music is playing.
+- The effects keep running even if you swipe Amber Player out of the recent apps.
+- **Detected music apps** (default) works with apps that offer an equalizer. **All sound
+  (global)** affects everything but doesn't work on every phone.
+- **Only one equalizer app at a time:** if e.g. Poweramp Equalizer runs alongside, they overwrite
+  each other.
+- For apps that don't register with equalizers (e.g. the regular YouTube app) there's **advanced
+  detection**. It needs a one-time permission via USB or wireless debugging; the command is shown
+  in the settings.
+
+> **How it works:** Android only lets apps attach its built-in building blocks to other apps.
+> Amber Player therefore sends a quiet test tone through your enabled effects, measures the
+> frequency curve and transfers it to these building blocks – even for plugins that don't exist
+> yet.
+
 ## Full screen
 
 By default the app hides the status and navigation bars. Swiping from the edge shows them

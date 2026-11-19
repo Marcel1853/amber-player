@@ -17,4 +17,10 @@
     <string name="amber_widget_radio_empty">Radio</string>
     <string name="amber_widget_radio_hint">Tik op een zender om af te spelen</string>
     <string name="amber_widget_radio_none">Sla zenders op in de app onder Radio met ★</string>
+    <string name="amber_geq_channel">Equalizer voor andere apps</string>
+    <string name="amber_geq_title">Amber-equalizer actief</string>
+    <string name="amber_geq_global">Werkt op al het geluid (globaal)</string>
+    <string name="amber_geq_waiting">Wacht op een muziek-app …</string>
+    <string name="amber_geq_apps">Actief voor: %1$s</string>
+    <string name="amber_geq_off">Uitschakelen</string>
 </resources>

@@ -78,6 +78,8 @@ Geschrieben in Rust (Tauri 2, rodio), mit eigener Oberfläche im warmen Dunkel-D
   Visualisierungen, Radio. Hintergrund-Wiedergabe mit Benachrichtigung, Sperrbildschirm und
   Kopfhörer-/Bluetooth-Tasten, dazu **Widgets** für den Startbildschirm (kompakt, groß, Quadrat
   und Radio).
+- **Effekte für andere Apps:** Equalizer, Ton, Plugin-Filter, Balance, Hall, 8D-Rundflug,
+  Anhebung und Begrenzer wirken auf Wunsch auch in YT Music, Spotify & Co.
 - **Mit dem PC koppeln** (QR-Code direkt in der App scannen): den PC vom Handy aus fernsteuern –
   Wiedergabe, Spulen, Hauptlautstärke des PCs, Klangeffekte –, Musik und Playlisten ohne Kopieren
   aufs Handy streamen und Plugins vom PC aufs Handy holen.

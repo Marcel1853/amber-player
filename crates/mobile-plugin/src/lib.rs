@@ -32,6 +32,13 @@ impl<R: Runtime> MediaBridge<R> {
         }
     }
 
+    /// Amber-Effekte für andere Apps: Klangkurve, Balance, Hall und Anhebung.
+    pub fn global_eq_values(&self, payload: serde_json::Value) {
+        if let Err(e) = self.0.run_mobile_plugin::<serde_json::Value>("globalEqValues", payload) {
+            log::warn!("Effekte für andere Apps: {e}");
+        }
+    }
+
     pub fn stop(&self) {
         let _ = self.0.run_mobile_plugin::<serde_json::Value>("stopMedia", serde_json::json!({}));
     }

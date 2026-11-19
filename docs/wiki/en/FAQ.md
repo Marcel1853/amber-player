@@ -89,6 +89,12 @@ It was also installed in the “Dual Messenger” profile. Uninstall one copy.
 **How do I get music from the PC onto the phone without copying it?**
 With pairing: **More → PC → Music from the PC** or play a playlist with **Here**.
 
+**The effects don't work in another app.**
+Is a second equalizer app running (e.g. Poweramp Equalizer)? Then they overwrite each other –
+quit or uninstall one. If the app doesn't register with equalizers (e.g. the regular YouTube
+app), advanced detection or **All sound (global)** helps. Echo, distortion and stereo width never
+work in other apps – see the tag on the effect.
+
 ## Plugins
 
 **My sound plugin doesn't show up.**

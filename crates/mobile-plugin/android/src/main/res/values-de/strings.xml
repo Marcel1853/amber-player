@@ -17,4 +17,10 @@
     <string name="amber_widget_radio_empty">Radio</string>
     <string name="amber_widget_radio_hint">Sender antippen zum Abspielen</string>
     <string name="amber_widget_radio_none">Sender in der App unter Radio mit ★ speichern</string>
+    <string name="amber_geq_channel">Equalizer für andere Apps</string>
+    <string name="amber_geq_title">Amber-Equalizer aktiv</string>
+    <string name="amber_geq_global">Wirkt auf den gesamten Ton (global)</string>
+    <string name="amber_geq_waiting">Wartet auf eine Musik-App …</string>
+    <string name="amber_geq_apps">Aktiv für: %1$s</string>
+    <string name="amber_geq_off">Ausschalten</string>
 </resources>

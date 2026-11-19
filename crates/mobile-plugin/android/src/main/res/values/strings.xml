@@ -18,4 +18,10 @@
     <string name="amber_widget_radio_empty">Radio</string>
     <string name="amber_widget_radio_hint">Tap a station to play</string>
     <string name="amber_widget_radio_none">Save stations in the app under Radio with ★</string>
+    <string name="amber_geq_channel">Equalizer for other apps</string>
+    <string name="amber_geq_title">Amber equalizer active</string>
+    <string name="amber_geq_global">Working on all sound (global)</string>
+    <string name="amber_geq_waiting">Waiting for a music app …</string>
+    <string name="amber_geq_apps">Active for: %1$s</string>
+    <string name="amber_geq_off">Turn off</string>
 </resources>

@@ -9,6 +9,7 @@ mod crossfeed;
 pub mod custom;
 mod equalizer;
 mod limiter;
+pub mod outside;
 mod reverb;
 mod stereo;
 mod tone;
@@ -59,6 +60,14 @@ pub trait EffectPlugin: Send + Sync {
     fn presets(&self) -> Vec<Preset> {
         Vec::new()
     }
+    /// Wie gut der Effekt in anderen Apps wirkt (Android, siehe [`outside`]).
+    fn outside(&self) -> Outside {
+        Outside::Full
+    }
+    /// Auto-Pan-Bausteine (Tempo in Hz, Tiefe 0…1) – für andere Apps über die Balance nachgebaut.
+    fn outside_autopan(&self, _values: &[f32]) -> Vec<(f32, f32)> {
+        Vec::new()
+    }
     /// Dateiname bei Plugins aus dem Plugin-Ordner (`None` = mitgeliefert).
     fn source(&self) -> Option<String> {
         None
@@ -92,6 +101,20 @@ pub fn builtin_plugins() -> Vec<Arc<dyn EffectPlugin>> {
     .collect()
 }
 
+/// Wirkt ein Effekt auch in anderen Apps? (Android lässt dort nur eingebaute Bausteine zu.)
+#[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum Outside {
+    /// Ganz
+    Full,
+    /// Mit Androids Bausteinen nachgebildet, klingt etwas anders
+    Approx,
+    /// Nur ein Teil (z. B. ohne Echo oder Stereobreite)
+    Partial,
+    /// Gar nicht
+    None,
+}
+
 #[derive(Debug, Clone, Serialize)]
 pub struct EffectInfo {
     pub id: &'static str,
@@ -105,6 +128,8 @@ pub struct EffectInfo {
     pub user_presets: Vec<UserPreset>,
     /// Dateiname, wenn das Plugin aus dem Plugin-Ordner stammt
     pub source: Option<String>,
+    /// Wirkt auch in anderen Apps?
+    pub outside: Outside,
 }
 
 /// Eine selbst gespeicherte Voreinstellung.
@@ -238,6 +263,7 @@ impl PluginHost {
             presets: slot.plugin.presets(),
             user_presets: slot.user_presets.read().unwrap().clone(),
             source: slot.plugin.source(),
+            outside: slot.plugin.outside(),
         }
     }
 

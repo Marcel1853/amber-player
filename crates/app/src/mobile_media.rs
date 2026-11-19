@@ -77,6 +77,36 @@ pub fn start<R: Runtime>(app: &AppHandle<R>, player: Arc<Player>) {
         log::error!("Medientasten verbinden: {e}");
     }
 
+    // Effekte für andere Apps: bei jeder Änderung an Effekten oder Anhebung die Kette neu
+    // vermessen und als Klangkurve, Balance und Hall an Android geben
+    {
+        let app = app.clone();
+        let player = player.clone();
+        std::thread::Builder::new()
+            .name("effekte-andere-apps".into())
+            .spawn(move || {
+                let mut seen = 0u64;
+                let mut last: Option<amber_core::effects::outside::OutsideProfile> = None;
+                loop {
+                    let fx = player.effects();
+                    let v = fx.settings_version();
+                    if v != seen {
+                        seen = v;
+                        let profile = fx.outside_profile();
+                        if last.as_ref() != Some(&profile) {
+                            match serde_json::to_value(&profile) {
+                                Ok(json) => app.state::<MediaBridge<R>>().global_eq_values(json),
+                                Err(e) => log::warn!("Effekte für andere Apps: {e}"),
+                            }
+                            last = Some(profile);
+                        }
+                    }
+                    std::thread::sleep(Duration::from_millis(500));
+                }
+            })
+            .ok();
+    }
+
     // Benachrichtigung und Sperrbildschirm bei jedem Titel-/Zustandswechsel aktualisieren
     let app = app.clone();
     let mut rx = player.subscribe();

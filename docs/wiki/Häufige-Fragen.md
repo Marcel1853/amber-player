@@ -86,6 +86,12 @@ Sie wurde zusätzlich im Profil „Dual Messenger“ installiert. Eine Kopie dei
 **Wie bekomme ich Musik vom PC aufs Handy, ohne sie zu kopieren?**
 Mit der Kopplung: **Mehr → PC → Musik vom PC** oder eine Playlist mit **Hier** abspielen.
 
+**Die Effekte wirken in einer anderen App nicht.**
+Läuft daneben eine zweite Equalizer-App (z. B. Poweramp Equalizer)? Dann überschreiben sich beide –
+eine davon beenden oder deinstallieren. Meldet sich die App nicht beim Equalizer (z. B. die normale
+YouTube-App), hilft die erweiterte Erkennung oder **Gesamten Ton (global)**. Echo, Verzerrung und
+Stereobreite gehen in anderen Apps grundsätzlich nicht – siehe das Schild am Effekt.
+
 ## Plugins
 
 **Mein Klang-Plugin erscheint nicht.**

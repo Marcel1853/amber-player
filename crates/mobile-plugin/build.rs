@@ -10,6 +10,8 @@ const COMMANDS: &[&str] = &[
     "move_to_back",
     "share_file",
     "take_shared_file",
+    "global_eq_get",
+    "global_eq_set",
     "check_permissions",
     "request_permissions",
     "register_listener",

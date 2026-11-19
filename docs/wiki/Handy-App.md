@@ -52,6 +52,37 @@ Lange auf den Startbildschirm drücken → **Widgets** → **Amber Player**:
 Cover oder Titel antippen öffnet die App. Läuft Amber Player gerade nicht, öffnen auch die Tasten
 die App. Die Widgets zeigen den letzten Stand auch nach dem Schließen.
 
+## Effekte für andere Apps
+
+Deine Klangeffekte aus Amber Player können auch in anderen Musik-Apps wirken – z. B. in YT Music,
+Spotify oder Poweramp. Einschalten: **Einstellungen → Effekte für andere Apps → Einschalten**.
+
+| Wirkt in anderen Apps | Wirkt nur in Amber |
+|---|---|
+| Equalizer, Ton, Bass-Booster, Stimmen klarer und alle Filter aus Plugins (z. B. Altes Radio, Amber Studio Klang) | Echo, Verzerrung, Stereobreite, Kopfhörer-Crossfeed |
+| Balance, Lautstärke-Anhebung und Begrenzer (nichts übersteuert) | |
+| Hall (mit Androids eigenem Hall nachgebildet, klingt etwas anders) | |
+| das Kreisen vom 8D-Rundflug | |
+
+An jedem Effekt steht ein kleines Schild: **Auch in anderen Apps**, **Andere Apps: ähnlich**,
+**Andere Apps: teilweise** oder **Nur in Amber**.
+
+- Solange die Effekte an sind, zeigt eine **Benachrichtigung**, für welche App sie gerade wirken.
+  Dort **Ausschalten** – wieder an geht nur in der App. Wegwischen lässt sie sich nur, solange
+  keine Musik läuft.
+- Die Effekte laufen weiter, auch wenn du Amber Player aus der App-Übersicht wischst.
+- **Erkannte Musik-Apps** (Standard) funktioniert mit Apps, die einen Equalizer anbieten.
+  **Gesamten Ton (global)** wirkt auf alles, geht aber nicht auf jedem Handy.
+- **Nur eine Equalizer-App gleichzeitig:** Läuft daneben z. B. der Poweramp Equalizer,
+  überschreiben sich beide gegenseitig.
+- Für Apps, die sich nicht beim Equalizer melden (z. B. die normale YouTube-App), gibt es die
+  **erweiterte Erkennung**. Sie braucht eine einmalige Freigabe per USB- oder WLAN-Debugging;
+  der Befehl steht in den Einstellungen.
+
+> **Wie das geht:** Android lässt an fremde Apps nur seine eingebauten Bausteine hängen. Amber
+> Player schickt darum einen leisen Testton durch deine eingeschalteten Effekte, misst die
+> Klangkurve und überträgt sie auf diese Bausteine – auch für Plugins, die es noch gar nicht gibt.
+
 ## Vollbild
 
 Standardmäßig blendet die App Status- und Navigationsleiste aus. Wischen vom Rand zeigt sie

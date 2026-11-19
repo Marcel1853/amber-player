@@ -22,6 +22,9 @@ and are saved.
 | **8D flight** | the music slowly moves around your head – best with headphones |
 | **Preamp & limiter** | louder/quieter and catch peaks |
 
+On the phone, most effects can also work in other music apps – see
+[Phone app → Effects for other apps](Phone-App.md#effects-for-other-apps).
+
 ## Reverb
 
 | Slider | Effect |
