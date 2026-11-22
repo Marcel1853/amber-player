@@ -25,6 +25,12 @@ use crate::model::{PlayState, RadioNow, Repeat, Status, Track};
 use crate::queue::Queue;
 
 const TICK: Duration = Duration::from_millis(200);
+/// Takt, solange nichts spielt (spart Akku: die Engine wacht seltener auf)
+const IDLE_TICK: Duration = Duration::from_secs(1);
+/// Handy: so lange nach dem Anhalten bleibt die Tonausgabe offen, danach wird sie pausiert –
+/// sonst schickt sie ununterbrochen Stille an den Audio-Chip und das Handy schläft nie.
+#[cfg(target_os = "android")]
+const OUTPUT_IDLE: Duration = Duration::from_secs(8);
 /// Bewegt sich die Position so lange nicht weiter, gilt der Titel als hängen geblieben.
 const STALL_LOCAL: Duration = Duration::from_secs(8);
 const STALL_NET: Duration = Duration::from_secs(25);
@@ -336,9 +342,29 @@ impl Engine {
         };
         self.publish();
 
+        #[cfg(target_os = "android")]
+        let mut idle_since: Option<Instant> = None;
+        #[cfg(target_os = "android")]
+        let mut output_paused = false;
         loop {
-            match rx.recv_timeout(TICK) {
+            let busy = self.state == PlayState::Playing || !self.fading.is_empty();
+            match rx.recv_timeout(if busy { TICK } else { IDLE_TICK }) {
                 Ok((cmd, reply)) => {
+                    // Erst die Ausgabe wieder anwerfen: manche Befehle (z. B. Springen) warten
+                    // darauf, dass der Audio-Thread sie ausführt – bei pausierter Ausgabe hinge
+                    // die Engine sonst.
+                    #[cfg(target_os = "android")]
+                    if output_paused {
+                        use rodio::cpal::traits::StreamTrait;
+                        if let Some(st) = &_stream {
+                            if let Err(e) = st.play() {
+                                log::warn!("Audioausgabe fortsetzen: {e}");
+                            }
+                        }
+                        output_paused = false;
+                        idle_since = None;
+                        log::info!("Audioausgabe wieder aktiv");
+                    }
                     self.handle_command(cmd);
                     self.publish();
                     if let Some(r) = reply {
@@ -353,6 +379,7 @@ impl Engine {
                 match android_output() {
                     Ok((stream, mixer)) => {
                         _stream = Some(stream);
+                        output_paused = false;
                         self.handle = Some(Output::Mixer(mixer));
                         self.reattach();
                     }
@@ -360,6 +387,34 @@ impl Engine {
                 }
             }
             self.tick();
+            // Akku: Tonausgabe pausieren, wenn eine Weile nichts spielt; sofort weiter beim Abspielen
+            #[cfg(target_os = "android")]
+            {
+                use rodio::cpal::traits::StreamTrait;
+                let busy = self.state == PlayState::Playing || !self.fading.is_empty();
+                if busy {
+                    idle_since = None;
+                    if output_paused {
+                        if let Some(st) = &_stream {
+                            if let Err(e) = st.play() {
+                                log::warn!("Audioausgabe fortsetzen: {e}");
+                            }
+                        }
+                        output_paused = false;
+                        log::info!("Audioausgabe wieder aktiv");
+                    }
+                } else {
+                    let since = *idle_since.get_or_insert_with(Instant::now);
+                    if !output_paused && since.elapsed() >= OUTPUT_IDLE {
+                        if let Some(st) = &_stream {
+                            if st.pause().is_ok() {
+                                output_paused = true;
+                                log::info!("Audioausgabe pausiert (nichts spielt) – spart Akku");
+                            }
+                        }
+                    }
+                }
+            }
         }
         self.save_session();
     }

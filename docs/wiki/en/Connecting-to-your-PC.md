@@ -55,11 +55,11 @@ volume) and **PC overall** (the PC's main volume). Below are four sections:
 Tracks from the PC behave like your own on the phone: queue, favourites, effects and visualizer
 work. They are streamed, not stored – without a connection to the PC they won't play.
 
-## Other player apps (Poweramp & co.)
+## Other player apps
 
 If you prefer another player app: on the PC under **Settings → Stream to your phone** there's a
 link with QR code for every playlist. Download the `.m3u` file and open it with your player app
-(in Poweramp, don't use “Add URL” – Poweramp can't read lists there).
+(don't enter it as a single stream address – many players can't read lists there).
 
 ## Problems
 

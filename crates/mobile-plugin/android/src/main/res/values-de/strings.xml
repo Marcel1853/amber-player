@@ -23,4 +23,5 @@
     <string name="amber_geq_waiting">Wartet auf eine Musik-App …</string>
     <string name="amber_geq_apps">Aktiv für: %1$s</string>
     <string name="amber_geq_off">Ausschalten</string>
+    <string name="amber_geq_rescan">Neu suchen</string>
 </resources>

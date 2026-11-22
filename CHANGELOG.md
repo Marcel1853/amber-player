@@ -3,6 +3,16 @@
 Neueste Version oben. Der Abschnitt einer Version erscheint automatisch in ihrer
 [Release-Übersicht](https://github.com/Marcel1853/amber-player/releases).
 
+## 0.9.3
+
+**Handy**
+- **Weniger Akkuverbrauch:** Die Tonausgabe ruht, wenn nichts spielt (vorher lief sie auch
+  pausiert weiter), die Fortschrittsanzeige zeichnet nicht mehr bei jedem Bild neu, und die
+  Effekte für andere Apps wachen deutlich seltener auf.
+- **Effekte für andere Apps:** „Apps neu suchen“ in den Einstellungen und in der Benachrichtigung;
+  veraltete Sitzungen einer App werden aufgeräumt, damit die Effekte an der richtigen hängen.
+- Der Effekt **Altes Radio** wirkt in anderen Apps wieder richtig.
+
 ## 0.9.2
 
 **Handy**

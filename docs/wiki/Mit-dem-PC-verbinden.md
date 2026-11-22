@@ -57,12 +57,12 @@ Titel vom PC erscheinen auf dem Handy wie eigene: Warteschlange, Favoriten, Effe
 Visualisierung funktionieren. Sie werden gestreamt, nicht gespeichert – ohne Verbindung zum PC
 spielen sie nicht.
 
-## Andere Player-Apps (Poweramp & Co.)
+## Andere Player-Apps
 
 Wer lieber eine andere Player-App nutzt: Am PC unter **Einstellungen → Aufs Handy streamen**
 gibt es für jede Playlist einen Link mit QR-Code. Die `.m3u`-Datei herunterladen und mit der
-Player-App öffnen (bei Poweramp nicht unter „URL hinzufügen“ eintragen – dort liest Poweramp
-keine Listen).
+Player-App öffnen (nicht als einzelne Stream-Adresse eintragen – dort lesen viele Player keine
+Listen).
 
 ## Probleme
 

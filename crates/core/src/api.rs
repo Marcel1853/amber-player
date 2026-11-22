@@ -702,8 +702,8 @@ async fn radio_play_url(State(st): State<ApiState>, Query(q): Query<RadioUrlQ>) 
 }
 
 // ---------- Streams fürs Handy ----------
-// Einzelne Titel lassen sich in Poweramp unter „Streams › URL hinzufügen“ eintragen. Ganze Listen
-// lädt man als .m3u aufs Handy und öffnet sie mit Poweramp (Poweramp liest keine Listen aus dem Netz).
+// Einzelne Titel lassen sich in Player-Apps als Stream-Adresse eintragen. Ganze Listen lädt man
+// als .m3u aufs Handy und öffnet sie mit der Player-App (viele lesen keine Listen aus dem Netz).
 
 /// „http://<Adresse wie vom Handy aufgerufen>“ – so stimmen die Links auch im Heimnetz.
 fn base_url(headers: &HeaderMap) -> String {

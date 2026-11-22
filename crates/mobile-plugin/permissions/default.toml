@@ -15,6 +15,7 @@ permissions = [
   "allow-take-shared-file",
   "allow-global-eq-get",
   "allow-global-eq-set",
+  "allow-global-eq-rescan",
   "allow-check-permissions",
   "allow-request-permissions",
   "allow-register-listener",

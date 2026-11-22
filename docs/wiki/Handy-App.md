@@ -55,7 +55,7 @@ die App. Die Widgets zeigen den letzten Stand auch nach dem Schließen.
 ## Effekte für andere Apps
 
 Deine Klangeffekte aus Amber Player können auch in anderen Musik-Apps wirken – z. B. in YT Music,
-Spotify oder Poweramp. Einschalten: **Einstellungen → Effekte für andere Apps → Einschalten**.
+Spotify oder VLC. Einschalten: **Einstellungen → Effekte für andere Apps → Einschalten**.
 
 | Wirkt in anderen Apps | Wirkt nur in Amber |
 |---|---|
@@ -71,9 +71,12 @@ An jedem Effekt steht ein kleines Schild: **Auch in anderen Apps**, **Andere App
   Dort **Ausschalten** – wieder an geht nur in der App. Wegwischen lässt sie sich nur, solange
   keine Musik läuft.
 - Die Effekte laufen weiter, auch wenn du Amber Player aus der App-Übersicht wischst.
+- Wird eine App nicht erkannt oder die falsche angezeigt: **Apps neu suchen** (in den
+  Einstellungen oder in der Benachrichtigung). Meldet sich eine App gar nicht, sie einmal ganz
+  schließen und neu starten.
 - **Erkannte Musik-Apps** (Standard) funktioniert mit Apps, die einen Equalizer anbieten.
   **Gesamten Ton (global)** wirkt auf alles, geht aber nicht auf jedem Handy.
-- **Nur eine Equalizer-App gleichzeitig:** Läuft daneben z. B. der Poweramp Equalizer,
+- **Nur eine Equalizer-App gleichzeitig:** Läuft daneben eine andere Equalizer-App,
   überschreiben sich beide gegenseitig.
 - Für Apps, die sich nicht beim Equalizer melden (z. B. die normale YouTube-App), gibt es die
   **erweiterte Erkennung**. Sie braucht eine einmalige Freigabe per USB- oder WLAN-Debugging;
@@ -108,7 +111,7 @@ Mehr dazu: [Plugins installieren](Plugins-installieren.md).
 |---|---|
 | HTTP-API, MCP-Server, Stream-Deck-Steuerung | Das Handy ist die Fernbedienung, nicht das Ziel. |
 | Quellen-Plugins (Online-Musik) | Sie starten Programme, das erlaubt Android nicht. |
-| Handy-Streams (`.m3u` für Poweramp) | Dafür gibt es jetzt die direkte PC-Verbindung. |
+| Handy-Streams (`.m3u` für andere Player-Apps) | Dafür gibt es jetzt die direkte PC-Verbindung. |
 
 ## Tablets
 

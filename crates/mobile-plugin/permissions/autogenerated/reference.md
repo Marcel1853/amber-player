@@ -16,6 +16,7 @@ Alles, was die Oberfläche von Amber Player auf Android braucht
 - `allow-take-shared-file`
 - `allow-global-eq-get`
 - `allow-global-eq-set`
+- `allow-global-eq-rescan`
 - `allow-check-permissions`
 - `allow-request-permissions`
 - `allow-register-listener`
@@ -104,6 +105,32 @@ Enables the global_eq_get command without any pre-configured scope.
 <td>
 
 Denies the global_eq_get command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`amber-mobile:allow-global-eq-rescan`
+
+</td>
+<td>
+
+Enables the global_eq_rescan command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`amber-mobile:deny-global-eq-rescan`
+
+</td>
+<td>
+
+Denies the global_eq_rescan command without any pre-configured scope.
 
 </td>
 </tr>

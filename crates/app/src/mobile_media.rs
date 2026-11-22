@@ -101,7 +101,7 @@ pub fn start<R: Runtime>(app: &AppHandle<R>, player: Arc<Player>) {
                             last = Some(profile);
                         }
                     }
-                    std::thread::sleep(Duration::from_millis(500));
+                    std::thread::sleep(Duration::from_millis(1000));
                 }
             })
             .ok();

@@ -479,14 +479,23 @@ function setRange(el, value) {
   el.style.setProperty('--pct', `${pct}%`);
 }
 
+/**
+ * Fortschrittsanzeige: viermal pro Sekunde beim Abspielen, sonst einmal pro Sekunde, und nur
+ * schreiben, wenn sich etwas geändert hat (früher bei jedem Bild – auf 120-Hz-Handys ein
+ * spürbarer Akkuverbrauch, auch im Pausenzustand).
+ */
 function tickProgress() {
   const s = state.status;
-  if (s && !state.seeking) {
+  if (s && !state.seeking && !document.hidden) {
     const pos = currentPosition();
-    $('#pos').textContent = fmtTime(pos);
-    setRange($('#seek'), s.duration_ms ? Math.round((pos / s.duration_ms) * 1000) : 0);
+    const text = fmtTime(pos);
+    const val = s.duration_ms ? Math.round((pos / s.duration_ms) * 1000) : 0;
+    const posEl = $('#pos');
+    const seek = $('#seek');
+    if (posEl && posEl.textContent !== text) posEl.textContent = text;
+    if (seek && Number(seek.value) !== val) setRange(seek, val);
   }
-  requestAnimationFrame(tickProgress);
+  setTimeout(tickProgress, s && s.state === 'playing' ? 250 : 1000);
 }
 
 // ---------- Titelliste (virtuell) ----------
@@ -1078,7 +1087,7 @@ async function renderPlaylist(el, v, fresh) {
   const cover = tracks.find((t) => t.has_cover);
   const art = cover ? `<img src="${coverUrl(cover.id)}" alt="">` : `<div class="initials" style="background:${hueGradient(pl.name)}">${icon('playlist')}</div>`;
   const actions = `${tracks.length ? playButtons : ''}
-    ${IS_ANDROID ? '' : `<button class="btn" data-act="phone" title="Als Stream fürs Handy (Poweramp)">${icon('phone')} Aufs Handy</button>`}
+    ${IS_ANDROID ? '' : `<button class="btn" data-act="phone" title="Als Stream fürs Handy (andere Player-Apps)">${icon('phone')} Aufs Handy</button>`}
     <button class="btn icon-only" data-act="rename" title="Umbenennen">${icon('edit')}</button>
     <button class="btn icon-only" data-act="export" title="Als M3U exportieren">${icon('export')}</button>
     <button class="btn icon-only danger" data-act="delete" title="Löschen">${icon('trash')}</button>`;
@@ -1776,7 +1785,7 @@ async function renderSettings(el, v, fresh) {
 
     <div class="box">
       <h3>Aufs Handy streamen</h3>
-      <p>Hör deine Musik vom PC auf dem Handy – ohne Dateien zu kopieren: Link aufs Handy (QR-Code), die .m3u-Datei herunterladen und mit Poweramp öffnen – nicht unter „URL hinzufügen“ eintragen, dort liest Poweramp keine Listen. Handy und PC müssen im selben WLAN sein.</p>
+      <p>Hör deine Musik vom PC auf dem Handy – ohne Dateien zu kopieren: Link aufs Handy (QR-Code), die .m3u-Datei herunterladen und mit einer Player-App öffnen – nicht als einzelne Stream-Adresse eintragen, dort lesen viele Player keine Listen. Handy und PC müssen im selben WLAN sein.</p>
       ${streams.lan && firewall.active && !firewall.opened
         ? `<div class="plugin-errors" style="border-color:var(--accent)"><b style="color:var(--accent)">Firewall:</b> ${esc(tx('Auf diesem PC ist die Firewall (ufw) aktiv. Damit das Handy durchkommt, muss Port {port} fürs Heimnetz freigegeben werden.', { port: firewall.port }))}
              <div style="font-family:var(--sans);margin-top:10px"><button class="btn small primary" data-act="firewall">Firewall fürs Heimnetz freigeben</button></div></div>`
@@ -1885,9 +1894,11 @@ async function renderSettings(el, v, fresh) {
           <option value="apps">${esc(tx('Erkannte Musik-Apps'))}</option>
           <option value="global">${esc(tx('Gesamten Ton (global)'))}</option>
         </select>
-        <span class="hint">${esc(tx('„Erkannte Musik-Apps“ funktioniert mit Apps, die einen Equalizer anbieten (z. B. Spotify, Poweramp, VLC). „Global“ wirkt auf alles, geht aber nicht auf jedem Handy.'))}</span>
+        <span class="hint">${esc(tx('„Erkannte Musik-Apps“ funktioniert mit Apps, die einen Equalizer anbieten (z. B. Spotify, VLC). „Global“ wirkt auf alles, geht aber nicht auf jedem Handy.'))}</span>
         <span class="hint" id="geqApps"></span>
-        <span class="hint">${esc(tx('Nur eine Equalizer-App gleichzeitig: Läuft daneben z. B. der Poweramp Equalizer, überschreiben sie sich gegenseitig.'))}</span></span>
+        <span class="actions" id="geqRescanRow" hidden><button class="btn small" id="geqRescan">${icon('refresh')} ${esc(tx('Apps neu suchen'))}</button>
+          <span class="hint" style="margin:0">${esc(tx('Hilft, wenn eine App nicht erkannt wird oder die falsche angezeigt wird. Meldet sich eine App gar nicht, sie einmal ganz schließen und neu starten.'))}</span></span>
+        <span class="hint">${esc(tx('Nur eine Equalizer-App gleichzeitig: Läuft daneben eine andere, überschreiben sie sich gegenseitig.'))}</span></span>
         <span class="k">${esc(tx('Erweiterte Erkennung'))}</span>
         <span><span id="geqDump" class="hint" style="margin:0;display:block"></span>
         <span class="hint" id="geqDumpHow" hidden>${esc(tx('Erkennt auch Apps, die sich nicht beim Equalizer melden (z. B. YouTube). Einmalig am PC mit USB- oder WLAN-Debugging freigeben:'))}
@@ -2150,6 +2161,7 @@ async function renderSettings(el, v, fresh) {
           geqMode.value = r.mode === 'global' ? 'global' : 'apps';
           $('#geqDump', el).textContent = r.dump ? tx('Freigegeben – auch YouTube und andere Apps werden erkannt.') : tx('Nicht freigegeben');
           $('#geqDumpHow', el).hidden = !!r.dump;
+          $('#geqRescanRow', el).hidden = !r.on;
           geqApps.textContent = r.on && r.mode !== 'global' ? (r.apps?.length ? tx('Aktiv für: {apps}', { apps: r.apps.join(', ') }) : tx('Wartet auf eine Musik-App …')) : '';
         })
         .catch(() => ($('#geqBox', el).hidden = true));
@@ -2158,6 +2170,12 @@ async function renderSettings(el, v, fresh) {
         .then(() => setTimeout(geqLoad, 600))
         .catch((e) => toast(String(e), 'err'));
     geqOn.addEventListener('change', geqSave);
+    $('#geqRescan', el).addEventListener('click', () => {
+      geqApps.textContent = tx('Sucht …');
+      invoke('plugin:amber-mobile|global_eq_rescan')
+        .then(() => setTimeout(geqLoad, 1500))
+        .catch((e) => toast(String(e), 'err'));
+    });
     geqMode.addEventListener('change', () => geqOn.checked && geqSave());
     geqLoad();
   }
@@ -2562,7 +2580,7 @@ async function addOwnStation() {
 
 // ---------- Streams fürs Handy ----------
 
-/** Zeigt Adresse und QR-Code einer Stream-Liste für Poweramp. */
+/** Zeigt Adresse und QR-Code einer Stream-Liste für andere Player-Apps. */
 async function streamDialog(link) {
   const svg = await invoke('qr_svg', { text: link.url });
   const modal = $('#modal');
@@ -2571,10 +2589,10 @@ async function streamDialog(link) {
       <div class="qr-wrap"><div class="qr">${svg}</div>
         <ol class="steps">
           <li>${esc(tx('QR-Code mit der Handykamera scannen und den Link öffnen – die Datei „{name}.m3u“ wird heruntergeladen.', { name: link.name }))}</li>
-          <li>${tx('Die Datei antippen und <b>mit Poweramp öffnen</b>.')}</li>
-          <li>${tx('Die Titel erscheinen in Poweramp unter <b>Streams</b> und spielen direkt vom PC.')}</li>
+          <li>${tx('Die Datei antippen und <b>mit einer Player-App öffnen</b>.')}</li>
+          <li>${tx('Die Titel erscheinen in der Player-App als <b>Streams</b> und spielen direkt vom PC.')}</li>
         </ol></div>
-      <p class="hint" style="color:var(--accent)">${tx('Wichtig: Die Adresse <b>nicht</b> in Poweramp unter „URL hinzufügen“ eintragen – dort kann Poweramp keine Listen lesen, nur einzelne Streams.')}</p>
+      <p class="hint" style="color:var(--accent)">${tx('Wichtig: Die Adresse <b>nicht</b> als einzelne Stream-Adresse („URL hinzufügen“) eintragen – dort lesen viele Player keine Listen, nur einzelne Streams.')}</p>
       ${copyField(link.url)}
       <p class="hint">Handy und PC müssen im selben WLAN sein, und Amber Player muss laufen.</p>
       <div class="actions"><button class="btn primary" data-r="ok">Fertig</button></div>
@@ -2986,7 +3004,7 @@ async function toggleViz(open = !viz.open, layer = 'full') {
   }
 }
 
-/** Handy in „Läuft gerade“: aus → hinter den Bedienelementen → Vollbild → aus (wie bei Poweramp). */
+/** Handy in „Läuft gerade“: aus → hinter den Bedienelementen → Vollbild → aus. */
 function vizCycle() {
   if (!(isMobile() && document.body.classList.contains('deck-open'))) return toggleViz();
   if (!viz.open) return toggleViz(true, 'behind');
@@ -4259,7 +4277,7 @@ async function init() {
   applyStatus(await invoke('get_status'));
   await loadPlaylists();
   render();
-  requestAnimationFrame(tickProgress);
+  tickProgress();
 }
 
 init();

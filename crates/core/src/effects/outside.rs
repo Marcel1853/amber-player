@@ -80,7 +80,9 @@ impl PluginHost {
                 });
                 continue;
             }
-            let mut proc = slot.plugin.create(RATE as u32, 2);
+            // Nur was in anderen Apps auch wirkt (Filter, Pegel) – ein Verzerrer würde den leisen
+            // Messton sonst wie eine starke Anhebung aussehen lassen.
+            let Some(mut proc) = slot.plugin.outside_processor(RATE as u32, 2) else { continue };
             proc.set_params(&values);
             let mut frame = [0f32; 2];
             for n in 0..FRAMES {
@@ -176,6 +178,17 @@ mod tests {
     }
 
     #[test]
+    fn old_radio_keeps_its_shape_without_saturation_boost() {
+        let host = PluginHost::new(super::super::builtin_plugins(), None);
+        host.set("altes-radio", Some(true), None).unwrap();
+        let p = host.outside_profile();
+        let at = |hz: f32| p.gains[p.centers.iter().position(|&c| c >= hz).unwrap()];
+        assert!(at(1200.0) < 8.0, "Mitte nur leicht angehoben, nicht +17 dB: {}", at(1200.0));
+        assert!(at(50.0) < at(1200.0) - 15.0, "Bass abgeschnitten: {}", at(50.0));
+        assert!(at(12000.0) < at(1200.0) - 15.0, "Höhen abgeschnitten: {}", at(12000.0));
+    }
+
+    #[test]
     fn rundflug_is_partial_and_reports_autopan() {
         let host = PluginHost::new(super::super::builtin_plugins(), None);
         assert_eq!(host.get("rundflug").unwrap().outside, super::super::Outside::Partial);
@@ -187,3 +200,4 @@ mod tests {
         assert!((p.autopan[0][0] - 0.15).abs() < 1e-3 && (p.autopan[0][1] - 0.8).abs() < 1e-3, "{:?}", p.autopan);
     }
 }
+

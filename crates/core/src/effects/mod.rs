@@ -64,6 +64,11 @@ pub trait EffectPlugin: Send + Sync {
     fn outside(&self) -> Outside {
         Outside::Full
     }
+    /// Verarbeitung für die Messung „andere Apps“: nur der Teil, der dort wirken kann
+    /// (`None` = gar nichts davon).
+    fn outside_processor(&self, sample_rate: u32, channels: u16) -> Option<Box<dyn Processor>> {
+        Some(self.create(sample_rate, channels))
+    }
     /// Auto-Pan-Bausteine (Tempo in Hz, Tiefe 0…1) – für andere Apps über die Balance nachgebaut.
     fn outside_autopan(&self, _values: &[f32]) -> Vec<(f32, f32)> {
         Vec::new()

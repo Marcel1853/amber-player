@@ -41,6 +41,9 @@ impl EffectPlugin for Crossfeed {
     fn outside(&self) -> super::Outside {
         super::Outside::None
     }
+    fn outside_processor(&self, _sample_rate: u32, _channels: u16) -> Option<Box<dyn Processor>> {
+        None
+    }
     fn create(&self, sample_rate: u32, _channels: u16) -> Box<dyn Processor> {
         Box::new(CrossfeedProcessor {
             rate: sample_rate as f32,

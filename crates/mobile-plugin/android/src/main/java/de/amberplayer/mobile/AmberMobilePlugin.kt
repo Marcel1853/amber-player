@@ -341,6 +341,15 @@ class AmberMobilePlugin(private val activity: Activity) : Plugin(activity) {
         invoke.resolve()
     }
 
+    /** „Apps neu suchen“ aus den Einstellungen. */
+    @Command
+    fun globalEqRescan(invoke: Invoke) {
+        if (GlobalEq.enabled(activity)) {
+            activity.startService(Intent(activity, GlobalEqService::class.java).setAction("rescan"))
+        }
+        invoke.resolve()
+    }
+
     /** Bänder und Anhebung vom Player (bei jeder Änderung am Equalizer). */
     @Command
     fun globalEqValues(invoke: Invoke) {

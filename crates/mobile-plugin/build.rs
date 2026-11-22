@@ -12,6 +12,7 @@ const COMMANDS: &[&str] = &[
     "take_shared_file",
     "global_eq_get",
     "global_eq_set",
+    "global_eq_rescan",
     "check_permissions",
     "request_permissions",
     "register_listener",

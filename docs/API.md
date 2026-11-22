@@ -75,8 +75,8 @@ gekoppelt ist ([Mit dem PC verbinden](wiki/Mit-dem-PC-verbinden.md)).
 | `GET /stream/playlist/{id}.m3u` | eine Playlist |
 | `GET /stream/track/{id}.mp3` | ein Titel (mit Range-Anfragen zum Spulen) |
 
-Poweramp liest Playlisten nicht direkt aus dem Netz: die `.m3u` herunterladen und mit Poweramp öffnen.
-Einzelne Titel- oder Radio-Adressen gehen auch über „Streams › URL hinzufügen“.
+Viele Player-Apps lesen Playlisten nicht direkt aus dem Netz: die `.m3u` herunterladen und mit der
+Player-App öffnen. Einzelne Titel- oder Radio-Adressen lassen sich auch als Stream-Adresse eintragen.
 
 ## Effekt-Plugins
 

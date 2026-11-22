@@ -53,7 +53,7 @@ too. The widgets keep showing the last state after the app is closed.
 ## Effects for other apps
 
 Your sound effects from Amber Player can also work in other music apps – e.g. YT Music, Spotify
-or Poweramp. Turn on: **Settings → Effects for other apps → Turn on**.
+or VLC. Turn on: **Settings → Effects for other apps → Turn on**.
 
 | Works in other apps | Only in Amber |
 |---|---|
@@ -69,9 +69,12 @@ partly** or **Only in Amber**.
   off** there – turning them back on only works in the app. It can only be swiped away while no
   music is playing.
 - The effects keep running even if you swipe Amber Player out of the recent apps.
+- If an app isn't detected or the wrong one is shown: **Search apps again** (in the settings or
+  in the notification). If an app doesn't show up at all, close it completely once and start it
+  again.
 - **Detected music apps** (default) works with apps that offer an equalizer. **All sound
   (global)** affects everything but doesn't work on every phone.
-- **Only one equalizer app at a time:** if e.g. Poweramp Equalizer runs alongside, they overwrite
+- **Only one equalizer app at a time:** if another equalizer app runs alongside, they overwrite
   each other.
 - For apps that don't register with equalizers (e.g. the regular YouTube app) there's **advanced
   detection**. It needs a one-time permission via USB or wireless debugging; the command is shown
@@ -105,7 +108,7 @@ app start, visualizers immediately. More: [Installing plugins](Installing-Plugin
 |---|---|
 | HTTP API, MCP server, Stream Deck control | The phone is the remote, not the target. |
 | Source plugins (online music) | They run programs, which Android doesn't allow. |
-| Phone streams (`.m3u` for Poweramp) | Replaced by the direct PC connection. |
+| Phone streams (`.m3u` for other player apps) | Replaced by the direct PC connection. |
 
 ## Tablets
 

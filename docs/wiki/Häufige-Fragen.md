@@ -87,7 +87,8 @@ Sie wurde zusätzlich im Profil „Dual Messenger“ installiert. Eine Kopie dei
 Mit der Kopplung: **Mehr → PC → Musik vom PC** oder eine Playlist mit **Hier** abspielen.
 
 **Die Effekte wirken in einer anderen App nicht.**
-Läuft daneben eine zweite Equalizer-App (z. B. Poweramp Equalizer)? Dann überschreiben sich beide –
+Zuerst **Apps neu suchen** (Einstellungen oder Benachrichtigung) probieren.
+Läuft daneben eine zweite Equalizer-App? Dann überschreiben sich beide –
 eine davon beenden oder deinstallieren. Meldet sich die App nicht beim Equalizer (z. B. die normale
 YouTube-App), hilft die erweiterte Erkennung oder **Gesamten Ton (global)**. Echo, Verzerrung und
 Stereobreite gehen in anderen Apps grundsätzlich nicht – siehe das Schild am Effekt.

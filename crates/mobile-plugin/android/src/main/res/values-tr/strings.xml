@@ -23,4 +23,5 @@
     <string name="amber_geq_waiting">Bir müzik uygulaması bekleniyor …</string>
     <string name="amber_geq_apps">Etkin: %1$s</string>
     <string name="amber_geq_off">Kapat</string>
+    <string name="amber_geq_rescan">Yeniden ara</string>
 </resources>

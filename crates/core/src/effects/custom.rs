@@ -365,6 +365,14 @@ fn parse_block(raw: &HashMap<String, Value>, params: &[String]) -> Result<BlockD
     Ok(BlockDef { kind, fields })
 }
 
+/// Bausteine, die sich als Klangkurve in andere Apps übertragen lassen.
+fn linear_filter(kind: &BlockKind) -> bool {
+    matches!(
+        kind,
+        BlockKind::Gain | BlockKind::Peaking | BlockKind::LowShelf | BlockKind::HighShelf | BlockKind::LowPass | BlockKind::HighPass
+    )
+}
+
 // ---------- Plugin ----------
 
 pub struct CustomPlugin {
@@ -458,13 +466,7 @@ impl EffectPlugin for CustomPlugin {
     }
     /// Filter, Pegel und Auto-Pan gehen in anderen Apps; Echo, Breite, Verzerrung und Kompressor nicht.
     fn outside(&self) -> super::Outside {
-        let ok = |k: &BlockKind| {
-            matches!(
-                k,
-                BlockKind::Gain | BlockKind::Peaking | BlockKind::LowShelf | BlockKind::HighShelf | BlockKind::LowPass | BlockKind::HighPass | BlockKind::AutoPan
-            )
-        };
-        let good = self.blocks.iter().filter(|b| ok(&b.kind)).count();
+        let good = self.blocks.iter().filter(|b| linear_filter(&b.kind) || matches!(b.kind, BlockKind::AutoPan)).count();
         if good == self.blocks.len() {
             super::Outside::Full
         } else if good > 0 {
@@ -472,6 +474,22 @@ impl EffectPlugin for CustomPlugin {
         } else {
             super::Outside::None
         }
+    }
+    /// Für die Messung nur Filter und Pegel (Auto-Pan läuft getrennt über die Balance).
+    fn outside_processor(&self, sample_rate: u32, channels: u16) -> Option<Box<dyn Processor>> {
+        let blocks: Vec<&BlockDef> = self.blocks.iter().filter(|b| linear_filter(&b.kind)).collect();
+        if blocks.is_empty() {
+            return None;
+        }
+        let ch = (channels as usize).clamp(1, MAX_CHANNELS);
+        Some(Box::new(CustomProcessor {
+            rate: sample_rate as f32,
+            channels: ch,
+            mix_expr: self.mix.clone(),
+            mix: 1.0,
+            blocks: blocks.into_iter().map(|d| Block::new(d.clone(), sample_rate as f32, ch)).collect(),
+            dry: vec![0.0; ch],
+        }))
     }
     fn outside_autopan(&self, values: &[f32]) -> Vec<(f32, f32)> {
         let mix = self.mix.eval(values).clamp(0.0, 1.0);

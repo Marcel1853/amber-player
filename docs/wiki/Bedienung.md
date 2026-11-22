@@ -92,7 +92,7 @@ Ein Titel aus der **Suche** spielt sofort; danach geht es mit der bisherigen War
 | **Fehlersuche** | **Protokoll** ein/aus – zeichnet Titelwechsel, Fehler, Medientasten und Kopfhörer-Wechsel auf; ansehen, teilen bzw. exportieren, leeren |
 | **Wiedergabe** | **Überblendung** (aus = lückenlos, 2–12 s) und **Lautstärke-Anhebung** (+3 bis +12 dB für leise Kopfhörer; ein Begrenzer verhindert Übersteuern) |
 | **Fernsteuerung & MCP** (PC) | API-Adresse, Heimnetz-Freigabe, Token, **Handy koppeln**, Beispiele für Stream Deck |
-| **Aufs Handy streamen** (PC) | Playlisten als `.m3u` für andere Player-Apps (z. B. Poweramp) |
+| **Aufs Handy streamen** (PC) | Playlisten als `.m3u` für andere Player-Apps |
 | **Cover** | automatische Cover-Suche an/aus, fehlende erneut suchen |
 | **Plugins** | Plugin-Ordner öffnen (PC) bzw. Plugins importieren (Handy) |
 | **Darstellung** | Sprache, Akzentfarbe, Dunkel/Hell/System, Vollbild (Handy), Tastenkürzel |

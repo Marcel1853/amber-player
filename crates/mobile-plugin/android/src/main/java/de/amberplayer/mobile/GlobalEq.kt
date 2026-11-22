@@ -266,10 +266,21 @@ object GlobalEq {
         if (!supported() || !enabled(ctx)) return
         if (pkg == ctx.packageName) return // Amber Player hat seinen eigenen Equalizer
         if (mode(ctx) == "global" && session != 0) return
+        if (effects.containsKey(session)) {
+            owners[session] = pkg
+            return
+        }
+        // Neue Sitzung derselben App: die alte ist veraltet (sonst hängt Amber an der falschen)
+        if (pkg != "?" && session != 0) {
+            owners.filter { (s, p) -> p == pkg && s != session && s != 0 }.keys.toList().forEach { old ->
+                release(old)
+                forget(ctx, old)
+                log("Effekte für andere Apps: alte Sitzung $old von „$pkg“ freigegeben")
+            }
+        }
         owners[session] = pkg
-        if (effects.containsKey(session)) return
         try {
-            // Wie Poweramps „AIDL-Modus“: Ab Android 15 (neues AIDL-Audiosystem, z. B. Samsung) läuft
+            // Ab Android 15 (neues AIDL-Audiosystem, z. B. Samsung) läuft
             // DynamicsProcessing nur mit der Zeitauflösungs-Variante zuverlässig, und sein Begrenzer
             // ist dort fehlerhaft. Darum ohne Begrenzer; die Anhebung übernimmt LoudnessEnhancer,
             // der selbst gegen Übersteuern schützt.
@@ -333,6 +344,29 @@ object GlobalEq {
         writeJson(ctx, "sessions", o.toString())
     }
 
+    /**
+     * „Apps neu suchen“: alles lösen, je App nur die neueste gemerkte Sitzung behalten und neu
+     * anhängen (holt dabei auch die Kontrolle zurück, falls eine andere Equalizer-App sie hat).
+     * Mit Sonderfreigabe werden zusätzlich alle laufenden Wiedergaben durchsucht.
+     */
+    fun rescan(ctx: Context) {
+        releaseAll()
+        if (mode(ctx) == "global") {
+            applyAll(ctx)
+            return
+        }
+        val o = readJson(ctx, "sessions")
+        val newest = linkedMapOf<String, String>() // App → Sitzung (die zuletzt gemerkte gewinnt)
+        for (key in o.keys()) newest[o.optString(key, "?")] = key
+        val kept = org.json.JSONObject()
+        newest.forEach { (pkg, session) -> kept.put(session, pkg) }
+        writeJson(ctx, "sessions", kept.toString())
+        synchronized(this) { scanned.clear() }
+        reattach(ctx)
+        scan(ctx)
+        log("Effekte für andere Apps: neu gesucht – ${apps().ifEmpty { listOf("keine App") }.joinToString(", ")}")
+    }
+
     /** Gemerkte Sitzungen wieder anhängen (beim Start des Dienstes). */
     fun reattach(ctx: Context) {
         if (!enabled(ctx) || mode(ctx) != "apps") return
@@ -352,14 +386,17 @@ object GlobalEq {
      * steht darin die Sitzungsnummer; dann hängt Amber sich auch an Apps, die schon liefen.
      */
     fun scanPublic(ctx: Context) {
-        if (!enabled(ctx) || mode(ctx) != "apps" || dumpGranted(ctx)) return
+        if (publicUseless || !enabled(ctx) || mode(ctx) != "apps" || dumpGranted(ctx)) return
         val am = ctx.getSystemService(android.media.AudioManager::class.java) ?: return
         val configs = try { am.activePlaybackConfigurations } catch (e: Exception) { return }
         for (c in configs) {
             val text = c.toString()
-            if (!publicLogged) {
-                publicLogged = true
-                log("Effekte für andere Apps: öffentliche Liste – ${text.take(220)}")
+            // Anonymisiert (wie auf den meisten Geräten)? Dann bringt diese Liste nichts – nicht
+            // mehr abfragen, das spart Akku.
+            if (text.contains("state:started") && text.contains("u/pid:-1/-1") && text.contains("sessionId:0")) {
+                publicUseless = true
+                log("Effekte für andere Apps: öffentliche Wiedergabeliste ist auf diesem Gerät anonymisiert")
+                return
             }
             val usage = c.audioAttributes.usage
             if (usage != android.media.AudioAttributes.USAGE_MEDIA && usage != android.media.AudioAttributes.USAGE_GAME) continue
@@ -369,7 +406,14 @@ object GlobalEq {
             attach(ctx, session, "?")
         }
     }
-    private var publicLogged = false
+    @Volatile private var publicUseless = false
+
+    /** Lohnt sich das regelmäßige Suchen? (Sonderfreigabe oder brauchbare öffentliche Liste) */
+    fun scanUseful(ctx: Context) = enabled(ctx) && mode(ctx) == "apps" && (dumpGranted(ctx) || !publicUseless)
+
+    /** Muss der Takt schnell laufen? Nur für das Kreisen vom 8D-Rundflug. */
+    @Synchronized
+    fun panning(ctx: Context) = effects.isNotEmpty() && profile(ctx).autopan.isNotEmpty()
 
     /**
      * Auto-Pan (8D-Rundflug) für andere Apps: die Balance wandert im Tempo des Effekts – wie in
@@ -566,14 +610,15 @@ class GlobalEqService : Service() {
             addAction(AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION)
         }
         ContextCompat.registerReceiver(this, receiver, filter, ContextCompat.RECEIVER_EXPORTED)
-        // erweiterte Erkennung: alle 2 Sekunden nachsehen, welche Apps gerade spielen
+        // Erkennung: mit Sonderfreigabe alle 4 Sekunden nachsehen, welche Apps spielen. Ohne
+        // brauchbare Quelle nur selten prüfen, ob die Freigabe inzwischen erteilt wurde (Akku).
         val ctx = applicationContext
         scanner = Thread {
             while (!Thread.currentThread().isInterrupted) {
                 try {
                     GlobalEq.scan(ctx)
                     GlobalEq.scanPublic(ctx)
-                    Thread.sleep(2000)
+                    Thread.sleep(if (GlobalEq.scanUseful(ctx)) 4000 else 30000)
                 } catch (e: InterruptedException) {
                     break
                 } catch (e: Exception) {
@@ -599,7 +644,8 @@ class GlobalEqService : Service() {
                             show()
                         }
                     }
-                    Thread.sleep(33)
+                    // schnell nur fürs Kreisen vom 8D-Rundflug, sonst selten (spart Akku)
+                    Thread.sleep(if (GlobalEq.panning(ctx)) 33 else 500)
                 } catch (e: InterruptedException) {
                     break
                 } catch (e: Exception) {
@@ -634,6 +680,11 @@ class GlobalEqService : Service() {
             // dass die Effekte aktiv sind und wie man sie ausschaltet). Ohne Musik darf sie weg
             // bleiben – sie kommt zurück, sobald wieder etwas spielt.
             if (musicPlaying()) show() else hidden = true
+            return START_STICKY
+        }
+        if (intent?.action == "rescan") {
+            if (GlobalEq.enabled(this)) GlobalEq.rescan(this)
+            show()
             return START_STICKY
         }
         if (intent?.action == "off") {
@@ -677,6 +728,13 @@ class GlobalEqService : Service() {
             .setContentIntent(open)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
+            .addAction(
+                0, getString(R.string.amber_geq_rescan),
+                PendingIntent.getService(
+                    this, 4, Intent(this, GlobalEqService::class.java).setAction("rescan"),
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+                ),
+            )
             .addAction(0, getString(R.string.amber_geq_off), off)
             .setDeleteIntent(
                 PendingIntent.getService(

@@ -731,7 +731,7 @@ pub async fn remove_station(ctx: State<'_, Ctx>, id: i64) -> R<()> {
 
 // ---------- Streams fürs Handy ----------
 
-/// Adressen, die z. B. Poweramp unter „Streams › URL hinzufügen“ abspielen kann.
+/// Adressen, die Player-Apps als einzelne Stream-Adresse abspielen können.
 #[tauri::command]
 pub async fn stream_links(ctx: State<'_, Ctx>) -> R<Value> {
     let cfg = ctx.api.lock().unwrap().config.clone();
